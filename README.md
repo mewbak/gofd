@@ -9,4 +9,4 @@ gofd is a concurrent finite domain solver for [golang](http://golang.org/).
 
 
 # Usage #
-* [Getting Started](gofd/wiki/GettingStarted) - Quick tutorial on how to set up gofd and implement your first constraint satisfaction problem in go
+* [Getting Started](/gofd/gofd/wiki/GettingStarted) - Quick tutorial on how to set up gofd and implement your first constraint satisfaction problem in go
