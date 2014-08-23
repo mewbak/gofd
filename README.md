@@ -3,10 +3,12 @@
 gofd is a concurrent finite domain solver for [golang](http://golang.org/).
 
 ### Install ###
+
 ```
 #!go get bitbucket.org/gofd/gofd
-```
 
+
+```
 
 
 ### Usage ###
