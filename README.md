@@ -13,4 +13,4 @@ gofd is a concurrent finite domain solver for [golang](http://golang.org/).
 * [Labeling](/gofd/gofd/wiki/Labeling) - Model and solve a more complex constraint satisfaction problem with labeling
 * [Eight Queens](/gofd/gofd/wiki/Eight Queens) - Place eight queens on a chess board so that no two queens attack each other
 
-# Dokumentation #
+# Documentation #
