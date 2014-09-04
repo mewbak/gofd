@@ -159,7 +159,7 @@ func (this *ChangeEntry) Add(val int) {
 	this.domainvalues.Add(val)
 }
 
-// Add adds a new value to a ChangeEntry
+// AddValues adds new values to a ChangeEntry
 func (this *ChangeEntry) AddValues(values map[int]bool) {
 	for val, _ := range values {
 		this.domainvalues.Add(val)

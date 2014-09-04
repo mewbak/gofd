@@ -5,11 +5,6 @@ import (
 )
 
 // tests basic functionality
-// in all tests there are the following first two lines
-//   setup()
-//   teardown()
-// to play well with the handmade testingframework.
-// This is followed by a log message stating the test name
 
 func Test_BasicVarNameTest(t *testing.T) {
 	setup()
@@ -17,13 +12,13 @@ func Test_BasicVarNameTest(t *testing.T) {
 	log("BasicVarNameTest")
 	X := CreateIntVarValues("_X", store, []int{1, 2, 3})
 	if "_X" == store.GetName(X) {
-		t.Errorf("CreateIntVarFromTo: store.GetName() == '%v'"+
+		t.Errorf("CreateIntVarValues: store.GetName() == '%v'"+
 			", want != '%v'",
 			"_X", "_X")
 	}
 	Y := CreateIntVarValues("", store, []int{1, 2, 3})
 	if "" == store.GetName(Y) {
-		t.Errorf("CreateIntVarFromTo: store.GetName() == '%v'"+
+		t.Errorf("CreateIntVarValues: store.GetName() == '%v'"+
 			", want !='%v'",
 			"", "")
 	}

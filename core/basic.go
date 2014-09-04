@@ -1,12 +1,12 @@
-// Package core provides the central constraint store and the finite domain 
-// variables as interval domains and explicit domains
+// Package core provides the central constraint store and the finite domain
+// variables as interval domains and explicit domains.
 package core
 
 // PropId is a type for a unique identifier for Propagators
 type PropId int
 
 // Constraint interface to be implemented by every Propagator,
-// for execution, registration and copying in store
+// for execution, registration, and copying in store
 type Constraint interface {
 	// Start starts propagator listening for events and propagating
 	Start(store *Store)
@@ -58,12 +58,12 @@ type Domain interface {
 	Remove(ele int)
 	// Removes deletes eles from this domain
 	Removes(eles Domain)
-	// Removes deletes eles from this domain and from Other for all elements
-	// which have no intersection with elements of this
+	// RemovesWithOther deletes eles from this domain and from Other for
+	// all elements which have no intersection with elements of this
 	RemovesWithOther(eles Domain)
-	// Values returns a slice of values of the domain
+	// Values_asSlice returns a slice of values of the domain
 	Values_asSlice() []int
-	// Values returns a map of values of the domain
+	// Values_asMap returns a map of values of the domain
 	Values_asMap() map[int]bool
 	// Size returns the number of elements of this domain
 	Size() int
@@ -74,7 +74,7 @@ type Domain interface {
 	// SortedValues provides a slice of values in ascending order
 	// (for now, irrelevant for IvDomain)
 	SortedValues() []int
-	// String returns a humanreadable string representation of the propagator
+	// String returns a human readable string representation of the propagator
 	String() string
 	// GetSubDomain() returns a Domain, which is a subdomain of current domain
 	//GetSubDomainBounds(min, max int) Domain

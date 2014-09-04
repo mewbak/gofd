@@ -26,8 +26,8 @@ func createRegisterIntVarEvent(name string,
 
 // run registers the IntVar, to be run in store.
 func (this *RegisterIntVarEvent) run(store *Store) {
-	v_id := registerOneIntVar(store, this.name, this.intvar)
-	this.channel <- v_id
+	varId := registerOneIntVar(store, this.name, this.intvar)
+	this.channel <- varId
 }
 
 // registerOneIntVar registers one IntVar at store, to be run in store,
@@ -35,18 +35,18 @@ func (this *RegisterIntVarEvent) run(store *Store) {
 func registerOneIntVar(store *Store, name string, intvar *IntVar) VarId {
 	store.stat.variables++
 	store.iDCounter += 1
-	v_id := store.iDCounter
-	intvar.ID = v_id
-	store.iDToIntVar[v_id] = intvar
+	varId := store.iDCounter
+	intvar.ID = varId
+	store.iDToIntVar[varId] = intvar
 	if name == "" {
-		name = store.generateAuxVariableName(v_id) // provide a name
+		name = store.generateAuxVariableName(varId) // provide a name
 	}
-	store.nameToID[name] = v_id
+	store.nameToID[name] = varId
 	store.iDToName[intvar.ID] = name
 	if logger.DoDebug() {
-		logger.Df("STORE_register[Aux]IntVar: %d, %s", v_id, name)
+		logger.Df("STORE_register[Aux]IntVar: %d, %s", varId, name)
 	}
-	return v_id
+	return varId
 }
 
 // String returns a readable representation of the RegisterIntVarEvent.
@@ -73,8 +73,8 @@ func createRegisterAuxIntVarEvent(intvar *IntVar) *RegisterAuxIntVarEvent {
 
 // run registers the helper IntVar in the central store goroutine.
 func (this *RegisterAuxIntVarEvent) run(store *Store) {
-	v_id := registerOneIntVar(store, "", this.intvar)
-	this.channel <- v_id
+	varId := registerOneIntVar(store, "", this.intvar)
+	this.channel <- varId
 }
 
 // String returns a readable representation of the RegisterAuxIntVarEvent.

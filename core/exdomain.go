@@ -5,19 +5,20 @@ import (
 	"runtime/debug"
 )
 
-// Domain representation explicitly as a set of integer values based
+// ExDomain representation explicitly as a set of integer values based
 // on builtin golang hashing.
 type ExDomain struct {
 	Values   map[int]bool
 	Min, Max int
 }
 
+// Reset resets the domain to an empty domain.
 func (this *ExDomain) Reset() {
 	this.Values = make(map[int]bool)
 	this.Min, this.Max = 1, 0
 }
 
-// CreateExDomain returns a pointer to a new empty Domain.
+// CreateExDomain returns a pointer to a new empty ExDomain.
 func CreateExDomain() *ExDomain {
 	domain := new(ExDomain)
 	domain.Values = make(map[int]bool)
@@ -25,7 +26,7 @@ func CreateExDomain() *ExDomain {
 	return domain
 }
 
-// CreateExDomain returns a pointer to a new Domain with
+// CreateExDomainAdds returns a pointer to a new Domain with
 // elements from elements.
 func CreateExDomainAdds(elements []int) *ExDomain {
 	domain := new(ExDomain)
@@ -238,8 +239,7 @@ func (this *ExDomain) removesDomain(dom *ExDomain, modifyingOtherDomain bool) {
 	// if max/min has changed)
 }
 
-// RemovesWithOther
-// ToDo: explain
+// RemovesWithOther, ToDo: explain
 func (this *ExDomain) RemovesWithOther(eles Domain) {
 	if d, ok := eles.(*IvDomain); ok {
 		this.removesIvDomain(d, true)
@@ -259,11 +259,12 @@ func (this *ExDomain) Removes(eles Domain) {
 	}
 }
 
-// Values returns a slice of values of the domain.
+// Values_asSlice returns a slice of values of the domain.
 func (this *ExDomain) Values_asSlice() []int {
 	return Keys_MapIntToBool(this.GetValues())
 }
 
+// GetValues returns the values of this domain.
 func (this *ExDomain) GetValues() map[int]bool {
 	return this.Values
 }
@@ -309,7 +310,7 @@ func (this *ExDomain) GetSubDomainBounds(min, max int) Domain {
 	return d
 }
 
-// GetDomainoutOfBounds returns a new domain with all values
+// GetDomainOutOfBounds returns a new domain with all values
 // outside of the given boundaries.
 func (this *ExDomain) GetDomainOutOfBounds(min, max int) Domain {
 	d := CreateExDomain()

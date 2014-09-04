@@ -13,6 +13,7 @@ type ControlEvent interface {
 }
 
 // --- Info-Events ---
+
 // GetNameEvent retrieves information about a variable name.
 type GetNameEvent struct {
 	varId   VarId
@@ -141,7 +142,7 @@ func createSelectVarIdUnfixedDomainEvent(min bool) *SelectVarIdUnfixedDomainEven
 }
 
 func (this *SelectVarIdUnfixedDomainEvent) run(store *Store) {
-	var varId VarId = VarId(-1)
+	varId := VarId(-1)
 	if this.min {
 		varId = store.getMinUnfixedDomain()
 	} else {
@@ -277,6 +278,7 @@ func (this *GetReadyEvent) String() string {
 	return fmt.Sprintf("GetReadyEvent")
 }
 
+// CloneEvent clones a complete store
 type CloneEvent struct {
 	store   *Store
 	chEvt   *ChangeEvent
@@ -336,16 +338,16 @@ func (this *CloneEvent) run(store *Store) {
 	// use new propIds
 	newStore.propCounter = this.store.propCounter
 	newStore.readyChannel = make(chan bool)
-	cloned_props := make([]Constraint, len(this.store.propagators))
+	clonedProps := make([]Constraint, len(this.store.propagators))
 	i := 0
 	for _, prop := range this.store.propagators {
-		cloned_prop := prop.Clone()
-		cloned_prop.SetID(0) // ignore existing id, treat as new
-		cloned_props[i] = cloned_prop
+		clonedProp := prop.Clone()
+		clonedProp.SetID(0) // ignore existing id, treat as new
+		clonedProps[i] = clonedProp
 		i++
 	}
 	go newStore.propagate()
-	newStore.AddPropagators(cloned_props...)
+	newStore.AddPropagators(clonedProps...)
 	// println(len(cloned_props), newStore.stat.propagators) // why diff?
 	this.channel <- newStore
 }
