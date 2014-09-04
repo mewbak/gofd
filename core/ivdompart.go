@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-// Iv DomPart is an interval/part, using only the lower (From) and
+// IvDomPart is an interval/part, using only the lower (From) and
 // upper (To) bound to represent all values (including the bounds)
 // in between.
 type IvDomPart struct {
@@ -31,7 +31,7 @@ func (this *IvDomPart) DIFFERENCE_MIN_MAX(min, max int) []*IvDomPart {
 	return p
 }
 
-// CreateIvDomPart creates new IvDomParts from given from and to values.
+// CreateIvDomParts creates new IvDomParts from given from and to values.
 func CreateIvDomParts(fromTos [][]int) []*IvDomPart {
 	parts := make([]*IvDomPart, len(fromTos))
 	partsPos := 0
@@ -59,6 +59,7 @@ func CreateIvDomParts(fromTos [][]int) []*IvDomPart {
 	return parts
 }
 
+// DIFFERENCE_Int computes the set difference
 func (this *IvDomPart) DIFFERENCE_Int(e int) (int, *IvDomPart) {
 	if this.ContainsInt(e) {
 		state := this.RelationCheckInt(e)
@@ -356,17 +357,20 @@ func (this *IvDomPart) addToMap(m map[int]bool) {
 	}
 }
 
-// sortable DomParts
+// SortableDomPart is a sortable list of interval domain parts
 type SortableDomPart []*IvDomPart
 
+// Len computes the length of the SortableDomPart
 func (this SortableDomPart) Len() int {
 	return len(this)
 }
 
+// Less imposes an order over domparts given indexes.
 func (this SortableDomPart) Less(i, j int) bool {
 	return this[i].From < this[j].From
 }
 
+// Swap exchanges inplace
 func (this SortableDomPart) Swap(i, j int) {
 	this[i], this[j] = this[j], this[i]
 }
@@ -484,6 +488,7 @@ func (this *IvDomPart) GT_DP(dom *IvDomPart) bool {
 	return this.From > dom.To
 }
 
+// internal constants
 const (
 	NOT_IN_LOWER                     = 0
 	NOT_IN_HIGHER                    = 1
@@ -498,6 +503,7 @@ const (
 	OVERLAPS_HIGHER                  = 10
 )
 
+// internal constants
 const (
 	INSERT_PART   = 0 // first modified, second insert
 	REMOVE_PART   = 1
@@ -505,6 +511,7 @@ const (
 	NOTHING       = 3
 )
 
+// internal constants
 const (
 	SPLIT  = 0 // do not modify anything, only say: you have to split!
 	MODIFY = 1
@@ -552,6 +559,7 @@ func (this *IvDomPart) ABS() *IvDomPart {
 }
 
 // ToDo: test
+
 // MULTIPLY multiplies the current part with the given dompart
 // Example: [3,4] * [6,7] = [18,28]
 // multiplication with negativ number results in switch
@@ -584,6 +592,7 @@ func (this *IvDomPart) MULTIPLY(dom *IvDomPart) *IvDomPart {
 }
 
 // ToDo: test, switch like mulitply for negative values
+
 // DIvIDE divides the current part with the given dompart
 // (rounds to natural next included number)
 // Example: [4,10]/[2,3]=[2,5] --> 5/3  and  9/2

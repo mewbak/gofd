@@ -52,7 +52,7 @@ type Domain interface {
 	Equals(other Domain) bool
 	// Copy (deep) copies a domain
 	Copy() Domain
-	// Add adds ele to this domain (for now, irrelevant for IvDomain)
+	// Add adds ele to this domain
 	Add(ele int)
 	// Remove deletes ele from this domain
 	Remove(ele int)
@@ -72,7 +72,6 @@ type Domain interface {
 	// IsGround returns true iff there is one element in this domain
 	IsGround() bool
 	// SortedValues provides a slice of values in ascending order
-	// (for now, irrelevant for IvDomain)
 	SortedValues() []int
 	// String returns a human readable string representation of the propagator
 	String() string

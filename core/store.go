@@ -33,10 +33,12 @@ type Store struct {
 	loggingStats  bool
 }
 
+// GetLoggingStat gets some statistics from logging.
 func (this *Store) GetLoggingStat() bool {
 	return this.loggingStats
 }
 
+// CreateStoreWithoutLogging creates a store, but does not log.
 func CreateStoreWithoutLogging() *Store {
 	if logger.DoDebug() {
 		logger.Dln("STORE_CreateStore")
@@ -229,8 +231,8 @@ func (this *Store) registerAuxIntVarAtStore(intVar *IntVar) VarId {
 // makeAuxVariableName generates a name for a variable (used for generating
 // names for auxiliary variables). These variable should not be communicated
 // to users, only for internal use.
-func (this *Store) generateAuxVariableName(v_id VarId) string {
-	return fmt.Sprintf("_%d", v_id)
+func (this *Store) generateAuxVariableName(varId VarId) string {
+	return fmt.Sprintf("_%d", varId)
 }
 
 // generateNewVariableName generates a name for a variable (used, if
@@ -279,7 +281,7 @@ func (this *Store) propagate() {
 			}
 			if !this.closed {
 				if len(event.changes) > 0 {
-					this.process_changes(event.changes, loggerDebug)
+					this.processChanges(event.changes, loggerDebug)
 				} else {
 					this.stat.emptyChangeEvents++
 				}
@@ -302,14 +304,14 @@ func (this *Store) propagate() {
 	}
 }
 
-// process_changes processes domain reductions from any propagator
-func (this *Store) process_changes(changes []*ChangeEntry, loggerDebug bool) {
-	for _, change_entry := range changes {
+// processChanges processes domain reductions from any propagator
+func (this *Store) processChanges(changes []*ChangeEntry, loggerDebug bool) {
+	for _, changeEntry := range changes {
 		this.stat.changeEntries++
-		varId := change_entry.varId
+		varId := changeEntry.varId
 		domain := this.iDToIntVar[varId].Domain
 		// removing values from changeEntry
-		toremovevalues := change_entry.GetValues()
+		toremovevalues := changeEntry.GetValues()
 		// too high, wraps around, useless for unbound domains
 		this.stat.domainReductions += toremovevalues.Size()
 		beforeSize := domain.Size()
@@ -326,9 +328,9 @@ func (this *Store) process_changes(changes []*ChangeEntry, loggerDebug bool) {
 		}
 		if !toremovevalues.IsEmpty() { // reductions to communicate
 			if numberOfRemoved == 0 {
-				logger.Ef("store.process_changes: no change %v\n", change_entry)
+				logger.Ef("store.processChanges: no change %v\n", changeEntry)
 			}
-			this.multiplex(change_entry) // distribute to propagators
+			this.multiplex(changeEntry) // distribute to propagators
 		}
 		if domain.IsGround() {
 			if loggerDebug {
@@ -371,15 +373,15 @@ func (this *Store) isInconsistent() bool {
 
 // multiplex multiplexes and dispatches copied value removal messages to all
 // registered propagators containing copies of those domains
-func (this *Store) multiplex(change_entry *ChangeEntry) {
+func (this *Store) multiplex(changeEntry *ChangeEntry) {
 	if logger.DoDebug() {
 		logger.Df("STORE_multiplex change on %s, value %s to %v channels",
-			this.iDToName[change_entry.varId], change_entry,
-			len(this.iDToWriteChannel[change_entry.varId]))
+			this.iDToName[changeEntry.varId], changeEntry,
+			len(this.iDToWriteChannel[changeEntry.varId]))
 	}
-	this.eventCounter += len(this.iDToWriteChannel[change_entry.varId])
-	for _, readChannel := range this.iDToWriteChannel[change_entry.varId] {
-		readChannel <- change_entry
+	this.eventCounter += len(this.iDToWriteChannel[changeEntry.varId])
+	for _, readChannel := range this.iDToWriteChannel[changeEntry.varId] {
+		readChannel <- changeEntry
 	}
 }
 
@@ -504,6 +506,7 @@ func (this *Store) String() string {
 	return fmt.Sprintf(msg, this.closed, this.communicating, s)
 }
 
+// StringWithSpecVarIds needs a comment ToDo
 func (this *Store) StringWithSpecVarIds(varids []VarId) string {
 	s := ""
 	for _, id := range varids {

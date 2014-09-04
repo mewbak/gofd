@@ -39,7 +39,7 @@ func LogPropagationOfConstraint(c Constraint) {
 	}
 }
 
-// GetIntervalDomains from any domain implementation (no new instance)
+// GetVaridToIntervalDomains from any domain implementation (no new instance)
 func GetVaridToIntervalDomains(idoms map[VarId]Domain) map[VarId]*IvDomain {
 	intervalDoms := make(map[VarId]*IvDomain, len(idoms))
 	for varid, idom := range idoms {
@@ -52,7 +52,8 @@ func GetVaridToIntervalDomains(idoms map[VarId]Domain) map[VarId]*IvDomain {
 	return intervalDoms
 }
 
-// GetExplicitDomains from any domain implementation (no new instance)
+// GetVaridToExplicitDomainsMap from any domain implementation
+// (no new instance)
 func GetVaridToExplicitDomainsMap(idoms map[VarId]Domain) map[VarId]*ExDomain {
 	explDoms := make(map[VarId]*ExDomain, len(idoms))
 	for varid, idom := range idoms {
@@ -65,7 +66,8 @@ func GetVaridToExplicitDomainsMap(idoms map[VarId]Domain) map[VarId]*ExDomain {
 	return explDoms
 }
 
-// GetExplicitDomains from any domain implementation (no new instance)
+// GetVaridToExplicitDomainsSlice from any domain implementation
+// (no new instance).
 func GetVaridToExplicitDomainsSlice(idoms []Domain) []*ExDomain {
 	explDoms := make([]*ExDomain, len(idoms))
 	for i, idom := range idoms {

@@ -8,7 +8,6 @@ import (
 // SortedIvDomPartList is a list with sorted IvDomParts
 // implementation with SliceTricks.
 // https://code.google.com/p/go-wiki/wiki/SliceTricks
-
 type SortedIvDomPartList struct {
 	parts []*IvDomPart
 }
@@ -22,14 +21,16 @@ func CreateSortedIvDomPartList() *SortedIvDomPartList {
 	return l
 }
 
+// CreateSortedIvDomPartListWithSortedParts creates an IvFomPart array
+// and directly puts (no copy) the parts there by reference.
 func CreateSortedIvDomPartListWithSortedParts(parts []*IvDomPart) *SortedIvDomPartList {
 	l := new(SortedIvDomPartList)
 	l.parts = parts
 	return l
 }
 
-// CreateIvDomainFromIntArr creates an IvDomain and inits its IvDomParts with
-// the given int-slice. The int-slice will be sorted first.
+// CreateSortedIvDomPartListFromIntArr creates an IvDomain and initialzes
+// it with the given int-slice. The int-slice will be sorted first.
 func CreateSortedIvDomPartListFromIntArr(eles []int) *SortedIvDomPartList {
 	if len(eles) == 0 {
 		return CreateSortedIvDomPartList()
@@ -57,18 +58,18 @@ func CreateSortedIvDomPartListFromIntArr(eles []int) *SortedIvDomPartList {
 
 //	--- manipulation functions ---
 
+// UnionWithParts needs a comment, ToDo
 func (this *SortedIvDomPartList) UnionWithParts(parts []*IvDomPart) {
 	for _, part := range parts {
 		this.AddAnyPart(part)
 	}
 }
 
-// AddPart adds a part to the current domain
+// AddAnyPart adds a part to the current domain
 // in contrast to other add/insert functions, this function
 // doesn't rely on conventions. You can add any part, you want
 // (even in incorrect order).
 // useful for union (see CreateIvDomainUnion)
-//
 // Examples:
 // d:[1,4]  [10,15]
 // addParts:
@@ -214,6 +215,7 @@ func (this *SortedIvDomPartList) removeDomPart(index int) {
 	this.parts = this.parts[:len(this.parts)-1]
 }
 
+// Removes removes a sorted list of domain parts
 func (this *SortedIvDomPartList) Removes(other *SortedIvDomPartList) {
 	i := 0
 	j := 0
@@ -253,6 +255,7 @@ func (this *SortedIvDomPartList) Removes(other *SortedIvDomPartList) {
 	}
 }
 
+// RemovesSortedInts removes the given integer values.
 func (this *SortedIvDomPartList) RemovesSortedInts(sortedEles []int) {
 	i := 0
 	j := 0
@@ -289,6 +292,7 @@ func (this *SortedIvDomPartList) RemovesSortedInts(sortedEles []int) {
 	}
 }
 
+// IntersectionInts needs a comment ToDo
 func (this *SortedIvDomPartList) IntersectionInts(sortedEles []int) *SortedIvDomPartList {
 	newInts := make([]int, 0)
 	i := 0
@@ -306,6 +310,7 @@ func (this *SortedIvDomPartList) IntersectionInts(sortedEles []int) *SortedIvDom
 	return CreateSortedIvDomPartListFromIntArr(newInts)
 }
 
+// Intersection needs a comment ToDo
 func (this *SortedIvDomPartList) Intersection(other *SortedIvDomPartList) *SortedIvDomPartList {
 	newParts := make([]*IvDomPart, 0)
 	i, j := 0, 0

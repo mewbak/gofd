@@ -111,41 +111,49 @@ func (this *StoreStatistics) String() string {
 	return s
 }
 
+// InitStatTime sets the start time.
 func (this *StoreStatistics) InitStatTime() {
 	this.end_working_time = time.Now().UnixNano()
 }
 
+// LogIdleTime logs the idle time in the store.
 func (this *StoreStatistics) LogIdleTime() {
 	this.start_working_time = time.Now().UnixNano()
 	this.idle_time += this.start_working_time - this.end_working_time
 }
 
+// LogWorkingTime logs the working time in the store.
 func (this *StoreStatistics) LogWorkingTime() {
 	this.end_working_time = time.Now().UnixNano()
 	this.working_time += this.end_working_time - this.start_working_time
 }
 
+// AddIdleTime adds a delta to the idle time.
 func (this *StoreStatistics) AddIdleTime(v int64) {
 	this.idle_time += v
 }
 
+// AddWorkingTime adds a delta to the working time.
 func (this *StoreStatistics) AddWorkingTime(v int64) {
 	this.working_time += v
 }
 
-// Get* some accessors
+// GetVariables gets a reference to the variables
 func (this *StoreStatistics) GetVariables() int {
 	return this.variables
 }
 
+// GetActVariables gets a reference to the current variables
 func (this *StoreStatistics) GetActVariables() int {
 	return this.act_variables
 }
 
+// GetPropagators gets the number of propagators.
 func (this *StoreStatistics) GetPropagators() int {
 	return this.propagators
 }
 
+// GetActPropagators gets the number of actual propagators.
 func (this *StoreStatistics) GetActPropagators() int {
 	return this.act_propagators
 }

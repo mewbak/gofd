@@ -8,12 +8,12 @@ import (
 
 // PropDummy propagator dummy for testing
 type PropDummy struct {
-	x        VarId
-	id       PropId
-	x_domain Domain
-	t        *testing.T
-	in       <-chan *ChangeEntry
-	out      chan<- *ChangeEvent
+	x       VarId
+	id      PropId
+	xDomain Domain
+	t       *testing.T
+	in      <-chan *ChangeEntry
+	out     chan<- *ChangeEvent
 }
 
 func (this *PropDummy) GetVarIds() []VarId {
@@ -21,7 +21,7 @@ func (this *PropDummy) GetVarIds() []VarId {
 }
 
 func (this *PropDummy) GetDomains() []Domain {
-	return []Domain{this.x_domain}
+	return []Domain{this.xDomain}
 }
 
 func (this *PropDummy) GetInCh() <-chan *ChangeEntry {
@@ -52,9 +52,9 @@ func (this *PropDummy) Register(store *Store) {
 	var domains []Domain
 	this.in, domains, this.out =
 		store.RegisterPropagator([]VarId{this.x}, this.id)
-	this.x_domain = domains[0]
-	this.x_domain.Remove(1)
-	if this.x_domain.Equals(store.iDToIntVar[this.x].Domain) {
+	this.xDomain = domains[0]
+	this.xDomain.Remove(1)
+	if this.xDomain.Equals(store.iDToIntVar[this.x].Domain) {
 		msg := "Store.PropDummyRegister: "
 		msg += "local domain IS NOT a copy of store domain"
 		this.t.Errorf(msg)
@@ -67,7 +67,7 @@ func (this *PropDummy) Clone() Constraint {
 }
 
 func (this *PropDummy) String() string {
-	return fmt.Sprintf("PropDummy, Dom: %v", this.x_domain)
+	return fmt.Sprintf("PropDummy, Dom: %v", this.xDomain)
 }
 
 func createPropagatorDummy(x VarId, t *testing.T) (Constraint, Constraint) {

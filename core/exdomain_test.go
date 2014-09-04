@@ -263,20 +263,20 @@ func convertDomainRemoveTest(t *testing.T,
 	DomainRemoveTest(t, d, xeles, dExp)
 }
 
-func Test_DomainPerformance_1(t *testing.T) {
+func Test_DomainPerformance1(t *testing.T) {
 	setup()
 	defer teardown()
-	log("DomainPerformance_1")
+	log("DomainPerformance1")
 	from, to := 1, 50000
 	eles := [][]int{{100, 1500}, {10000, 15000}}
 	expEles := [][]int{{1, 99}, {1501, 9999}, {15001, 50000}}
 	convertDomainRemoveTest(t, from, to, eles, expEles)
 }
 
-func Test_DomainPerformance_2(t *testing.T) {
+func Test_DomainPerformance2(t *testing.T) {
 	setup()
 	defer teardown()
-	log("DomainPerformance_2")
+	log("DomainPerformance2")
 	from, to := 1, 50000
 	eles := [][]int{{100, 1500}, {10000, 15000}}
 	expEles := [][]int{{1, 99}, {1501, 9999}, {15001, 50000}}
@@ -284,10 +284,10 @@ func Test_DomainPerformance_2(t *testing.T) {
 }
 
 // takes long
-func NOTest_DomainPerformance_3(t *testing.T) {
+func NOTest_DomainPerformance3(t *testing.T) {
 	setup()
 	defer teardown()
-	log("DomainPerformance_3")
+	log("DomainPerformance3")
 	from, to := 1, 500000
 	eles := [][]int{{100, 1500}, {10000, 15000}, {200000, 200100}}
 	expEles := [][]int{{1, 99}, {1501, 9999}, {15001, 199999},
@@ -296,10 +296,10 @@ func NOTest_DomainPerformance_3(t *testing.T) {
 }
 
 // takes long
-func NOTest_DomainPerformance_4(t *testing.T) {
+func NOTest_DomainPerformance4(t *testing.T) {
 	setup()
 	defer teardown()
-	log("DomainPerformance_4")
+	log("DomainPerformance4")
 	from, to := 1, 500000
 	eles := [][]int{{100, 1500}, {10000, 15000}, {200000, 200100}}
 	expEles := [][]int{{1, 99}, {1501, 9999}, {15001, 199999},
@@ -307,10 +307,10 @@ func NOTest_DomainPerformance_4(t *testing.T) {
 	convertDomainRemoveTest(t, from, to, eles, expEles)
 }
 
-func Test_DomainPerformance_5(t *testing.T) {
+func Test_DomainPerformance5(t *testing.T) {
 	setup()
 	defer teardown()
-	log("DomainPerformance_5")
+	log("DomainPerformance5")
 	log("Removing ele 9000 from 0..0, 2..2, ..., 10000..10000")
 	vals := makeIvDomainWorstCase(10000, -1)
 	d := CreateExDomainAdds(vals)

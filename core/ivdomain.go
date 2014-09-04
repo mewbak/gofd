@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-// Domain representation as a list of intervals, where each interval
+// IvDomain represents a Domain as list of intervals, where each interval
 // is a set of consecutive values represented as tuple (from, to) where
 // from <= to must always hold. Example: [[0,5], [10,50], [100,200]]
 type IvDomain struct {
@@ -19,7 +19,8 @@ func CreateIvDomainFromDomain(dom *ExDomain) *IvDomain {
 	return CreateIvDomainFromIntArr(dom.Values_asSlice())
 }
 
-// CreateIvDomainFromTos creates a domain from given fromTo pairs.
+// CreateIvDomainFromTos creates an interval domain from given
+// fromTo pairs.
 func CreateIvDomainFromTos(fromTos [][]int) *IvDomain {
 	domain := CreateIvDomain()
 	domain.partList = CreateSortedIvDomPartListWithSortedParts(
@@ -27,15 +28,15 @@ func CreateIvDomainFromTos(fromTos [][]int) *IvDomain {
 	return domain
 }
 
-// CreateIvDomainFromTos creates a domain from given fromTo pairs.
+// CreateIvDomain creates an interval domain.
 func CreateIvDomain() *IvDomain {
 	domain := new(IvDomain)
 	domain.partList = CreateSortedIvDomPartList()
 	return domain
 }
 
-// CreateIvDomainUnion returns a domain with merged. This means, that
-// a set union operation is applied to all intervals. If intervals overlap,
+// CreateIvDomainUnion returns a domain merged from parts with help of
+// a set union operation applied to all intervals. If intervals overlap,
 // then they are joined together.
 func CreateIvDomainUnion(parts []*IvDomPart) *IvDomain {
 	domain := CreateIvDomain()
@@ -160,6 +161,7 @@ func (this *IvDomain) Contains(ele int) bool {
 	return this.partList.Contains(ele)
 }
 
+// Reset resets the interval domain to the empty Domain.
 func (this *IvDomain) Reset() {
 	this.partList = CreateSortedIvDomPartList()
 }
@@ -239,7 +241,7 @@ func getIntersectionAsSortedDomPartList(intersectionMap map[int][]*IvDomPart) []
 	return parts
 }
 
-// IntersectionWithIvDomainThisAssoc calculates the intersection between this
+// IntersectionWithDomainThisAssoc calculates the intersection between this
 // and dom. It returns a map: key is the part-index of this.parts, value
 // is a list of intersections in the specific part (at part-index).
 // intersection between this and dom
@@ -305,6 +307,7 @@ func (this *IvDomain) IntersectionWithIvDomainThisAssoc(dom *IvDomain) map[int][
 }
 
 // --- set operations ---
+
 // IntersectionIvDomain returns a domain, which represents the intersection
 // between this and dom
 func (this *IvDomain) IntersectionIvDomain(dom *IvDomain) *IvDomain {
@@ -369,7 +372,7 @@ func (this *IvDomain) SortedValues() []int {
 	return this.Values_asSlice()
 }
 
-// AddPart adds a part to the current domain
+// AddAnyPart adds a part to the current domain
 // in contrast to other add/insert functions, this function
 // doesn't rely on conventions. You can add any part, you want
 // (even in incorrect order).
@@ -482,6 +485,7 @@ func (this *IvDomain) DifferenceWithDomain(dom *ExDomain) *IvDomain {
 	return CreateIvDomainDomParts(diffParts)
 }
 
+// DifferenceWithIntersectionIntsParts has a way too long name, ToDo
 func (this *IvDomain) DifferenceWithIntersectionIntsParts(intersectionPerPart map[int][]int) []*IvDomPart {
 	var parts []*IvDomPart
 	if len(intersectionPerPart) > 0 {
@@ -505,6 +509,7 @@ func (this *IvDomain) DifferenceWithIntersectionIntsParts(intersectionPerPart ma
 }
 
 // ToDo: test
+
 // MULTIPLY returns a new domain with len(this.parts)*len(dom.parts) parts.
 // Every part of this.parts will be multiplied with every part of dom.parts.
 // The result will be added to the new domain. For the case, that some
@@ -530,6 +535,7 @@ func (this *IvDomain) MULTIPLY(dom *IvDomain) *IvDomain {
 }
 
 // ToDo: test
+
 // DIvIDE divides the parts of the first domain with ones of the
 // second domain and returns a new domain.
 func (this *IvDomain) DIvIDE(dom *IvDomain) *IvDomain {

@@ -21,7 +21,7 @@ type IntVar struct {
 func CreateIntVarDom(name string, store *Store, dom Domain) VarId {
 	intvar := new(IntVar)
 	intvar.Domain = dom
-	name = intvar_fixname(name, store)
+	name = intvarFixname(name, store)
 	return store.registerIntVarAtStore(name, intvar)
 }
 
@@ -36,16 +36,16 @@ func CreateIntVarValues(name string, store *Store, values []int) VarId {
 func CreateIntVarIvValues(name string, store *Store, values []int) VarId {
 	intvar := new(IntVar)
 	intvar.Domain = CreateIvDomainFromIntArr(values)
-	name = intvar_fixname(name, store)
+	name = intvarFixname(name, store)
 	return store.registerIntVarAtStore(name, intvar)
 }
 
-// CreateIntVarValues creates a new IntVar object with an explicit domain
+// CreateIntVarExValues creates a new IntVar object with an explicit domain
 // from domain values and adds it to the store.
 func CreateIntVarExValues(name string, store *Store, values []int) VarId {
 	intvar := new(IntVar)
 	intvar.Domain = CreateExDomainAdds(values)
-	name = intvar_fixname(name, store)
+	name = intvarFixname(name, store)
 	return store.registerIntVarAtStore(name, intvar)
 }
 
@@ -60,7 +60,7 @@ func CreateIntVarFromTo(name string, store *Store, from, to int) VarId {
 func CreateIntVarIvFromTo(name string, store *Store, from int, to int) VarId {
 	intvar := new(IntVar)
 	intvar.Domain = CreateIvDomainFromTo(from, to)
-	name = intvar_fixname(name, store)
+	name = intvarFixname(name, store)
 	return store.registerIntVarAtStore(name, intvar)
 }
 
@@ -69,7 +69,7 @@ func CreateIntVarIvFromTo(name string, store *Store, from int, to int) VarId {
 func CreateIntVarExFromTo(name string, store *Store, from, to int) VarId {
 	intvar := new(IntVar)
 	intvar.Domain = CreateExDomainFromTo(from, to)
-	name = intvar_fixname(name, store)
+	name = intvarFixname(name, store)
 	return store.registerIntVarAtStore(name, intvar)
 }
 
@@ -79,7 +79,7 @@ func CreateAuxIntVarValues(store *Store, values []int) VarId {
 	return CreateAuxIntVarIvValues(store, values)
 }
 
-// CreateAuxIntVarValues creates a new auxiliary IntVar object with interval
+// CreateAuxIntVarIvValues creates a new auxiliary IntVar object with interval
 // domain from array values and adds it to the store.
 func CreateAuxIntVarIvValues(store *Store, values []int) VarId {
 	intvar := new(IntVar)
@@ -87,7 +87,7 @@ func CreateAuxIntVarIvValues(store *Store, values []int) VarId {
 	return store.registerAuxIntVarAtStore(intvar)
 }
 
-// CreateAuxIntVarValues creates a new auxiliary IntVar object with explicit
+// CreateAuxIntVarExValues creates a new auxiliary IntVar object with explicit
 // domain from array values and adds it to the store.
 func CreateAuxIntVarExValues(store *Store, values []int) VarId {
 	intvar := new(IntVar)
@@ -109,7 +109,7 @@ func CreateAuxIntVarIvFromTo(store *Store, from, to int) VarId {
 	return store.registerAuxIntVarAtStore(intvar)
 }
 
-// CreateAuxIntVarFromTo creates a new auxiliary IntVar object with explicit
+// CreateAuxIntVarExFromTo creates a new auxiliary IntVar object with explicit
 // domain from values from and to inclusive and adds it to the store.
 func CreateAuxIntVarExFromTo(store *Store, from, to int) VarId {
 	intvar := new(IntVar)
@@ -127,7 +127,7 @@ func CreateIntVarsIvFromTo(varids []*VarId, names []string,
 	for i, varid := range varids {
 		intvar := new(IntVar)
 		intvar.Domain = CreateIvDomainFromTo(from, to)
-		name := intvar_fixname(names[i], store)
+		name := intvarFixname(names[i], store)
 		(*varid) = store.registerIntVarAtStore(name, intvar)
 	}
 }
@@ -140,7 +140,7 @@ func CreateIntVarsIvValues(varids []*VarId, names []string,
 	for i, varid := range varids {
 		intvar := new(IntVar)
 		intvar.Domain = CreateIvDomainFromIntArr(values)
-		name := intvar_fixname(names[i], store)
+		name := intvarFixname(names[i], store)
 		(*varid) = store.registerIntVarAtStore(name, intvar)
 	}
 }
@@ -149,7 +149,7 @@ func CreateIntVarsIvValues(varids []*VarId, names []string,
 func CreateIntVarIvDomBool(name string, store *Store) VarId {
 	intvar := new(IntVar)
 	intvar.Domain = CreateIvDomainFromTo(0, 1)
-	name = intvar_fixname(name, store)
+	name = intvarFixname(name, store)
 	return store.registerIntVarAtStore(name, intvar)
 }
 
@@ -174,7 +174,7 @@ func (this *IntVar) IsGround() bool {
 /* helper */
 
 // name may not be empty and may not begin with '_' (auxiliary var prefix)
-func intvar_fixname(name string, store *Store) string {
+func intvarFixname(name string, store *Store) string {
 	if name == "" || name[0] == '_' {
 		currentName := name
 		name = store.generateNewVariableName()

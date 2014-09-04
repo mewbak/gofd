@@ -8,20 +8,25 @@ import (
 )
 
 // logger, the default singleton logger
-var logger = Logger{prefix: "", logging_level: 3, out: os.Stdout}
+var logger = Logger{prefix: "", loggingLevel: 3, out: os.Stdout}
+
+// DefLogger is a public reference to the default singleton logger
 var DefLogger = &logger
 
-const LOG_DEBUG = 0
-const LOG_INFO = 1
-const LOG_ERROR = 2
-const LOG_NONE = 3
+// logging level constants
+const (
+	LOG_DEBUG = 0
+	LOG_INFO  = 1
+	LOG_ERROR = 2
+	LOG_NONE  = 3
+)
 
-// Logger, struct containing information for constructing log messages
+// Logger is a struct containing information for constructing log messages
 type Logger struct {
-	mu            sync.Mutex // ensures atomic I/O; protects other fields
-	prefix        string     // prefix to write at beginning of each line
-	logging_level int
-	out           io.Writer
+	mu           sync.Mutex // ensures atomic I/O; protects other fields
+	prefix       string     // prefix to write at beginning of each line
+	loggingLevel int
+	out          io.Writer
 }
 
 // GetLogger returns the default singleton logger
@@ -38,12 +43,12 @@ func (this *Logger) output(msg string) {
 
 // SetLoggingLevel sets the logging level
 func (this *Logger) SetLoggingLevel(level int) {
-	this.logging_level = level
+	this.loggingLevel = level
 }
 
 // GetLoggingLevel returns the current logging level
 func (this *Logger) GetLoggingLevel() int {
-	return this.logging_level
+	return this.loggingLevel
 }
 
 // getByteArrFromString returns string contents as byte array,
@@ -55,21 +60,21 @@ func getByteArrFromString(s string) []byte {
 
 // I prints message on info log level
 func (this *Logger) I(msg string) {
-	if LOG_INFO >= this.logging_level {
+	if LOG_INFO >= this.loggingLevel {
 		this.output(fmt.Sprintf("INFO: %v", msg))
 	}
 }
 
 // Iln prints message with newline on info log level
 func (this *Logger) Iln(msg string) {
-	if LOG_INFO >= this.logging_level {
+	if LOG_INFO >= this.loggingLevel {
 		this.output(fmt.Sprintf("INFO: %v\n", msg))
 	}
 }
 
 // If prints message via Printf on info log level
 func (this *Logger) If(format string, v ...interface{}) {
-	if LOG_INFO >= this.logging_level {
+	if LOG_INFO >= this.loggingLevel {
 		s := fmt.Sprintf(format, v...)
 		this.output(fmt.Sprintf("INFO: %v\n", s))
 	}
@@ -77,21 +82,21 @@ func (this *Logger) If(format string, v ...interface{}) {
 
 // D prints message on debug log level
 func (this *Logger) D(msg string) {
-	if LOG_DEBUG >= this.logging_level {
+	if LOG_DEBUG >= this.loggingLevel {
 		this.output(fmt.Sprintf("DEBUG: %v", msg))
 	}
 }
 
 // Dln prints message with newline on debug log level
 func (this *Logger) Dln(msg string) {
-	if LOG_DEBUG >= this.logging_level {
+	if LOG_DEBUG >= this.loggingLevel {
 		this.output(fmt.Sprintf("DEBUG: %v\n", msg))
 	}
 }
 
 // Df prints message via Printf on debug log level
 func (this *Logger) Df(format string, v ...interface{}) {
-	if LOG_DEBUG >= this.logging_level {
+	if LOG_DEBUG >= this.loggingLevel {
 		s := fmt.Sprintf(format, v...)
 		this.output(fmt.Sprintf("DEBUG: %v\n", s))
 	}
@@ -99,21 +104,21 @@ func (this *Logger) Df(format string, v ...interface{}) {
 
 // E prints message on error log level
 func (this *Logger) E(msg string) {
-	if LOG_ERROR >= this.logging_level {
+	if LOG_ERROR >= this.loggingLevel {
 		this.output(fmt.Sprintf("ERROR: %v", msg))
 	}
 }
 
 // Eln prints message with newline on error log level
 func (this *Logger) Eln(msg string) {
-	if LOG_ERROR >= this.logging_level {
+	if LOG_ERROR >= this.loggingLevel {
 		this.output(fmt.Sprintf("ERROR: %v\n", msg))
 	}
 }
 
 // Ef prints message via Printf on error log level
 func (this *Logger) Ef(format string, v ...interface{}) {
-	if LOG_ERROR >= this.logging_level {
+	if LOG_ERROR >= this.loggingLevel {
 		s := fmt.Sprintf(format, v...)
 		this.output(fmt.Sprintf("ERROR: %v\n", s))
 	}
@@ -144,6 +149,7 @@ func (this *Logger) DoDebug() bool {
 	return this.GetLoggingLevel() == LOG_DEBUG
 }
 
+// ILogger is an interface for logger implementations.
 type ILogger interface {
 	I(msg string)
 	D(msg string)
