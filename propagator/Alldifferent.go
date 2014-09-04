@@ -1,3 +1,5 @@
+// package propagator provides different propagators for finite
+// domain constraints
 package propagator
 
 import (

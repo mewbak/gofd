@@ -1,3 +1,5 @@
+// package demo provides sample programs using gofd as finite domain
+// constraint solver
 package demo
 
 import (

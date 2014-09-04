@@ -1,3 +1,5 @@
+// package reification provides propagators that are reified constraints
+// allowing to reason over the truth value of that constraint
 package reification
 
 import (

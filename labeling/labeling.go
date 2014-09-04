@@ -1,3 +1,5 @@
+// package labeling allows to search a solution of a finite domain problem
+// by implicit enumeration
 package labeling
 
 import (

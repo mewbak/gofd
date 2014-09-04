@@ -1,5 +1,5 @@
-// Package interval provides constraints, which propagation functions are based
-// on interval domains (IvDomain)
+// package interval provides propagators that are geared towards
+// using finite domain variables represented with an intervals domain
 package interval
 
 import (

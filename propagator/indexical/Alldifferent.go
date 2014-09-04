@@ -1,3 +1,5 @@
+// package indexical provides propagators implemented using a 
+// higher level abstraction as provided in the indexical package
 package indexical
 
 import (
