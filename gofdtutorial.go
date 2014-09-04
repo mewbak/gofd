@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-func GettingStarted() {
+func gettingStarted() {
 	store := core.CreateStore()
 	X := core.CreateIntVarFromTo("X", store, 0, 9)
 	Y := core.CreateIntVarFromTo("Y", store, 0, 9)
@@ -22,7 +22,7 @@ func GettingStarted() {
 	fmt.Printf("X: %s, Y: %s \n", store.GetDomain(X), store.GetDomain(Y))
 }
 
-func Labeling() {
+func doLabeling() {
 	store := core.CreateStore()
 	appetizer := core.CreateIntVarValues("appetizer", store, []int{1, 4})
 	main := core.CreateIntVarValues("main", store, []int{7, 6})
@@ -47,7 +47,7 @@ func Labeling() {
 	}
 }
 
-func EightQueens() {
+func eightQueens() {
 	store := core.CreateStore()
 	n := 8
 	queens := make([]core.VarId, n)
@@ -57,16 +57,16 @@ func EightQueens() {
 	}
 	prop := propagator.CreateAlldifferent(queens...)
 	store.AddPropagators(prop)
-	left_offset := make([]int, len(queens))
-	right_offset := make([]int, len(queens))
-	for i, _ := range queens {
-		left_offset[i] = -i
-		right_offset[i] = i
+	leftOffset := make([]int, len(queens))
+	rightOffset := make([]int, len(queens))
+	for i := range queens {
+		leftOffset[i] = -i
+		rightOffset[i] = i
 	}
-	left_prop := interval.CreateAlldifferent_Offset(queens, left_offset)
-	store.AddPropagator(left_prop)
-	right_prop := interval.CreateAlldifferent_Offset(queens, right_offset)
-	store.AddPropagator(right_prop)
+	leftProp := interval.CreateAlldifferent_Offset(queens, leftOffset)
+	store.AddPropagator(leftProp)
+	rightProp := interval.CreateAlldifferent_Offset(queens, rightOffset)
+	store.AddPropagator(rightProp)
 	query := labeling.CreateSearchAllQuery()
 	solutionFound := labeling.Labeling(store, query,
 		labeling.SmallestDomainFirst, labeling.InDomainMin)
@@ -80,11 +80,11 @@ func main() {
 	fmt.Println("Welcome to gofd!")
 	fmt.Println("  Only a sample program that runs through the tutorial.")
 	fmt.Println("# Getting Started #")
-	GettingStarted()
+	gettingStarted()
 	fmt.Println("# Labeling #")
-	Labeling()
+	doLabeling()
 	fmt.Println("# Eight Queens #")
-	EightQueens()
+	eightQueens()
 	fmt.Println("# Done #")
 	fmt.Println("https://bitbucket.org/gofd/gofd")
 }
