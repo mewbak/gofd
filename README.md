@@ -14,4 +14,4 @@ gofd is a concurrent finite domain solver for [golang](http://golang.org/).
 * [Eight Queens](/gofd/gofd/wiki/Eight Queens) - Place eight queens on a chess board so that no two queens attack each other
 
 # Documentation #
-* [godoc](http://godoc.org/bitbucket.org/gofd/gofd) - Generated documentation of api
+* [godoc/gofd](http://godoc.org/bitbucket.org/gofd/gofd) - Automatically generated api documentation of gofd
