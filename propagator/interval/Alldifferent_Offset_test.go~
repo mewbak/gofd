@@ -1,0 +1,44 @@
+package interval
+
+import (
+	"bitbucket.org/gofd/gofd/core"
+	"testing"
+)
+
+func Alldifferent_Offset_test(t *testing.T, xinit []int, yinit []int,
+	zinit []int, qinit []int, offsets []int, expx []int, expy []int,
+	expz []int, expq []int, expready bool) {
+	X := core.CreateIntVarIvValues("X", store, xinit)
+	Y := core.CreateIntVarIvValues("Y", store, yinit)
+	Z := core.CreateIntVarIvValues("Z", store, zinit)
+	Q := core.CreateIntVarIvValues("Q", store, qinit)
+	Alldifferent_Offset := CreateAlldifferent_Offset(
+		[]core.VarId{X, Y, Z, Q}, offsets)
+	store.AddPropagators(Alldifferent_Offset)
+	ready := store.IsConsistent()
+	ready_test(t, "Alldifferent_Offset", ready, expready)
+	if expready {
+		domainEquals_test(t, "Alldifferent_Offset", X, expx)
+		domainEquals_test(t, "Alldifferent_Offset", Y, expy)
+		domainEquals_test(t, "Alldifferent_Offset", Z, expz)
+		domainEquals_test(t, "Alldifferent_Offset", Q, expq)
+	}
+}
+
+func Test_Alldifferent_Offseta(t *testing.T) {
+	setup()
+	defer teardown()
+	log("Alldifferent_Offseta: X:0, Y:0..1, Z:1..2, Q:2..3, offsets={1,2,3}")
+	offsets := []int{1, 2, 3}
+	Alldifferent_Offset_test(t, []int{0}, []int{0, 1}, []int{1, 2}, []int{2, 3},
+		offsets, []int{}, []int{}, []int{}, []int{}, false)
+}
+
+func Test_Alldifferent_Offsetb(t *testing.T) {
+	setup()
+	defer teardown()
+	log("Alldifferent_Offsetb: X:0..1, Y:1, Z:1..3, Q:5, offsets={1,2,3}")
+	offsets := []int{1, 2, 3}
+	Alldifferent_Offset_test(t, []int{0, 1}, []int{1}, []int{1, 3}, []int{5},
+		offsets, []int{1}, []int{1}, []int{1}, []int{5}, true)
+}
