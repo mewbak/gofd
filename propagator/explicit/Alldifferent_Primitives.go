@@ -1,3 +1,5 @@
+// package explicit provides propagators that are geared towards
+// using finite domain variables represented with an explicit domain
 package explicit
 
 import (

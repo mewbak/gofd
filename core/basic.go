@@ -1,3 +1,5 @@
+// Package core provides the central constraint store and the finite domain 
+// variables as interval domains and explicit domains
 package core
 
 // PropId is a type for a unique identifier for Propagators

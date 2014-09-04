@@ -1,3 +1,5 @@
+// package indexical provides a higher level abstraction for writing
+// propagators
 package indexical
 
 import (
