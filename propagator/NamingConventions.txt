@@ -1,0 +1,50 @@
+Structure and naming conventions of propagator implementations
+==============================================================
+
+Summary: Create<constraint>[Bounds]
+* We use interval domain representation and arc consistency 
+  as default propagator implementation
+* If bounds consistency is used the propagator gets "Bounds" appended
+* To create a propagator implementing a constraint call 
+  the propagator name with a Create in front
+* Just use the Create* functions as defined in the top level 
+  propagator directory
+
+Each constraint restricting the possible values of potentially 
+many variables may be implemented by one or more propagators that 
+eliminate some of the invalid elements. For most constraints, we provide
+a default implementation in the propagator folder using a self-describing 
+constraint name without revealing any implementation details. 
+To use gofd simply model and solve your problem using the 
+constraints/propagators directly in the propagator folder.
+
+Propagators mainly differ in their strength, that is how many values
+they remove, or in their inner working, which in turn depends on the
+domain representation. Currently, we provide two different domain
+representations. There is an explicit domain representation listing all
+values of a domain in a map and an interval representation using
+a list of intervals where consecutive values are collapsed, but the
+interval representation still supports "holes" in the domain. Although 
+one may convert between the domains it is not recommended to do so. 
+For modeling and solving a problem just one domain representation should 
+be used. We recommend and use by default interval representation. In 
+addition, the default propagator strategy is to provide arc consistency.
+However, sometimes it make sense to use the weaker bounds consistency
+and rely on enumeration. In case a propagator uses bounds consistency,
+"Bounds" is appended to its name.
+
+There are "Create"-functions, functions that start with Create, that 
+generate a propagator for a constraint. Most often, in the top level
+propagator directory, these just call one of the specific implementations
+in a sub folder. We collect all propagators working with the explicit 
+domain representation underneath "explicit" and all working with intervals
+underneath "interval". We also provide a "DSL"-like facility to specify
+propagators more high level and implement the propagators using that
+facility underneath "indexicals". Underneath "reification" you find some 
+special constraints with their propagators that allow reasoning about 
+constraints by attaching a Boolean truth value that corresponds to the 
+validity of the constraints. The "Bounds"-convention is followed in all 
+sub directories.
+
+In case you extend the propagators and write new ones, it is recommend to
+follow the structure and naming convention.
