@@ -8,21 +8,21 @@ import (
 // StoreStatistics contains all statistical information about the
 // contents and execution of a store.
 type StoreStatistics struct {
-	variables          int   // cumulated number of variables
-	act_variables      int   // computed on retrieve event
-	propagators        int   // cumulated number of propagators
-	act_propagators    int   // computed on retrieve event
-	sizeChannels       int   // cumulated size of channels
-	changeEvents       int   // cumulated number of ChangeEvents
-	emptyChangeEvents  int   // cumulated number of empty ChangeEvents
-	changeEntries      int   // cumulated number of ChangeEntries
-	domainReductions   int   // cumulated number of requested domain reductions
-	domainValsRemoved  int   // cumulated number of performed domain reductions
-	controlEvents      int   // cumulated number of ControlEvents
-	working_time       int64 // working time in msecs
-	idle_time          int64 // idle time in msecs
-	start_working_time int64 // current start working time in msecs for calcs
-	end_working_time   int64 // current end working time in msecs for calcs
+	variables         int   // cumulated number of variables
+	actVariables      int   // computed on retrieve event
+	propagators       int   // cumulated number of propagators
+	actPropagators    int   // computed on retrieve event
+	sizeChannels      int   // cumulated size of channels
+	changeEvents      int   // cumulated number of ChangeEvents
+	emptyChangeEvents int   // cumulated number of empty ChangeEvents
+	changeEntries     int   // cumulated number of ChangeEntries
+	domainReductions  int   // cumulated number of requested domain reductions
+	domainValsRemoved int   // cumulated number of performed domain reductions
+	controlEvents     int   // cumulated number of ControlEvents
+	workingTime       int64 // working time in msecs
+	idleTime          int64 // idle time in msecs
+	startWorkingTime  int64 // current start working time in msecs for calcs
+	endWorkingTime    int64 // current end working time in msecs for calcs
 }
 
 // CreateStoreStatistics creates a new empty StoreStatistics instance
@@ -37,8 +37,8 @@ func (this *StoreStatistics) resetStat() {
 	this.variables = 0
 	this.propagators = 0
 	// act might also be ignored
-	this.act_variables = 0
-	this.act_propagators = 0
+	this.actVariables = 0
+	this.actPropagators = 0
 	this.sizeChannels = 0
 	this.changeEvents = 0
 	this.emptyChangeEvents = 0
@@ -46,8 +46,8 @@ func (this *StoreStatistics) resetStat() {
 	this.domainReductions = 0
 	this.domainValsRemoved = 0
 	this.controlEvents = 0
-	this.working_time = 0
-	this.idle_time = 0
+	this.workingTime = 0
+	this.idleTime = 0
 }
 
 // Clone creates a new copy of the StoreStatistics,
@@ -57,8 +57,8 @@ func (this *StoreStatistics) Clone(store *Store) *StoreStatistics {
 	other := store.stat
 	stat.variables = other.variables
 	stat.propagators = other.propagators
-	stat.act_variables = len(store.iDToIntVar)    // fresh on Clone
-	stat.act_propagators = len(store.propagators) // fresh on Clone
+	stat.actVariables = len(store.iDToIntVar)    // fresh on Clone
+	stat.actPropagators = len(store.propagators) // fresh on Clone
 	stat.sizeChannels = other.sizeChannels
 	stat.changeEvents = other.changeEvents
 	stat.emptyChangeEvents = other.emptyChangeEvents
@@ -66,8 +66,8 @@ func (this *StoreStatistics) Clone(store *Store) *StoreStatistics {
 	stat.domainReductions = other.domainReductions
 	stat.domainValsRemoved = other.domainValsRemoved
 	stat.controlEvents = other.controlEvents
-	stat.working_time = other.working_time
-	stat.idle_time = other.idle_time
+	stat.workingTime = other.workingTime
+	stat.idleTime = other.idleTime
 	return stat
 }
 
@@ -84,8 +84,8 @@ func (this *StoreStatistics) UpdateStoreStatistics(other *StoreStatistics) {
 	this.domainReductions += other.domainReductions
 	this.domainValsRemoved += other.domainValsRemoved
 	this.controlEvents += other.controlEvents
-	this.working_time += other.working_time
-	this.idle_time += other.idle_time
+	this.workingTime += other.workingTime
+	this.idleTime += other.idleTime
 }
 
 // String returns compact readable representation of the statistics
@@ -104,38 +104,38 @@ func (this *StoreStatistics) String() string {
 	f += " %10dms Store-Idle-Time, %10dms Store-Working-Time"
 	s := fmt.Sprintf(f,
 		this.variables, this.propagators, this.sizeChannels,
-		// this.act_variables, this.act_propagators,
+		// this.actVariables, this.actPropagators,
 		this.changeEvents, this.emptyChangeEvents,
 		this.changeEntries, this.domainReductions, this.domainValsRemoved,
-		this.controlEvents, this.idle_time/1000000, this.working_time/1000000)
+		this.controlEvents, this.idleTime/1000000, this.workingTime/1000000)
 	return s
 }
 
 // InitStatTime sets the start time.
 func (this *StoreStatistics) InitStatTime() {
-	this.end_working_time = time.Now().UnixNano()
+	this.endWorkingTime = time.Now().UnixNano()
 }
 
 // LogIdleTime logs the idle time in the store.
 func (this *StoreStatistics) LogIdleTime() {
-	this.start_working_time = time.Now().UnixNano()
-	this.idle_time += this.start_working_time - this.end_working_time
+	this.startWorkingTime = time.Now().UnixNano()
+	this.idleTime += this.startWorkingTime - this.endWorkingTime
 }
 
 // LogWorkingTime logs the working time in the store.
 func (this *StoreStatistics) LogWorkingTime() {
-	this.end_working_time = time.Now().UnixNano()
-	this.working_time += this.end_working_time - this.start_working_time
+	this.endWorkingTime = time.Now().UnixNano()
+	this.workingTime += this.endWorkingTime - this.startWorkingTime
 }
 
 // AddIdleTime adds a delta to the idle time.
 func (this *StoreStatistics) AddIdleTime(v int64) {
-	this.idle_time += v
+	this.idleTime += v
 }
 
 // AddWorkingTime adds a delta to the working time.
 func (this *StoreStatistics) AddWorkingTime(v int64) {
-	this.working_time += v
+	this.workingTime += v
 }
 
 // GetVariables gets a reference to the variables
@@ -145,7 +145,7 @@ func (this *StoreStatistics) GetVariables() int {
 
 // GetActVariables gets a reference to the current variables
 func (this *StoreStatistics) GetActVariables() int {
-	return this.act_variables
+	return this.actVariables
 }
 
 // GetPropagators gets the number of propagators.
@@ -155,5 +155,5 @@ func (this *StoreStatistics) GetPropagators() int {
 
 // GetActPropagators gets the number of actual propagators.
 func (this *StoreStatistics) GetActPropagators() int {
-	return this.act_propagators
+	return this.actPropagators
 }

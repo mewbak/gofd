@@ -120,12 +120,12 @@ func (this *ExDomain) Equals(otherDomain Domain) bool {
 		panic(fmt.Sprintf("Domain %s is not comparable with Domain %s",
 			this, other))
 	}
-	for k, _ := range this.Values {
+	for k := range this.Values {
 		if _, exists := otherDom.Values[k]; !exists { // inline Contains
 			return false
 		}
 	}
-	for k, _ := range otherDom.Values {
+	for k := range otherDom.Values {
 		if _, exists := this.Values[k]; !exists { // inline Contains
 			return false
 		}
@@ -223,7 +223,7 @@ func (this *ExDomain) removesIvDomain(ivdom *IvDomain,
 
 func (this *ExDomain) removesDomain(dom *ExDomain, modifyingOtherDomain bool) {
 	if modifyingOtherDomain {
-		for ele, _ := range dom.GetValues() {
+		for ele := range dom.GetValues() { // a map
 			if this.Contains(ele) {
 				this.Remove(ele)
 			} else {
@@ -231,7 +231,7 @@ func (this *ExDomain) removesDomain(dom *ExDomain, modifyingOtherDomain bool) {
 			}
 		}
 	} else {
-		for ele, _ := range dom.GetValues() {
+		for ele := range dom.GetValues() {
 			this.Remove(ele)
 		}
 	}
@@ -269,6 +269,7 @@ func (this *ExDomain) GetValues() map[int]bool {
 	return this.Values
 }
 
+// Values_asMap just returns the values.
 func (this *ExDomain) Values_asMap() map[int]bool {
 	return this.GetValues()
 }
@@ -327,7 +328,7 @@ func (this *ExDomain) GetDomainOutOfBounds(min, max int) Domain {
 func (this *ExDomain) Intersection(domain Domain) Domain {
 	newDomain := CreateExDomain()
 	domainValues := domain.Values_asMap()
-	for key, _ := range this.Values {
+	for key := range this.Values {
 		if domainValues[key] {
 			newDomain.Add(key)
 		}
@@ -340,11 +341,11 @@ func (this *ExDomain) Intersection(domain Domain) Domain {
 func (this *ExDomain) Union(domain Domain) Domain {
 	newDomain := CreateExDomain()
 	newDomainValues := this.Values_asMap()
-	for k, _ := range newDomainValues {
+	for k := range newDomainValues {
 		newDomain.Add(k)
 	}
 	domainValues := domain.Values_asMap()
-	for key, _ := range domainValues {
+	for key := range domainValues {
 		if !newDomainValues[key] {
 			newDomain.Add(key)
 		}
@@ -357,13 +358,13 @@ func (this *ExDomain) Union(domain Domain) Domain {
 func (this *ExDomain) Difference(domain Domain) Domain {
 	newDomain := CreateExDomain()
 	domainValues := domain.Values_asMap()
-	for key, _ := range this.Values {
+	for key := range this.Values {
 		if !domainValues[key] {
 			newDomain.Add(key)
 		}
 	}
 
-	for key, _ := range domainValues {
+	for key := range domainValues {
 		if !this.Values[key] {
 			newDomain.Add(key)
 		}
@@ -374,7 +375,7 @@ func (this *ExDomain) Difference(domain Domain) Domain {
 // IsSubset returns a boolean indicating if this is a subset of domain.
 func (this *ExDomain) IsSubset(domain Domain) bool {
 	domainValues := domain.Values_asMap()
-	for key, _ := range this.Values {
+	for key := range this.Values {
 		if !domainValues[key] {
 			return false
 		}
