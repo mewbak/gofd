@@ -363,6 +363,8 @@ func (this *Store) isReady() bool {
 
 // isInconsistent returns true iff one IntVar in the store has an empty domain
 func (this *Store) isInconsistent() bool {
+	// Note that precomputing the result (during reductions) is not worth
+	// the effort (benched it) and complicates cloning
 	for _, intVar := range this.iDToIntVar {
 		if intVar.Domain.IsEmpty() {
 			return true
