@@ -149,11 +149,6 @@ func (this *ChangeEntry) SetValuesByIntArr(values []int) {
 	this.domainvalues = CreateIvDomainFromIntArr(values)
 }
 
-// Remove do not remove that value due to this ChangeEntry
-func (this *ChangeEntry) Remove(value int) {
-	this.domainvalues.Remove(value)
-}
-
 // Add adds a new value to a ChangeEntry
 func (this *ChangeEntry) Add(val int) {
 	this.domainvalues.Add(val)

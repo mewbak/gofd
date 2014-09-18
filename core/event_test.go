@@ -23,11 +23,14 @@ func Test_ChangeEvent(t *testing.T) {
 	}
 	entry0 := CreateChangeEntry(varIds[0])
 	if !entry0.IsEmpty() {
-		t.Errorf("ChangeEntry %s should be initially empty", entry0.String())
+		t.Errorf("ChangeEntry %s should initially be empty", entry0.String())
 	}
-	dom := CreateIvDomainFromTo(vars[0].Domain.GetMin(),
-		vars[0].Domain.GetMin())
-	entry0.SetValues(dom)
+	if entry0.GetID() != varIds[0] {
+		t.Errorf("ChangeEntry Varid is %s, want %s",
+			entry0.GetID(), varIds[0])
+	}
+	v0min := vars[0].Domain.GetMin()
+	entry0 = CreateChangeEntryWithIntValue(varIds[0], v0min)
 	if entry0.IsEmpty() {
 		t.Errorf("ChangeEntry %s should contain a value", entry0.String())
 	}
@@ -39,12 +42,15 @@ func Test_ChangeEvent(t *testing.T) {
 		entry := CreateChangeEntry(varIds[i])
 		dom := CreateIvDomainFromTo(i, noVars-1)
 		entry.SetValues(dom)
+		if !entry.GetValues().Equals(dom) {
+			t.Errorf("ChangeEntry domain is %s, want %s",
+				entry.GetValues().String(), dom.String())
+		}
 		event.AddChangeEntry(entry)
 	}
 
 	// Equals-Test
-	entry1 := CreateChangeEntry(varIds[0])
-	entry1.SetValues(dom)
+	entry1 := CreateChangeEntryWithIntValues(varIds[0], []int{v0min})
 	if !entry0.Equals(entry1) {
 		t.Errorf("ChangeEntry %s should be equal to ChangeEntry %s",
 			entry0, entry1)
@@ -72,7 +78,7 @@ func Test_ChangeEvent(t *testing.T) {
 			event, event2)
 	}
 	event2.changes[1].varId -= 1
-	event2.changes[1].Add(171717)
+	event2.changes[1].SetValuesByIntArr([]int{17, 1717, 171717})
 	if event.Equals(event2) {
 		t.Errorf("ChangeEvent %s should no be equal to ChangeEvent %s",
 			event, event2)
@@ -98,9 +104,8 @@ func Test_ChangeEvent(t *testing.T) {
 		t.Errorf("ChangeEvent:String got %s, want %s",
 			showEventString, want)
 	}
-	simpleEntry := CreateChangeEntry(6)
-	dom = CreateIvDomainFromTo(17, 42)
-	simpleEntry.SetValues(dom)
+	dom := CreateIvDomainFromTo(17, 42)
+	simpleEntry := CreateChangeEntryWithValues(6, dom)
 	showEvent.AddChangeEntry(simpleEntry)
 	showEventString = showEvent.String()
 	want = "ChangeEvent[ChangeEntry{6, [17..42]}]"

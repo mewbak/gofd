@@ -80,7 +80,7 @@ func (this *XgtY) xinYout(evt *core.ChangeEvent) {
 	}
 }
 
-// z€Z.Domain | z<x_val
+// z \in Z.Domain | z<x_val
 func (this *XgtY) yinXout(evt *core.ChangeEvent) {
 	ymin := this.y_Domain.GetMin()
 	var chEntry *core.ChangeEntry = nil
