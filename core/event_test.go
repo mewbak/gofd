@@ -104,8 +104,10 @@ func Test_ChangeEvent(t *testing.T) {
 		t.Errorf("ChangeEvent:String got %s, want %s",
 			showEventString, want)
 	}
-	dom := CreateIvDomainFromTo(17, 42)
+	dom := CreateIvDomainFromTo(17, 34)
 	simpleEntry := CreateChangeEntryWithValues(6, dom)
+	simpleEntry.Add(35)
+	simpleEntry.AddValues(CreateIvDomainFromTo(36, 42))
 	showEvent.AddChangeEntry(simpleEntry)
 	showEventString = showEvent.String()
 	want = "ChangeEvent[ChangeEntry{6, [17..42]}]"
