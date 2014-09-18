@@ -45,16 +45,9 @@ func (this *XeqC) Start(store *core.Store) {
 }
 
 func (this *XeqC) xin(evt *core.ChangeEvent) {
-	var chEntry *core.ChangeEntry = nil
-	for x_val := range this.x_Domain.Values_asMap() {
-		if x_val != this.c {
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.x)
-			}
-			chEntry.Add(x_val)
-		}
-	}
-	if chEntry != nil {
+	if !this.x_Domain.IsGround() || this.x_Domain.GetMin() != this.c {
+		rDom := this.x_Domain.GetDomainOutOfBounds(this.c, this.c)
+		chEntry := core.CreateChangeEntryWithValues(this.x, rDom)
 		evt.AddChangeEntry(chEntry)
 	}
 }

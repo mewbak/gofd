@@ -51,16 +51,9 @@ func (this *XgtC) Start(store *core.Store) {
 }
 
 func (this *XgtC) xin(evt *core.ChangeEvent) {
-	var chEntry *core.ChangeEntry = nil
-	for v := range this.x_Domain.Values_asMap() {
-		if v <= this.c { // remove all values v \in X with v <= C
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.x)
-			}
-			chEntry.Add(v)
-		}
-	}
-	if chEntry != nil {
+	if this.x_Domain.GetMin() <= this.c {
+		rDom := core.CreateIvDomainFromTo(this.x_Domain.GetMin(), this.c)
+		chEntry := core.CreateChangeEntryWithValues(this.x, rDom)
 		evt.AddChangeEntry(chEntry)
 	}
 }

@@ -54,53 +54,24 @@ func (this *XgtY) Start(store *core.Store) {
 	}
 }
 
-// x \in X.Domain | x>z_val
+// x \in X.Domain | x>y_val
 func (this *XgtY) xinYout(evt *core.ChangeEvent) {
 	xmax := this.x_Domain.GetMax()
-	var chEntry *core.ChangeEntry = nil
 
-	if xmax > this.y_Domain.GetMax() {
-		return
-	}
-
-	vals := make([]int, 0)
-
-	for y_val := range this.y_Domain.Values_asMap() {
-		if xmax <= y_val {
-			vals = append(vals, y_val)
-		}
-	}
-
-	if len(vals) != 0 {
-		if chEntry == nil {
-			chEntry = core.CreateChangeEntry(this.y)
-		}
-		chEntry.SetValuesByIntArr(vals)
+	if this.y_Domain.GetMax() >= xmax {
+		rDom := core.CreateIvDomainFromTo(xmax, this.y_Domain.GetMax())
+		chEntry := core.CreateChangeEntryWithValues(this.y, rDom)
 		evt.AddChangeEntry(chEntry)
 	}
 }
 
-// z \in Z.Domain | z<x_val
+// y \in y.Domain | y<x_val
 func (this *XgtY) yinXout(evt *core.ChangeEvent) {
 	ymin := this.y_Domain.GetMin()
-	var chEntry *core.ChangeEntry = nil
 
-	if ymin < this.x_Domain.GetMin() {
-		return
-	}
-
-	vals := make([]int, 0)
-	for x_val := range this.x_Domain.Values_asMap() {
-		if ymin >= x_val {
-			vals = append(vals, x_val)
-		}
-	}
-
-	if len(vals) != 0 {
-		if chEntry == nil {
-			chEntry = core.CreateChangeEntry(this.x)
-		}
-		chEntry.SetValuesByIntArr(vals)
+	if this.x_Domain.GetMin() <= ymin {
+		rDom := core.CreateIvDomainFromTo(this.x_Domain.GetMin(), ymin)
+		chEntry := core.CreateChangeEntryWithValues(this.x, rDom)
 		evt.AddChangeEntry(chEntry)
 	}
 }
