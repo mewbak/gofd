@@ -56,43 +56,22 @@ func (this *XgtYplusC) Start(store *core.Store) {
 }
 
 func (this *XgtYplusC) xinYout(evt *core.ChangeEvent) {
+
 	xmaxmc := this.x_Domain.GetMax() - this.c
-	var chEntry *core.ChangeEntry = nil
 
-	if xmaxmc > this.y_Domain.GetMax() {
-		return
-	}
-
-	for y_val := range this.y_Domain.Values_asMap() {
-		if xmaxmc <= y_val {
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.y)
-			}
-			chEntry.Add(y_val)
-		}
-	}
-	if chEntry != nil {
+	if (this.y_Domain.GetMax()) >= xmaxmc {
+		rDom := core.CreateIvDomainFromTo(xmaxmc, this.y_Domain.GetMax())
+		chEntry := core.CreateChangeEntryWithValues(this.y, rDom)
 		evt.AddChangeEntry(chEntry)
 	}
 }
 
 func (this *XgtYplusC) yinXout(evt *core.ChangeEvent) {
 	yminmc := this.y_Domain.GetMin() + this.c
-	var chEntry *core.ChangeEntry = nil
 
-	if yminmc < this.x_Domain.GetMin() {
-		return
-	}
-
-	for x_val := range this.x_Domain.Values_asMap() {
-		if yminmc >= x_val {
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.x)
-			}
-			chEntry.Add(x_val)
-		}
-	}
-	if chEntry != nil {
+	if (this.x_Domain.GetMin()) <= yminmc {
+		rDom := core.CreateIvDomainFromTo(this.x_Domain.GetMin(), yminmc)
+		chEntry := core.CreateChangeEntryWithValues(this.x, rDom)
 		evt.AddChangeEntry(chEntry)
 	}
 }

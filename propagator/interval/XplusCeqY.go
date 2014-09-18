@@ -59,33 +59,25 @@ func (this *XplusCeqY) Start(store *core.Store) {
 }
 
 func (this *XplusCeqY) xinYout(evt *core.ChangeEvent) {
-	x_Domain := this.x_Domain
 	var chEntry *core.ChangeEntry = nil
-	for y_val := range this.y_Domain.Values_asMap() {
-		if !x_Domain.Contains(y_val - this.c) {
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.y)
-			}
-			chEntry.Add(y_val)
-		}
-	}
-	if chEntry != nil {
+
+	tx := this.x_Domain.ADD(core.CreateIvDomainFromTo(this.c, this.c))
+	diff := this.y_Domain.Difference(tx)
+
+	if !diff.IsEmpty() {
+		chEntry = core.CreateChangeEntryWithValues(this.y, diff)
 		evt.AddChangeEntry(chEntry)
 	}
 }
 
 func (this *XplusCeqY) yinXout(evt *core.ChangeEvent) {
-	y_Domain := this.y_Domain
 	var chEntry *core.ChangeEntry = nil
-	for x_val := range this.x_Domain.Values_asMap() {
-		if !y_Domain.Contains(x_val + this.c) {
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.x)
-			}
-			chEntry.Add(x_val)
-		}
-	}
-	if chEntry != nil {
+
+	ty := this.y_Domain.ADD(core.CreateIvDomainFromTo(-this.c, -this.c))
+	diff := this.x_Domain.Difference(ty)
+
+	if !diff.IsEmpty() {
+		chEntry = core.CreateChangeEntryWithValues(this.x, diff)
 		evt.AddChangeEntry(chEntry)
 	}
 }

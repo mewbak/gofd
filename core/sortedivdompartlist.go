@@ -153,6 +153,14 @@ func (this *SortedIvDomPartList) Append(part *IvDomPart) {
 	this.parts = append(this.parts, part)
 }
 
+// ToDo: Test
+// Appends appends parts at the end of the current list
+// important: parts must be sorted and part[0] must be greater than
+// greatest part of this (difference>1).
+func (this *SortedIvDomPartList) Appends(parts []*IvDomPart) {
+	this.parts = append(this.parts, parts...)
+}
+
 // Add adds an element to the current IvDomain
 func (this *SortedIvDomPartList) Add(ele int) {
 	// extend part or merge two parts
@@ -292,7 +300,8 @@ func (this *SortedIvDomPartList) RemovesSortedInts(sortedEles []int) {
 	}
 }
 
-// IntersectionInts needs a comment ToDo
+// IntersectionInts calculates the intersection between the current part list
+// (this) and the given int array. Linear time algorithm
 func (this *SortedIvDomPartList) IntersectionInts(sortedEles []int) *SortedIvDomPartList {
 	newInts := make([]int, 0)
 	i := 0
@@ -310,7 +319,8 @@ func (this *SortedIvDomPartList) IntersectionInts(sortedEles []int) *SortedIvDom
 	return CreateSortedIvDomPartListFromIntArr(newInts)
 }
 
-// Intersection needs a comment ToDo
+// Intersection calculates the intersection between the current part list
+// (this) and the given part list (other). Linear time algorithm
 func (this *SortedIvDomPartList) Intersection(other *SortedIvDomPartList) *SortedIvDomPartList {
 	newParts := make([]*IvDomPart, 0)
 	i, j := 0, 0

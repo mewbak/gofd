@@ -372,6 +372,34 @@ func (this *IvDomain) SortedValues() []int {
 	return this.Values_asSlice()
 }
 
+// ToDo: Test
+// Append appends a part to the current part list. Attention: the given
+// part must be greater than the parts in this-Domain
+func (this *IvDomain) Append(part *IvDomPart) {
+	lenDom := len(this.GetParts())
+	if part.GT_DP(this.GetParts()[lenDom-1]) {
+		this.partList.Append(part)
+		return
+	}
+	panic("IvDomain.Append error: part have to be greater than the parts in" +
+		"current IvDomain (this)")
+}
+
+// ToDo: Test
+// Append appends a part to the current part list. Attention: the given
+// part must be greater than the parts in this-Domain
+func (this *IvDomain) Appends(parts []*IvDomPart) {
+	lenDom := len(this.GetParts())
+	if len(parts) > 0 {
+		if parts[0].GT_DP(this.GetParts()[lenDom-1]) {
+			this.partList.Appends(parts)
+			return
+		}
+		panic("IvDomain.Append error: part have to be greater than the" +
+			"parts in current IvDomain (this)")
+	}
+}
+
 // AddAnyPart adds a part to the current domain
 // in contrast to other add/insert functions, this function
 // doesn't rely on conventions. You can add any part, you want

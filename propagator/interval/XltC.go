@@ -54,15 +54,11 @@ func (this *XltC) Start(store *core.Store) {
 
 func (this *XltC) xin(evt *core.ChangeEvent) {
 	var chEntry *core.ChangeEntry = nil
-	for v := range this.x_Domain.Values_asMap() {
-		if v >= this.c { // remove all values v in X with v <= C
-			if chEntry == nil {
-				chEntry = core.CreateChangeEntry(this.x)
-			}
-			chEntry.Add(v)
-		}
-	}
-	if chEntry != nil {
+
+	if this.x_Domain.GetMax() > this.c {
+		// there values, that have to be removed. Remove c..max(x_Domain)
+		d := core.CreateIvDomainFromTo(this.c, this.x_Domain.GetMax())
+		chEntry = core.CreateChangeEntryWithValues(this.x, d)
 		evt.AddChangeEntry(chEntry)
 	}
 }
