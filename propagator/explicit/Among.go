@@ -193,7 +193,7 @@ func (this *Among) NinXiout(evt *core.ChangeEvent) {
 					chEntry = core.CreateChangeEntry(varid)
 				}
 				newDomain := domain.Intersection(this.k)
-				chEntry.AddValues(newDomain.Values_asMap())
+				chEntry.AddValues(newDomain)
 				evt.AddChangeEntry(chEntry)
 				// decrease ub because the current domain is now in state f and
 				// has become irrelevant
@@ -216,7 +216,7 @@ func (this *Among) NinXiout(evt *core.ChangeEvent) {
 					chEntry = core.CreateChangeEntry(varid)
 				}
 				newDomain = domain.Difference(this.k)
-				chEntry.AddValues(newDomain.Values_asMap())
+				chEntry.AddValues(newDomain)
 				valuesToRemove = append(valuesToRemove, varid)
 				// increase lb because the current domain is now in state t
 				// and has become irrelevant

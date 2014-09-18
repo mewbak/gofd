@@ -197,10 +197,10 @@ func (this *Among) NinXiout(evt *core.ChangeEvent) {
 						chEntry = core.CreateChangeEntry(x_id)
 					}
 					newDomain := domain.Intersection(this.k)
-					chEntry.AddValues(newDomain.Values_asMap())
+					chEntry.AddValues(newDomain)
 					evt.AddChangeEntry(chEntry)
-					//decrease ub because the current domain is now in state f and
-					//has become irrelevant
+					// decrease ub because the current domain is now in
+					// state f and has become irrelevant
 					subtractUb += 1
 					valuesToRemove = append(valuesToRemove, x_id)
 				}
@@ -208,24 +208,25 @@ func (this *Among) NinXiout(evt *core.ChangeEvent) {
 		}
 	}
 
-	//if only one element exists in D(N) which has the same value as the upper bound
+	// if only one element exists in D(N) which has the same value
+	// as the upper bound
 	if this.ub == this.minN {
 		for _, x_id := range this.xi {
 			domain := this.varidToDomainMap[x_id]
 			if domain != nil {
 				chEntry = nil
 				newDomain := domain.Intersection(this.k)
-				//the domains of the xi which are intersecting with D(K) are checked
-				//and all values outside of D(K) are removed
+				// the domains of the xi which are intersecting with D(K)
+				// are checked and all values outside of D(K) are removed
 				if !newDomain.IsEmpty() {
 					if chEntry == nil {
 						chEntry = core.CreateChangeEntry(x_id)
 					}
 					newDomain = domain.Difference(this.k)
-					chEntry.AddValues(newDomain.Values_asMap())
+					chEntry.AddValues(newDomain)
 					valuesToRemove = append(valuesToRemove, x_id)
-					//increase lb because the current domain is now in state t and
-					//has become irrelevant
+					// increase lb because the current domain is now in
+					// state t and has become irrelevant
 					addLb += 1
 				}
 				if chEntry != nil {

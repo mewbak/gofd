@@ -121,7 +121,7 @@ func (this *Range) makeConsistent(evt *core.ChangeEvent) bool {
 					chEntry = core.CreateChangeEntry(this.xi[index-1])
 				}
 				newDomain := this.t_Domain.Difference(x_domain)
-				chEntry.AddValues(newDomain.Values_asMap())
+				chEntry.AddValues(newDomain)
 				if chEntry != nil {
 					evt.AddChangeEntry(chEntry)
 					countChangeEntries += 1
@@ -145,7 +145,7 @@ func (this *Range) makeConsistent(evt *core.ChangeEvent) bool {
 	valuesToRemoveFromT := unionOfXiDoms.Difference(this.t_Domain)
 	chEntry = nil
 	chEntry = core.CreateChangeEntry(this.t)
-	chEntry.AddValues(valuesToRemoveFromT.Values_asMap())
+	chEntry.AddValues(valuesToRemoveFromT)
 	if chEntry != nil {
 		evt.AddChangeEntry(chEntry)
 		countChangeEntries += 1

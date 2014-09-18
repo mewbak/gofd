@@ -155,10 +155,8 @@ func (this *ChangeEntry) Add(val int) {
 }
 
 // AddValues adds new values to a ChangeEntry
-func (this *ChangeEntry) AddValues(values map[int]bool) {
-	for val, _ := range values {
-		this.domainvalues.Add(val)
-	}
+func (this *ChangeEntry) AddValues(values Domain) {
+	this.domainvalues = this.domainvalues.Union(values)
 }
 
 // String returns a readable string-representation of this ChangeEntry

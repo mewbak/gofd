@@ -111,7 +111,7 @@ func (this *Roots) makeConsistent(evt *core.ChangeEvent) bool {
 				// its domain contains values from and outside of D(T),
 				// all values that are not part of D(T) are removed from D(X)
 				newDomain := this.t_Domain.Difference(x_domain)
-				chEntry.AddValues(newDomain.Values_asMap())
+				chEntry.AddValues(newDomain)
 				if chEntry != nil {
 					evt.AddChangeEntry(chEntry)
 					countChangeEntries += 1
@@ -125,7 +125,7 @@ func (this *Roots) makeConsistent(evt *core.ChangeEvent) bool {
 				// if the index of a variable X in Xi does not appear in D(S)
 				// and its domain contains values from D(T), all values
 				// that are part of D(T) are removed from D(X)
-				chEntry.AddValues(domIntersection.Values_asMap())
+				chEntry.AddValues(domIntersection)
 				if chEntry != nil {
 					evt.AddChangeEntry(chEntry)
 					countChangeEntries += 1
