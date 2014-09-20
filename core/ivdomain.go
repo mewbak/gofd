@@ -377,17 +377,18 @@ func (this *IvDomain) SortedValues() []int {
 // part must be greater than the parts in this-Domain
 func (this *IvDomain) Append(part *IvDomPart) {
 	lenDom := len(this.GetParts())
-	if part.GT_DP(this.GetParts()[lenDom-1]) {
+	if part.GT_DP(this.GetParts()[lenDom-1]) && this.GetParts()[lenDom-1].To+1 < part.From {
 		this.partList.Append(part)
 		return
 	}
-	panic("IvDomain.Append error: part have to be greater than the parts in" +
-		"current IvDomain (this)")
+	panic("IvDomain.Append error: part have to be greater than the greatest" +
+		"part in current IvDomain (from > greatestPart.To+1)")
 }
 
 // ToDo: Test
 // Append appends a part to the current part list. Attention: the given
-// part must be greater than the parts in this-Domain
+// parts must be sorted and the first one must be greater than the
+// parts in this-Domain
 func (this *IvDomain) Appends(parts []*IvDomPart) {
 	lenDom := len(this.GetParts())
 	if len(parts) > 0 {

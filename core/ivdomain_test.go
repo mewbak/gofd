@@ -1526,3 +1526,69 @@ func Test_NOTIvDomain(t *testing.T) {
 	notTest(t, [][]int{{NEG_INFINITY, 3}, {5, 10}, {13, INFINITY}},
 		[][]int{{4, 4}, {11, 12}})
 }
+
+func Test_AppendIvDomain(t *testing.T) {
+	setup()
+	defer teardown()
+	log("AppendIvDomain")
+
+	appendTest(t, [][]int{{0, 5}, {10, 20}}, []int{25, 50},
+		[][]int{{0, 5}, {10, 20}, {25, 50}})
+	appendTest(t, [][]int{{0, 5}}, []int{25, 50},
+		[][]int{{0, 5}, {25, 50}})
+	appendTest(t, [][]int{{0, 1}}, []int{3, 4},
+		[][]int{{0, 1}, {3, 4}})
+	//fail-cases, ToDo: panic-testing not included yet
+	//appendTest(t, [][]int{{0,1}}, []int{2,3}, nil)
+	//appendTest(t, [][]int{{2,3}}, []int{0,1}, nil)
+
+}
+
+func appendTest(t *testing.T, fromTos1 [][]int,
+	appendIv []int, expFromTos [][]int) {
+	d1 := CreateIvDomainFromTos(fromTos1)
+	iv := CreateIvDomPart(appendIv[0], appendIv[1])
+	expD := CreateIvDomainFromTos(expFromTos)
+
+	dNew := d1.Copy().(*IvDomain)
+	dNew.Append(iv)
+
+	if !dNew.Equals(expD) {
+		msg := "AppendIvDomain: %s.Append(%s) results in %s, want %s"
+		t.Errorf(msg, d1, iv, dNew, expD)
+	}
+}
+
+func Test_AppendsIvDomain(t *testing.T) {
+	setup()
+	defer teardown()
+	log("AppendIvDomain")
+
+	appendsTest(t, [][]int{{0, 5}, {10, 20}}, [][]int{{25, 50}},
+		[][]int{{0, 5}, {10, 20}, {25, 50}})
+	appendsTest(t, [][]int{{0, 5}}, [][]int{{25, 50}},
+		[][]int{{0, 5}, {25, 50}})
+	appendsTest(t, [][]int{{0, 1}}, [][]int{{3, 4}, {7, 9}},
+		[][]int{{0, 1}, {3, 4}, {7, 9}})
+	appendsTest(t, [][]int{{0, 1}, {3, 4}}, [][]int{{7, 9}, {20, 30}},
+		[][]int{{0, 1}, {3, 4}, {7, 9}, {20, 30}})
+	//fail-cases, ToDo: panic-testing not included yet
+	//appendsTest(t, [][]int{{0,1}}, [][]int{{2,3}}, nil)
+	//appendsTest(t, [][]int{{2,3}}, [][]int{{0,1}}, nil)
+
+}
+
+func appendsTest(t *testing.T, fromTos1 [][]int, appendIvs [][]int,
+	expFromTos [][]int) {
+	d1 := CreateIvDomainFromTos(fromTos1)
+	ivs := CreateIvDomainFromTos(appendIvs)
+	expD := CreateIvDomainFromTos(expFromTos)
+
+	dNew := d1.Copy().(*IvDomain)
+	dNew.Appends(ivs.GetParts())
+
+	if !dNew.Equals(expD) {
+		msg := "AppendIvDomain: %s.Append(%s) results in %s, want %s"
+		t.Errorf(msg, d1, ivs, dNew, expD)
+	}
+}
