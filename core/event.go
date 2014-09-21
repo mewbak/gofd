@@ -47,7 +47,8 @@ func createGetNewIdEvent() *GetNewIdEvent {
 }
 
 func (this *GetNewIdEvent) run(store *Store) {
-	this.channel <- store.iDCounter + 1 // unique id, increasing
+	store.iDCounter += 1
+	this.channel <- store.iDCounter // unique id, increasing
 }
 
 func (this *GetNewIdEvent) String() string {

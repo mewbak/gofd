@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -114,6 +115,61 @@ func Test_ChangeEvent(t *testing.T) {
 	if want != showEventString {
 		t.Errorf("ChangeEvent:String got %s, want %s",
 			showEventString, want)
+	}
+}
+
+func Test_GetNameEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetNameEventTest")
+	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	Yid := CreateIntVarValues("Y", store, []int{4, 5, 6})
+	getNameEvent := createGetNameEvent(Xid)
+	expected := fmt.Sprintf("GetNameEvent: varid %d", Xid)
+	if expected != getNameEvent.String() {
+		t.Errorf("GetNameEvent:String got %s, want %s",
+			getNameEvent.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- getNameEvent
+	name := <-getNameEvent.channel
+	if name != "X" {
+		t.Errorf("GetNameEvent:Name got %s, want %s", name, "X")
+	}
+	// through public API, which is implemented by direct access
+	name = store.GetName(Yid)
+	if name != "Y" {
+		t.Errorf("GetNameEvent:Name got %s, want %s", name, "Y")
+	}
+}
+
+func Test_GetNewIdEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetNewIdEvent")
+	getNewIdEvent := createGetNewIdEvent()
+	expected := "GetNewIdEvent"
+	if getNewIdEvent.String() != expected {
+		t.Errorf("GetNewIdEvent:Name got %s, want %s",
+			getNewIdEvent.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- getNewIdEvent
+	newId := <-getNewIdEvent.channel
+	ids := make(map[VarId]bool)
+	ids[newId] = true
+	names := make(map[string]bool)
+	names["X"] = true
+	for i := 0; i < 1000; i += 1 {
+		getNewIdEvent = createGetNewIdEvent()
+		store.controlChannel <- getNewIdEvent
+		newId = <-getNewIdEvent.channel
+		ids[newId] = true
+		names[store.generateNewVariableName()] = true
+	}
+	if len(ids) != 1001 || len(names) != 1001 || newId+1 != 2000 {
+		t.Errorf("GetNewIdEvent: len(ids) %d, len(names) %d, lastNewId %d",
+			len(ids), len(names), newId)
 	}
 }
 
