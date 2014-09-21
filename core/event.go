@@ -73,7 +73,7 @@ func (this *GetDomainEvent) run(store *Store) {
 }
 
 func (this *GetDomainEvent) String() string {
-	return fmt.Sprintf("GetDomainEvent: %d", this.varId)
+	return fmt.Sprintf("GetDomainEvent: varid %d", this.varId)
 }
 
 // GetDomainsEvent to retrieve a slice of domain copies from the store

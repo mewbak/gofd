@@ -173,6 +173,50 @@ func Test_GetNewIdEvent(t *testing.T) {
 	}
 }
 
+func Test_GetDomainEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetDomainEventTest")
+	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	Yid := CreateIntVarValues("X", store, []int{4, 5, 6})
+	getDomainEvent := createGetDomainEvent(Xid)
+	expected := fmt.Sprintf("GetDomainEvent: varid %d", Xid)
+	if expected != getDomainEvent.String() {
+		t.Errorf("GetDomainEvent:String got %s, want %s",
+			getDomainEvent.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- getDomainEvent
+	domainX := <-getDomainEvent.channel
+	expectedDomainX := CreateIvDomainFromTo(1, 3)
+	if !domainX.Equals(expectedDomainX) {
+		t.Errorf("GetDomainEvent: got %s, want %s",
+			domainX.String(), expectedDomainX.String())
+	}
+	// directly
+	domainX = store.GetDomain(Xid)
+	if !domainX.Equals(expectedDomainX) {
+		t.Errorf("GetDomain: got %s, want %s",
+			domainX.String(), expectedDomainX.String())
+	}
+	domains := store.GetDomains([]VarId{Xid, Yid})
+	expectedDomainY := CreateIvDomainFromTo(4, 6)
+	if !domains[1].Equals(expectedDomainY) {
+		t.Errorf("GetDomainsY: got %s, want %s",
+			domains[1].String(), expectedDomainY.String())
+	}
+	if !domains[0].Equals(expectedDomainX) {
+		t.Errorf("GetDomainsX: got %s, want %s",
+			domains[0].String(), expectedDomainX.String())
+	}
+	domainsEvent := createGetDomainsEvent([]VarId{Xid, Yid})
+	expected = "GetDomainsEvent: for 2 domains"
+	if expected != domainsEvent.String() {
+		t.Errorf("GetDomainsEvent.String: got %s, want %s",
+			domainsEvent.String(), expected)
+	}
+}
+
 func Test_IntVarEvent(t *testing.T) {
 	setup()
 	defer teardown()
