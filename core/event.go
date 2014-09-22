@@ -122,7 +122,7 @@ func (this *GetMinMaxDomainEvent) run(store *Store) {
 }
 
 func (this *GetMinMaxDomainEvent) String() string {
-	return fmt.Sprintf("GetMinMaxDomainEvent: %d", this.varId)
+	return fmt.Sprintf("GetMinMaxDomainEvent: varid %d", this.varId)
 }
 
 // SelectVarIdUnfixedDomainEvent retrieves the id of a variable
@@ -215,7 +215,7 @@ func (this *GetIntVarEvent) run(store *Store) {
 }
 
 func (this *GetIntVarEvent) String() string {
-	return fmt.Sprintf("GetIntVarEvent: %d", this.varId)
+	return fmt.Sprintf("GetIntVarEvent: varid %d", this.varId)
 }
 
 // GetNumPropagatorsEvent to retrieve the number of propagators

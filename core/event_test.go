@@ -8,7 +8,7 @@ import (
 func Test_ChangeEvent(t *testing.T) {
 	setup()
 	defer teardown()
-	log("ChangeEventTest")
+	log("ChangeEvent")
 	noVars := 10
 	// noVars variables with domain of size noVars where for the ith variable
 	// starting with the second all domain values >= i are to be removed
@@ -121,7 +121,7 @@ func Test_ChangeEvent(t *testing.T) {
 func Test_GetNameEvent(t *testing.T) {
 	setup()
 	defer teardown()
-	log("GetNameEventTest")
+	log("GetNameEvent")
 	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
 	Yid := CreateIntVarValues("Y", store, []int{4, 5, 6})
 	getNameEvent := createGetNameEvent(Xid)
@@ -176,9 +176,9 @@ func Test_GetNewIdEvent(t *testing.T) {
 func Test_GetDomainEvent(t *testing.T) {
 	setup()
 	defer teardown()
-	log("GetDomainEventTest")
+	log("GetDomainEvent")
 	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
-	Yid := CreateIntVarValues("X", store, []int{4, 5, 6})
+	Yid := CreateIntVarValues("Y", store, []int{4, 5, 6})
 	getDomainEvent := createGetDomainEvent(Xid)
 	expected := fmt.Sprintf("GetDomainEvent: varid %d", Xid)
 	if expected != getDomainEvent.String() {
@@ -217,14 +217,119 @@ func Test_GetDomainEvent(t *testing.T) {
 	}
 }
 
+func Test_GetMinMaxDomainEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetMinMaxDomainEvent")
+	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	event := createGetMinMaxDomainEvent(Xid)
+	expected := fmt.Sprintf("GetMinMaxDomainEvent: varid %d", Xid)
+	if expected != event.String() {
+		t.Errorf("GetMinMaxDomainEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	min, max := <-event.channel, <-event.channel
+	expmin, expmax := 1, 3
+	if min != expmin || max != expmax {
+		t.Errorf("GetMinMaxDomainEvent: got %d-%d, want %d-%d",
+			min, max, expmin, expmax)
+	}
+	// directly
+	min, max = store.GetMinMaxDomain(Xid)
+	if min != expmin || max != expmax {
+		t.Errorf("GetMinMaxDomain: got %d-%d, want %d-%d",
+			min, max, expmin, expmax)
+	}
+}
+
+func Test_SelectVarIdUnfixedDomainEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("SelectVarIdUnfixedDomainEvent")
+	Yid := CreateIntVarValues("Y", store, []int{4})
+	event := createSelectVarIdUnfixedDomainEvent(true)
+	expected := "SelectVarIdUnfixedDomainEvent: true"
+	if expected != event.String() {
+		t.Errorf("SelectVarIdUnfixedDomainEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	vid := <-event.channel
+	if vid != -1 {
+		t.Errorf("SelectVarIdUnfixedDomainEvent: found %d, expected none",
+			vid)
+		if vid != Yid { // uses Yid
+			panic("Found something nonexistant")
+		}
+	}
+	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	Zid := CreateIntVarValues("Z", store, []int{5, 6})
+	vid = store.SelectVarIdUnfixedDomain(true)
+	if vid != Zid {
+		t.Errorf("SelectVarIdUnfixedDomainEvent true:  found %d, expected %d",
+			vid, Zid)
+	}
+	vid = store.SelectVarIdUnfixedDomain(false)
+	if vid != Xid {
+		t.Errorf("SelectVarIdUnfixedDomainEvent false: found %d, expected %d",
+			vid, Xid)
+	}
+}
+
+func Test_GetVariableIDsEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetVariableIDsEvent")
+	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	Yid := CreateIntVarValues("Y", store, []int{4, 5, 6})
+	event := createGetVariableIDsEvent()
+	expected := "GetVariableIDsEvent"
+	if expected != event.String() {
+		t.Errorf("GetVariableIDsEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	ids := <-event.channel
+	if len(ids) != 2 {
+		t.Errorf("GetVariableIDsEvent: want len(%d), got len(%d)",
+			2, len(ids))
+	}
+	if (ids[0] != Xid && ids[1] != Xid) ||
+		(ids[0] != Yid && ids[1] != Yid) {
+		t.Errorf("GetVariableIDsEvent: want %d, %d; got %d, %d",
+			Xid, Yid, ids[0], ids[1])
+	}
+	// directly
+	ids = store.GetVariableIDs()
+	if len(ids) != 2 {
+		t.Errorf("GetVariableIDsEvent: want len(%d), got len(%d)",
+			2, len(ids))
+	}
+	if (ids[0] != Xid && ids[1] != Xid) ||
+		(ids[0] != Yid && ids[1] != Yid) {
+		t.Errorf("GetVariableIDsEvent: want %d, %d; got %d, %d",
+			Xid, Yid, ids[0], ids[1])
+	}
+}
+
 func Test_IntVarEvent(t *testing.T) {
 	setup()
 	defer teardown()
-	log("IntVarEventTest")
+	log("IntVarEvent")
 	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	event := createGetIntVarEvent(Xid)
+	expected := fmt.Sprintf("GetIntVarEvent: varid %d", Xid)
+	if expected != event.String() {
+		t.Errorf("GetIntVarEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
 	X, _ := store.GetIntVar(Xid)
 	rive := createRegisterIntVarEvent("X", X)
-	expected := "RegisterIntVarEvent: name X, [1..3]"
+	expected = "RegisterIntVarEvent: name X, [1..3]"
 	if expected != rive.String() {
 		t.Errorf("RegisterIntVarEvent.String = %s, want %s",
 			rive.String(), expected)
