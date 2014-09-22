@@ -331,7 +331,79 @@ func Test_IntVarEvent(t *testing.T) {
 	rive := createRegisterIntVarEvent("X", X)
 	expected = "RegisterIntVarEvent: name X, [1..3]"
 	if expected != rive.String() {
-		t.Errorf("RegisterIntVarEvent.String = %s, want %s",
+		t.Errorf("RegisterIntVarEvent.String: got %s, want %s",
 			rive.String(), expected)
+	}
+}
+
+func Test_GetNumPropagatorsEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetNumPropagatorsEvent")
+	event := createGetNumPropagatorsEvent()
+	expected := "GetNumPropagatorsEvent"
+	if expected != event.String() {
+		t.Errorf("GetNumPropagatorsEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	num := <-event.channel
+	if num != 0 {
+		t.Errorf("GetNumPropagatorsEvent: want %d, got %d",
+			0, num)
+	}
+	prop1, prop2 := createVarPropagatorDummy(t)
+	store.AddPropagator(prop1)
+	num = store.GetNumPropagators()
+	if num != 1 {
+		t.Errorf("GetNumPropagatorsEvent: want %d, got %d",
+			1, num)
+	}
+	store.AddPropagator(prop2)
+	store.AddPropagators(createVarPropagatorDummy(t))
+	num = store.GetNumPropagators()
+	if num != 4 {
+		t.Errorf("GetNumPropagatorsEvent: want %d, got %d",
+			4, num)
+	}
+}
+
+func Test_GetStatEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetStatEvent")
+	event := createGetStatEvent()
+	expected := "GetStatEvent"
+	if expected != event.String() {
+		t.Errorf("GetStatEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	stat1 := <-event.channel
+	stat2 := store.GetStat()
+	if stat1.controlEvents+1 != stat2.controlEvents {
+		t.Errorf("GetStat: got %s, want %s",
+			stat1.String(), stat2.String())
+	}
+}
+
+func Test_GetReadyEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("GetReadyEvent")
+	event := createGetReadyEvent()
+	expected := "GetReadyEvent"
+	if expected != event.String() {
+		t.Errorf("GetReadyEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	ok1 := <-store.getReadyChannel()
+	ok2 := store.IsConsistent()
+	if !ok1 || !ok2 {
+		t.Errorf("GetReadyEvent: got %v, %v, want true", ok1, ok2)
 	}
 }
