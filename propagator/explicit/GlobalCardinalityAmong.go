@@ -21,7 +21,6 @@ func CreateGCCAmong(xi []core.VarId, k []int, counters []int,
 	if len(k) != amountCounters {
 		panic("The length of counters is not equal to the amount " +
 			"of elements in the domain of k!!")
-		return nil
 	}
 	// for every value k[i] an Among constraint is created which limits
 	// the number of occurrences of k[i] in the assignment to
