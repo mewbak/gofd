@@ -27,7 +27,7 @@ func Test_ChangeEvent(t *testing.T) {
 		t.Errorf("ChangeEntry %s should initially be empty", entry0.String())
 	}
 	if entry0.GetID() != varIds[0] {
-		t.Errorf("ChangeEntry Varid is %s, want %s",
+		t.Errorf("ChangeEntry Varid is %d, want %d",
 			entry0.GetID(), varIds[0])
 	}
 	v0min := vars[0].Domain.GetMin()
@@ -102,7 +102,7 @@ func Test_ChangeEvent(t *testing.T) {
 	showEventString := showEvent.String()
 	want := "ChangeEvent[]"
 	if want != showEventString {
-		t.Errorf("ChangeEvent:String got %s, want %s",
+		t.Errorf("ChangeEvent.String: got %s, want %s",
 			showEventString, want)
 	}
 	dom := CreateIvDomainFromTo(17, 34)
@@ -113,7 +113,7 @@ func Test_ChangeEvent(t *testing.T) {
 	showEventString = showEvent.String()
 	want = "ChangeEvent[ChangeEntry{6, [17..42]}]"
 	if want != showEventString {
-		t.Errorf("ChangeEvent:String got %s, want %s",
+		t.Errorf("ChangeEvent.String: got %s, want %s",
 			showEventString, want)
 	}
 }
@@ -127,19 +127,19 @@ func Test_GetNameEvent(t *testing.T) {
 	getNameEvent := createGetNameEvent(Xid)
 	expected := fmt.Sprintf("GetNameEvent: varid %d", Xid)
 	if expected != getNameEvent.String() {
-		t.Errorf("GetNameEvent:String got %s, want %s",
+		t.Errorf("GetNameEvent.String: got %s, want %s",
 			getNameEvent.String(), expected)
 	}
 	// execute on store
 	store.controlChannel <- getNameEvent
 	name := <-getNameEvent.channel
 	if name != "X" {
-		t.Errorf("GetNameEvent:Name got %s, want %s", name, "X")
+		t.Errorf("GetNameEvent.Name: got %s, want %s", name, "X")
 	}
 	// through public API, which is implemented by direct access
 	name = store.GetName(Yid)
 	if name != "Y" {
-		t.Errorf("GetNameEvent:Name got %s, want %s", name, "Y")
+		t.Errorf("GetNameEvent.Name: got %s, want %s", name, "Y")
 	}
 }
 
@@ -150,7 +150,7 @@ func Test_GetNewIdEvent(t *testing.T) {
 	getNewIdEvent := createGetNewIdEvent()
 	expected := "GetNewIdEvent"
 	if getNewIdEvent.String() != expected {
-		t.Errorf("GetNewIdEvent:Name got %s, want %s",
+		t.Errorf("GetNewIdEvent.Name: got %s, want %s",
 			getNewIdEvent.String(), expected)
 	}
 	// execute on store
@@ -182,7 +182,7 @@ func Test_GetDomainEvent(t *testing.T) {
 	getDomainEvent := createGetDomainEvent(Xid)
 	expected := fmt.Sprintf("GetDomainEvent: varid %d", Xid)
 	if expected != getDomainEvent.String() {
-		t.Errorf("GetDomainEvent:String got %s, want %s",
+		t.Errorf("GetDomainEvent.String: got %s, want %s",
 			getDomainEvent.String(), expected)
 	}
 	// execute on store
@@ -405,5 +405,67 @@ func Test_GetReadyEvent(t *testing.T) {
 	ok2 := store.IsConsistent()
 	if !ok1 || !ok2 {
 		t.Errorf("GetReadyEvent: got %v, %v, want true", ok1, ok2)
+	}
+}
+
+func Test_CloneEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("CloneEvent")
+	event := createCloneEvent(store, nil)
+	expected := fmt.Sprintf("CloneEvent: cloning %p", store)
+	if expected != event.String() {
+		t.Errorf("CloneEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on store
+	store.controlChannel <- event
+	newStore := <-event.channel
+	if &store == &newStore {
+		t.Errorf("CloneEvent: same store, %v", store)
+	}
+	store.AddPropagators(createVarPropagatorDummy(t))
+	newStore = store.Clone(nil)
+	if &store == &newStore {
+		t.Errorf("CloneEvent: same store, %v", store)
+	}
+	Xid := CreateIntVarValues("X", store, []int{1, 2, 3})
+	changeEntry := CreateChangeEntryWithIntValue(Xid, 2)
+	changeEvent := CreateChangeEvent()
+	changeEvent.AddChangeEntry(changeEntry)
+	newStore = store.Clone(changeEvent)
+	if store.GetDomain(Xid).Equals(newStore.GetDomain(Xid)) {
+		t.Errorf("CloneEvent: changeEvent had no effect %s",
+			store.GetDomain(Xid))
+	}
+}
+
+func Test_CloseEvent(t *testing.T) {
+	setup()
+	defer teardown()
+	log("CloseEvent")
+	newStore := store.Clone(nil)
+	event := createCloseEvent(newStore)
+	expected := fmt.Sprintf("CloseEvent: closing %p", newStore)
+	if expected != event.String() {
+		t.Errorf("CloseEvent.String: got %s, want %s",
+			event.String(), expected)
+	}
+	// execute on newStore
+	newStore.controlChannel <- event
+	ok := <-event.channel
+	if !ok {
+		t.Errorf("CloseEvent: did not close %p", newStore)
+	}
+	newStore = store.Clone(nil)
+	ok = newStore.Close()
+	if !ok {
+		t.Errorf("CloseEvent, directly: did not close %p", newStore)
+	}
+	store.AddPropagators(createVarPropagatorDummy(t))
+	newStore = store.Clone(nil)
+	ok = newStore.Close()
+	if !ok {
+		t.Errorf("CloseEvent, nonempty: did not close %p", newStore)
 	}
 }
