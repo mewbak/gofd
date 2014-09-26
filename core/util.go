@@ -101,18 +101,6 @@ func ValuesOfMapVarIdToIvDomain(varids []VarId,
 	return doms
 }
 
-// ValuesOfMapVarIdToIvDomainOnlyMap returns IvDomains as domains.
-// ToDo: Why is that needed?
-func ValuesOfMapVarIdToIvDomainOnlyMap(m map[VarId]*IvDomain) []Domain {
-	doms := make([]Domain, len(m))
-	i := 0
-	for _, dom := range m {
-		doms[i] = dom
-		i += 1
-	}
-	return doms
-}
-
 // ValuesOfMapVarIdToDomain returns a slice of domains from explicit domains.
 func ValuesOfMapVarIdToExDomain(varids []VarId, m map[VarId]*ExDomain) []Domain {
 	doms := make([]Domain, len(varids))
