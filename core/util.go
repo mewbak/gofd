@@ -79,17 +79,6 @@ func SortIntArr(values []int) {
 	sort.Sort(SortableIntSlice(values))
 }
 
-// ValuesOfMapVarIdToDomain returns a slice of domains from a
-// given map of domains.
-func ValuesOfMapVarIdToDomain(varids []VarId,
-	m map[VarId]Domain) []Domain {
-	doms := make([]Domain, len(varids))
-	for i, varid := range varids {
-		doms[i] = m[varid]
-	}
-	return doms
-}
-
 // ValuesOfMapVarIdToIvDomain returns a slice of domains from a
 // given map if IvDomains.
 func ValuesOfMapVarIdToIvDomain(varids []VarId,

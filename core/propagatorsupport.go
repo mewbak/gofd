@@ -68,7 +68,7 @@ func GetVaridToExplicitDomainsMap(idoms map[VarId]Domain) map[VarId]*ExDomain {
 
 // GetVaridToExplicitDomainsSlice from any domain implementation
 // (no new instance).
-func GetVaridToExplicitDomainsSlice(idoms []Domain) []*ExDomain {
+func GetExDomainSlice(idoms []Domain) []*ExDomain {
 	explDoms := make([]*ExDomain, len(idoms))
 	for i, idom := range idoms {
 		if dom, k := idom.(*ExDomain); k {

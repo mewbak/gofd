@@ -262,7 +262,7 @@ func (this *Among) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator(idSlice, this.id)
 
-	ds := core.GetVaridToExplicitDomainsSlice(domains)
+	ds := core.GetExDomainSlice(domains)
 
 	this.xi_Domains = make(map[core.VarId]*core.ExDomain)
 	for i = 0; i < (len(idSlice) - 1); i++ {
