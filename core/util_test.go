@@ -8,8 +8,7 @@ import (
 func Test_ValuesOfMapVarIdToIvDomain(t *testing.T) {
 	setup()
 	defer teardown()
-	log("util_ValuesOfMapVarIdToDomain")
-
+	log("ValuesOfMapVarIdToIvDomain")
 	varids := []VarId{1, 2, 3}
 	fromTos := [][]int{{1, 10}, {20, 30}, {40, 50}}
 	checkValuesOfMapVarIdToIvDomain(t, varids, fromTos)
@@ -31,33 +30,28 @@ func makeExDomains(fromTos [][]int) []*ExDomain {
 	return doms
 }
 
-func checkValuesOfMapVarIdToIvDomain(t *testing.T, varids []VarId, fromTos [][]int) {
+func checkValuesOfMapVarIdToIvDomain(t *testing.T,
+	varids []VarId, fromTos [][]int) {
 	expDoms := makeIvDomains(fromTos)
-
 	m := make(map[VarId]*IvDomain)
 	m[varids[0]] = expDoms[0]
 	m[varids[1]] = expDoms[1]
 	m[varids[2]] = expDoms[2]
-
 	doms := ValuesOfMapVarIdToIvDomain(varids, m)
 	checkSameSliceResultIvDomain(t, doms, expDoms)
-	
 	expDomsEx := makeExDomains(fromTos)
-	
 	mEx := make(map[VarId]*ExDomain)
 	mEx[varids[0]] = expDomsEx[0]
 	mEx[varids[1]] = expDomsEx[1]
 	mEx[varids[2]] = expDomsEx[2]
-	
 	doms = ValuesOfMapVarIdToExDomain(varids, mEx)
 	checkSameSliceResultExDomain(t, doms, expDomsEx)
 }
 
-
 func Test_ScalarSlice(t *testing.T) {
 	setup()
 	defer teardown()
-	log("util_ScalarSlice")
+	log("ScalarSlice")
 	result := ScalarSlice(5, []int{1, 2, 3, 4, 5})
 	expResult := []int{5, 10, 15, 20, 25}
 	checkSameSliceResult(t, result, expResult)
@@ -66,30 +60,33 @@ func Test_ScalarSlice(t *testing.T) {
 	checkSameSliceResult(t, result, expResult)
 }
 
-func checkSameDomain(t *testing.T, errorS string, got, want Domain){
+func checkSameDomain(t *testing.T, errorS string, got, want Domain) {
 	if !got.Equals(want) {
 		t.Errorf(errorS, got, want)
 	}
 }
 
-func checkSameSliceResultExDomain(t *testing.T, got []Domain, want []*ExDomain) {
+func checkSameSliceResultExDomain(t *testing.T,
+	got []Domain, want []*ExDomain) {
 	for i := 0; i < len(got); i++ {
-		checkSameDomain(t, "util.ScalarSliceExDomain: result=%s, want %s",
-						got[i],want[i])
+		msg := "checkSameSliceResultExDomain: got %s, want %s"
+		checkSameDomain(t, msg, got[i], want[i])
 	}
 }
 
-func checkSameSliceResultIvDomain(t *testing.T, got []Domain, want []*IvDomain) {
+func checkSameSliceResultIvDomain(t *testing.T,
+	got []Domain, want []*IvDomain) {
 	for i := 0; i < len(got); i++ {
-		checkSameDomain(t, "util.ScalarSliceIvDomain: result=%s, want %s",
-						got[i],want[i])
+		msg := "checkSameSliceResultIvDomain: got %s, want=%s"
+		checkSameDomain(t, msg, got[i], want[i])
 	}
 }
 
 func checkSameSliceResult(t *testing.T, got, want []int) {
 	for i := 0; i < len(got); i++ {
 		if got[i] != want[i] {
-			t.Errorf("util.ScalarSlice: result=%v, want %v", got, want)
+			t.Errorf("checkSameSliceResult: got %v, want %v",
+				got, want)
 			return
 		}
 	}
@@ -98,7 +95,7 @@ func checkSameSliceResult(t *testing.T, got, want []int) {
 func Test_AbsInt(t *testing.T) {
 	setup()
 	defer teardown()
-	log("util_AbsInt")
+	log("AbsInt")
 	msg := "AbsInt(%v)"
 	checkSameInt(t, msg, -1, AbsInt(-1), 1)
 	checkSameInt(t, msg, -3, AbsInt(-3), 3)
@@ -117,7 +114,7 @@ func checkSameInt(t *testing.T, msg string, param, got, want int) {
 func Test_BeautifulOutput(t *testing.T) {
 	setup()
 	defer teardown()
-	log("util_BeautifulOutput")
+	log("BeautifulOutput")
 	checkSameOutput(t, "", []int{2, 3, 5, 7, 11, 13}, "[2..3,5,7,11,13]")
 	checkSameOutput(t, "", []int{}, "[]")
 	checkSameOutput(t, "", []int{1}, "[1]")
