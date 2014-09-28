@@ -123,3 +123,36 @@ func log(msgs ...string) {
 func propStat() {
 	log(store.GetStat().String())
 }
+
+// clone_test test the correctness of the clone function of a given constraint
+// c1, which contains variables created in a given store store1. It clones
+// the original store to store2 and the given constraint to c2, then adds
+// c2 to store2 and checks, if the resulting domains in store1 and store2 
+// are the same after propagating.
+func clone_test(t *testing.T, store1 *core.Store, c1 core.Constraint) {
+
+	store2 := store1.Clone(nil)
+	c2 := c1.Clone()
+	
+	store1.AddPropagator(c1)
+	store2.AddPropagator(c2)
+	
+	ready1 := store1.IsConsistent()
+	ready2 := store2.IsConsistent()
+	
+	if ready1 != ready2 {
+		msg := "%s - Clone-Test failed, ready1 = %v, ready2 = %v"
+		t.Errorf(msg, c1, ready1, ready2)
+	}
+	
+	varids := store1.GetVariableIDs()
+	for _,vid := range varids {
+		d1 := store1.GetDomain(vid)
+		d2 := store2.GetDomain(vid)
+		
+		if !d1.Equals(d2) {
+			msg := "%s - Clone-Test failed, d1 = %v, d2 = %v"
+			t.Errorf(msg, c1, d1, d2)
+		}
+	}
+}

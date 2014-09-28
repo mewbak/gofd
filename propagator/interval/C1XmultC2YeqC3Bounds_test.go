@@ -1,7 +1,6 @@
 package interval
 
 import (
-	"bitbucket.org/gofd/gofd/core"
 	"testing"
 )
 
@@ -9,9 +8,7 @@ func C1XmultC2YeqC3ZBounds_test(t *testing.T, c1 int, xinit []int,
 	c2 int, yinit []int, c3 int, zinit []int,
 	expx []int, expy []int, expz []int, expready bool) {
 	//test_logger.SetLoggingLevel(core.LOG_DEBUG)
-	X := core.CreateIntVarIvValues("X", store, xinit)
-	Y := core.CreateIntVarIvValues("Y", store, yinit)
-	Z := core.CreateIntVarIvValues("Z", store, zinit)
+	X, Y, Z := createC1XplusC2YeqC3ZtestVars(xinit, yinit, zinit)
 	store.AddPropagator(CreateC1XmultC2YeqC3ZBounds(c1, X, c2, Y, c3, Z))
 	ready := store.IsConsistent()
 	ready_test(t, "C1XmultC2YeqC3ZBounds", ready, expready)
@@ -84,4 +81,20 @@ func Test_C1XmultC2YeqC3ZBoundsd(t *testing.T) {
 	expz := []int{}
 	C1XmultC2YeqC3ZBounds_test(t, c1, xinit, c2, yinit, c3, zinit,
 		expx, expy, expz, false)
+}
+
+func Test_C1XmultC2YeqC3ZBounds_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("C1XmultC2YeqC3ZBounds_clone")
+
+	xinit := []int{0, 1, 2, 3, 4}
+	yinit := []int{0, 1, 2, 3, 4}
+	zinit := []int{6, 8, 9, 16}
+	c1, c2, c3 := 1, 1, 1
+
+	X, Y, Z := createC1XplusC2YeqC3ZtestVars(xinit, yinit, zinit)
+	c := CreateC1XmultC2YeqC3ZBounds(c1, X, c2, Y, c3, Z)
+
+	clone_test(t, store, c)
 }

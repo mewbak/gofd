@@ -124,3 +124,22 @@ func Test_Amonge(t *testing.T) {
 
 	among_test(t, xi, k, n, expxi, n, true)
 }
+
+func Test_Among_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("Among_clone")
+
+	xi := [][]int{[]int{2, 3}, []int{4, 5}, []int{4, 5}, []int{5, 6}}
+	names := []string{"X", "Y", "Z", "Q"}
+
+	k := []int{2, 3, 4}
+	n := []int{1}
+
+	Xi := createTestVars(xi, names)
+
+	N := core.CreateIntVarIvValues("N", store, n)
+	c := CreateAmong(Xi, k, N)
+
+	clone_test(t, store, c)
+}

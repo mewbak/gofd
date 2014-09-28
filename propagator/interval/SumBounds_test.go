@@ -6,8 +6,9 @@ import (
 	"testing"
 )
 
-func sumBoundsinterval_test(t *testing.T, varsMapping []*VarMapping, sum *VarMapping,
-	expready bool) {
+func createSumtestVars(varsMapping []*VarMapping,
+	sum *VarMapping) (core.VarId, []core.VarId) {
+
 	cnt := 0
 	varList := make([]core.VarId, len(varsMapping))
 	for _, varMapping := range varsMapping {
@@ -19,6 +20,13 @@ func sumBoundsinterval_test(t *testing.T, varsMapping []*VarMapping, sum *VarMap
 	}
 	sumVar := core.CreateIntVarIvValues("SUM", store, sum.initDomain)
 	sum.intVar = sumVar
+
+	return sumVar, varList
+}
+
+func sumBoundsinterval_test(t *testing.T, varsMapping []*VarMapping, sum *VarMapping,
+	expready bool) {
+	sumVar, varList := createSumtestVars(varsMapping, sum)
 	p := CreateSumBounds(store, sumVar, varList)
 	store.AddPropagator(p)
 	ready := store.IsConsistent()
@@ -90,4 +98,18 @@ func Test_SumBoundsE(t *testing.T) {
 	v2 := CreateVarMapping([]int{0, 1, 2, 3, 4, 6, 7, 8}, []int{7, 8})
 	sum := CreateVarMapping([]int{15, 16, 17}, []int{15, 16})
 	sumBoundsinterval_test(t, []*VarMapping{v1, v2}, sum, true)
+}
+
+func Test_SumBounds_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("SumBounds_clone")
+
+	v1 := CreateVarMapping([]int{0, 1, 2, 3, 4, 6, 7, 8}, []int{7, 8})
+	v2 := CreateVarMapping([]int{0, 1, 2, 3, 4, 6, 7, 8}, []int{7, 8})
+	sum := CreateVarMapping([]int{15, 16, 17}, []int{15, 16})
+	sumVar, varList := createSumtestVars([]*VarMapping{v1, v2}, sum)
+	constraint := CreateSumBounds(store, sumVar, varList)
+
+	clone_test(t, store, constraint)
 }

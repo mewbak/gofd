@@ -1,14 +1,12 @@
 package interval
 
 import (
-	"bitbucket.org/gofd/gofd/core"
 	"testing"
 )
 
 func xNeqY_test(t *testing.T, xinit []int, yinit []int,
 	expx []int, expy []int, expready bool) {
-	X := core.CreateIntVarIvValues("X", store, xinit)
-	Y := core.CreateIntVarIvValues("Y", store, yinit)
+	X, Y := createXYtestVars(xinit, yinit)
 	prop := CreateXneqY(X, Y)
 	store.AddPropagator(prop)
 	ready := store.IsConsistent()
@@ -54,4 +52,18 @@ func Test_XneqY3(t *testing.T) {
 	expx := []int{}
 	expy := []int{}
 	xNeqY_test(t, xinit, yinit, expx, expy, false)
+}
+
+func Test_XneqY_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("XneqY_clone")
+
+	xinit := []int{1}
+	yinit := []int{1}
+
+	X, Y := createXYtestVars(xinit, yinit)
+	constraint := CreateXneqY(X, Y)
+
+	clone_test(t, store, constraint)
 }

@@ -104,3 +104,18 @@ func Test_WeightedSumF(t *testing.T) {
 	sum := CreateVarMapping([]int{5, 6, 7, 8, 9, 10, 12, 13, 14, 15}, []int{5, 6, 7, 8, 12, 13, 14, 15})
 	sumweighted2interval_test(t, []*VarMappingWeighted{A, B}, sum, true)
 }
+
+func Test_WeightedSum_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("WeightedSum_clone")
+
+	A := CreateVarMappingWeighted(1, []int{0, 1, 2, 3, 4}, []int{1, 2, 3, 4})
+	B := CreateVarMappingWeighted(1, []int{0, 1, 2, 3, 4}, []int{1, 2, 3, 4})
+	sum := CreateVarMapping([]int{5, 6, 7, 8, 9, 10, 12, 13, 14, 15}, []int{5, 6, 7, 8})
+	sumVar, weightList, varList := createWeightedSumtestVars(
+		[]*VarMappingWeighted{A, B}, sum)
+	constraint := CreateWeightedSum(store, sumVar, weightList, varList...)
+
+	clone_test(t, store, constraint)
+}

@@ -70,3 +70,17 @@ func Test_XlteqC5b(t *testing.T) {
 	log("XlteqC5b: X<=5, X:6..9")
 	xlteqc_test(t, []int{6, 7, 8, 9}, 5, []int{}, false)
 }
+
+func Test_XltC_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("XltC_clone")
+
+	xinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	c := 5
+
+	X := core.CreateIntVarIvValues("X", store, xinit)
+	constraint := CreateXltC(X, c)
+
+	clone_test(t, store, constraint)
+}

@@ -7,8 +7,7 @@ import (
 
 func xGtEqY_test(t *testing.T, xinit []int, yinit []int,
 	expx []int, expy []int, expready bool) {
-	X := core.CreateIntVarIvValues("X", store, xinit)
-	Y := core.CreateIntVarIvValues("Y", store, yinit)
+	X, Y := createXYtestVars(xinit, yinit)
 	prop := CreateXgteqY(X, Y)
 	store.AddPropagator(prop)
 	ready := store.IsConsistent()
@@ -17,17 +16,8 @@ func xGtEqY_test(t *testing.T, xinit []int, yinit []int,
 			ready, !ready)
 	}
 	if expready {
-		dx := core.CreateExDomain()
-		dx.Adds(expx)
-		dy := core.CreateExDomain()
-		dy.Adds(expy)
-		msg := "XgteqY_test-DomainCheck: Domain calculated = %v, want %v"
-		if !store.GetDomain(X).Equals(dx) {
-			t.Errorf(msg, store.GetDomain(X), dx)
-		}
-		if !store.GetDomain(Y).Equals(dy) {
-			t.Errorf(msg, store.GetDomain(Y), dy)
-		}
+		domainEquals_test(t, "XgteqY_test-DomainCheck", X, expx)
+		domainEquals_test(t, "XgteqY_test-DomainCheck", Y, expy)
 	}
 }
 
@@ -132,4 +122,19 @@ func Test_XgtYplusC3(t *testing.T) {
 	expx := []int{6}
 	expy := []int{0}
 	xGtYPlusC_test(t, xinit, yinit, C, expx, expy, true)
+}
+
+func Test_XgtYplusC_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("XgtYplusC_clone")
+
+	xinit := []int{0, 1, 2, 3, 4, 5, 6}
+	yinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	c := 5
+
+	X, Y := createXYtestVars(xinit, yinit)
+	constraint := CreateXgtYplusC(X, Y, c)
+
+	clone_test(t, store, constraint)
 }

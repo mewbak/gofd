@@ -1,15 +1,13 @@
 package interval
 
 import (
-	"bitbucket.org/gofd/gofd/core"
 	"testing"
 )
 
 func c1XPlusC2YeqC3_test(t *testing.T, c1 int, xinit []int,
 	c2 int, yinit []int, c3 int,
 	expx []int, expy []int, expready bool) {
-	X := core.CreateIntVarIvValues("X", store, xinit)
-	Y := core.CreateIntVarIvValues("Y", store, yinit)
+	X, Y := createXYtestVars(xinit, yinit)
 	prop := CreateC1XplusC2YeqC3(c1, X, c2, Y, c3)
 	store.AddPropagator(prop)
 	ready := store.IsConsistent()
@@ -62,4 +60,19 @@ func Test_C1XplusC2YeqC3c(t *testing.T) {
 	expx := []int{}
 	expy := []int{}
 	c1XPlusC2YeqC3_test(t, c1, xinit, c2, yinit, c3, expx, expy, false)
+}
+
+func Test_C1XplusC2YeqC3_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("C1XplusC2YeqC3_clone")
+
+	c1, c2, c3 := 1, 2, 12
+	xinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	yinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	X, Y := createXYtestVars(xinit, yinit)
+	c := CreateC1XplusC2YeqC3(c1, X, c2, Y, c3)
+
+	clone_test(t, store, c)
 }

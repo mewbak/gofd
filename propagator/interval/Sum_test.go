@@ -2,23 +2,12 @@ package interval
 
 import (
 	"bitbucket.org/gofd/gofd/core"
-	"strconv"
 	"testing"
 )
 
 func suminterval_test(t *testing.T, varsMapping []*VarMapping, sum *VarMapping,
 	expready bool) {
-	cnt := 0
-	varList := make([]core.VarId, len(varsMapping))
-	for _, varMapping := range varsMapping {
-		v := core.CreateIntVarIvValues("V"+strconv.Itoa(cnt),
-			store, varMapping.initDomain)
-		varMapping.intVar = v
-		varList[cnt] = v
-		cnt += 1
-	}
-	sumVar := core.CreateIntVarIvValues("SUM", store, sum.initDomain)
-	sum.intVar = sumVar
+	sumVar, varList := createSumtestVars(varsMapping, sum)
 	p := CreateSum(store, sumVar, varList)
 	store.AddPropagator(p)
 	ready := store.IsConsistent()
@@ -90,4 +79,18 @@ func Test_SumE(t *testing.T) {
 	v2 := CreateVarMapping([]int{0, 1, 2, 3, 4, 6, 7, 8}, []int{7, 8})
 	sum := CreateVarMapping([]int{15, 16, 17}, []int{15, 16})
 	suminterval_test(t, []*VarMapping{v1, v2}, sum, true)
+}
+
+func Test_Sum_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("Sum_clone")
+
+	v1 := CreateVarMapping([]int{0, 1, 2, 3, 4, 6, 7, 8}, []int{7, 8})
+	v2 := CreateVarMapping([]int{0, 1, 2, 3, 4, 6, 7, 8}, []int{7, 8})
+	sum := CreateVarMapping([]int{15, 16, 17}, []int{15, 16})
+	sumVar, varList := createSumtestVars([]*VarMapping{v1, v2}, sum)
+	constraint := CreateSum(store, sumVar, varList)
+
+	clone_test(t, store, constraint)
 }

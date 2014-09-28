@@ -73,9 +73,6 @@ func Test_XgteqC5(t *testing.T) {
 	xgteqc_test(t, []int{0, 1, 2, 3, 4}, 5, []int{}, false)
 }
 
-// fails with deadlock on copied store although
-// * almost nothing happens
-// * all channels are closed
 func Test_Xgteq_storeclone(t *testing.T) {
 	setup()
 	defer teardown()
@@ -92,4 +89,17 @@ func Test_Xgteq_storeclone(t *testing.T) {
 		nnstore = nstore.Clone(nil)
 	}
 	nnstore.IsConsistent()
+}
+
+func Test_XgtC_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("XgtC_clone")
+
+	xinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	c := 5
+	X := core.CreateIntVarIvValues("X", store, xinit)
+	constraint := CreateXgtC(X, c)
+
+	clone_test(t, store, constraint)
 }

@@ -1,15 +1,12 @@
 package interval
 
 import (
-	"bitbucket.org/gofd/gofd/core"
 	"testing"
 )
 
 func ivxplusyeqz_test(t *testing.T, xinit []int, yinit []int, zinit []int,
 	expx []int, expy []int, expz []int, expready bool) {
-	X := core.CreateIntVarIvValues("X", store, xinit)
-	Y := core.CreateIntVarIvValues("Y", store, yinit)
-	Z := core.CreateIntVarIvValues("Z", store, zinit)
+	X, Y, Z := createXYZtestVars(xinit, yinit, zinit)
 	store.AddPropagator(CreateXplusYeqZ(X, Y, Z))
 	ready := store.IsConsistent()
 	ready_test(t, "XplusYeqZ_intervals", ready, expready)
@@ -111,4 +108,19 @@ func Test_XplusYeqZf(t *testing.T) {
 	expz := []int{}
 
 	ivxplusyeqz_test(t, xinit, xinit, zinit, expx, expx, expz, false)
+}
+
+func Test_XplusYeqZ_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("XplusYeqZ_clone")
+
+	xinit := []int{0, 1, 2, 3, 4}
+	yinit := []int{0, 1, 2, 3, 4}
+	zinit := []int{1}
+
+	X, Y, Z := createXYZtestVars(xinit, yinit, zinit)
+	c := CreateXplusYeqZ(X, Y, Z)
+
+	clone_test(t, store, c)
 }

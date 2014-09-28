@@ -6,8 +6,9 @@ import (
 	"testing"
 )
 
-func sumweightedBoundsinterval_test(t *testing.T, varsMapping []*VarMappingWeighted,
-	sum *VarMapping, expready bool) {
+func createWeightedSumtestVars(varsMapping []*VarMappingWeighted,
+	sum *VarMapping) (core.VarId, []int, []core.VarId) {
+
 	cnt := 0
 	varList := make([]core.VarId, len(varsMapping))
 	weightList := make([]int, len(varsMapping))
@@ -21,6 +22,15 @@ func sumweightedBoundsinterval_test(t *testing.T, varsMapping []*VarMappingWeigh
 	}
 	sumVar := core.CreateIntVarIvValues("SUM", store, sum.initDomain)
 	sum.intVar = sumVar
+
+	return sumVar, weightList, varList
+}
+
+func sumweightedBoundsinterval_test(t *testing.T, varsMapping []*VarMappingWeighted,
+	sum *VarMapping, expready bool) {
+
+	sumVar, weightList, varList := createWeightedSumtestVars(varsMapping,
+		sum)
 	p := CreateWeightedSumBounds(store, sumVar, weightList, varList...)
 	store.AddPropagators(p)
 	ready := store.IsConsistent()
@@ -98,4 +108,19 @@ func Test_WeightedSumBoundsF(t *testing.T) {
 	sum := CreateVarMapping([]int{5, 6, 7, 8, 12, 13, 14, 15},
 		[]int{5, 6, 7, 8, 12, 13, 14, 15})
 	sumweightedBoundsinterval_test(t, []*VarMappingWeighted{A, B}, sum, true)
+}
+
+func Test_WeightedSumBounds_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("WeightedSumBounds_clone")
+
+	X := CreateVarMappingWeighted(1, []int{0, 1, 2}, []int{2})
+	Y := CreateVarMappingWeighted(2, []int{0, 1, 2}, []int{2})
+	sum := CreateVarMapping([]int{6}, []int{6})
+	sumVar, weightList, varList := createWeightedSumtestVars(
+		[]*VarMappingWeighted{X, Y}, sum)
+	constraint := CreateWeightedSumBounds(store, sumVar, weightList, varList...)
+
+	clone_test(t, store, constraint)
 }

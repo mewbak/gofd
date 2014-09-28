@@ -45,3 +45,16 @@ func Test_XneqC0(t *testing.T) {
 	log("XneqC0 : X!=0, X:0")
 	xneqc_test(t, []int{0}, 0, []int{}, false)
 }
+
+func Test_XneqC_clone(t *testing.T) {
+	setup()
+	defer teardown()
+	log("XneqC_clone")
+
+	xinit := []int{4, 5, 6}
+	c := 6
+	X := core.CreateIntVarIvValues("X", store, xinit)
+	constraint := CreateXneqC(X, c)
+
+	clone_test(t, store, constraint)
+}

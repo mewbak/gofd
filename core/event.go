@@ -343,7 +343,8 @@ func (this *CloneEvent) run(store *Store) {
 	i := 0
 	for _, prop := range this.store.propagators {
 		clonedProp := prop.Clone()
-		clonedProp.SetID(0) // ignore existing id, treat as new
+		clonedProp.SetID(0) // temporary value. Will be overridden
+		// for each propagator in function "AddPropagators"
 		clonedProps[i] = clonedProp
 		i++
 	}
