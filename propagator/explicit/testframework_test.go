@@ -49,7 +49,8 @@ func teardown() {
 
 // domainEquals_test checks whether the domain of a variable (id) is the same
 // as a given set of values
-func domainEquals_test(t *testing.T, test string, id core.VarId, values []int) {
+func domainEquals_test(t *testing.T, test string,
+	id core.VarId, values []int) {
 	want := core.CreateExDomainAdds(values)
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
@@ -86,8 +87,8 @@ func result_count_test(t *testing.T, test string,
 }
 
 // resultSet_test checks, if the result-row (result_id) in resultSet
-// is as expected. Respective, if the fixed value for a specific IntVar (var_id)
-// is equal to an expected value (expValue). So it checks,
+// is as expected. Respective, if the fixed value for a specific IntVar
+// (var_id) is equal to an expected value (expValue). So it checks,
 // if resultSet[result_id][var_id] == expValue
 func resultSet_test(t *testing.T, test string,
 	resultSet map[int]map[core.VarId]int, result_id int,
@@ -126,29 +127,23 @@ func log(msgs ...string) {
 // clone_test test the correctness of the clone function of a given constraint
 // c1, which contains variables created in a given store store1. It clones
 // the original store to store2 and the given constraint to c2, then adds
-// c2 to store2 and checks, if the resulting domains in store1 and store2 
+// c2 to store2 and checks, if the resulting domains in store1 and store2
 // are the same after propagating.
 func clone_test(t *testing.T, store1 *core.Store, c1 core.Constraint) {
-
 	store2 := store1.Clone(nil)
 	c2 := c1.Clone()
-	
 	store1.AddPropagator(c1)
 	store2.AddPropagator(c2)
-	
 	ready1 := store1.IsConsistent()
 	ready2 := store2.IsConsistent()
-	
 	if ready1 != ready2 {
 		msg := "%s - Clone-Test failed, ready1 = %v, ready2 = %v"
 		t.Errorf(msg, c1, ready1, ready2)
 	}
-	
 	varids := store1.GetVariableIDs()
-	for _,vid := range varids {
+	for _, vid := range varids {
 		d1 := store1.GetDomain(vid)
 		d2 := store2.GetDomain(vid)
-		
 		if !d1.Equals(d2) {
 			msg := "%s - Clone-Test failed, d1 = %v, d2 = %v"
 			t.Errorf(msg, c1, d1, d2)
