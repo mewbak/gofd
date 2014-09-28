@@ -49,11 +49,12 @@ func teardown() {
 
 // domainEquals_test checks whether the domain of a variable (id) is the same
 // as a given set of values
-func domainEquals_test(t *testing.T, test string, id core.VarId, values []int) {
+func domainEquals_test(t *testing.T, test string,
+	id core.VarId, values []int) {
 	want := core.CreateExDomainAdds(values)
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
-		msg := "%s %s: Domain calculated = %v, want %v"
+		msg := "%s %s: domain got %s, want %s"
 		t.Errorf(msg, test, store.GetName(id), got.String(), want.String())
 	}
 }
@@ -62,7 +63,7 @@ func DomainEquals_test(t *testing.T, test string, id core.VarId,
 	want core.Domain) {
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
-		msg := "%s %s: Domain calculated = %v, want %v"
+		msg := "%s %s: domain got %s, want %s"
 		t.Errorf(msg, test, store.GetName(id), got.String(), want.String())
 	}
 }
@@ -70,32 +71,34 @@ func DomainEquals_test(t *testing.T, test string, id core.VarId,
 // equalsInt_test checks two int-values, if they are equal.
 func equalsInt_test(t *testing.T, test string, val int, expval int) {
 	if val != expval {
-		msg := "%s: value calculated = %v, want %v"
+		msg := "%s: value got %v, want %v"
 		t.Errorf(msg, test, val, expval)
 	}
 }
 
 // equalsInt_test checks, if the number of results, is equal to the expected
 // number of results
-func result_count_test(t *testing.T, test string, resultSet map[int]map[core.VarId]int, expCount int) {
+func result_count_test(t *testing.T, test string,
+	resultSet map[int]map[core.VarId]int, expCount int) {
 	if len(resultSet) != expCount {
-		msg := "%s: result_count = %v, want %v"
+		msg := "%s: result_count got %v, want %v"
 		t.Errorf(msg, test, len(resultSet), expCount)
 	}
 }
 
 // resultSet_test checks, if the result-row (result_id) in resultSet
-// is as expected. Respective, if the fixed value for a specific IntVar (var_id)
-// is equal to an expected value (expValue). So it checks,
+// is as expected. Respective, if the fixed value for a specific IntVar
+// (var_id) is equal to an expected value (expValue). So it checks,
 // if resultSet[result_id][var_id] == expValue
-func resultSet_test(t *testing.T, test string, resultSet map[int]map[core.VarId]int, result_id int, var_id core.VarId, expValue int) {
+func resultSet_test(t *testing.T, test string,
+	resultSet map[int]map[core.VarId]int, result_id int,
+	var_id core.VarId, expValue int) {
 	if len(resultSet) < result_id {
 		msg := "%s: no such result_id (number of results to low)"
 		t.Errorf(msg, test)
 	}
-
 	if resultSet[result_id][var_id] != expValue {
-		t.Errorf("chicken and rabbit: result = %v, want %v",
+		t.Errorf("resultSet_test: got %v, want %v",
 			resultSet[result_id][var_id], expValue)
 	}
 }
@@ -104,7 +107,7 @@ func resultSet_test(t *testing.T, test string, resultSet map[int]map[core.VarId]
 // (true: solution found, false: propagation failed)
 func ready_test(t *testing.T, test string, ready bool, expready bool) {
 	if ready != expready {
-		msg := "%s: ready = %v, want %v"
+		msg := "%s: ready got %v, want %v"
 		t.Errorf(msg, test, ready, expready)
 	}
 }
@@ -125,29 +128,23 @@ func log(msgs ...string) {
 // c2 to store2 and checks, if the resulting domains in store1 and store2
 // are the same after propagating.
 func clone_test(t *testing.T, store1 *core.Store, c1 core.Constraint) {
-
 	store2 := store1.Clone(nil)
 	c2 := c1.Clone()
-
 	store1.AddPropagator(c1)
 	store2.AddPropagator(c2)
-
 	ready1 := store1.IsConsistent()
 	ready2 := store2.IsConsistent()
-
 	if ready1 != ready2 {
-		msg := "%s - Clone-Test failed, ready1 = %v, ready2 = %v"
-		t.Errorf(msg, c1, ready1, ready2)
+		msg := "%s: clone test ready got %v, want %v"
+		t.Errorf(msg, c1, ready2, ready1)
 	}
-
 	varids := store1.GetVariableIDs()
 	for _, vid := range varids {
 		d1 := store1.GetDomain(vid)
 		d2 := store2.GetDomain(vid)
-
 		if !d1.Equals(d2) {
-			msg := "%s - Clone-Test failed, d1 = %v, d2 = %v"
-			t.Errorf(msg, c1, d1, d2)
+			msg := "%s: clone test domain got %s, want %s"
+			t.Errorf(msg, c1, d2.String(), d1.String())
 		}
 	}
 }
@@ -165,16 +162,13 @@ func createXYtestVars(xinit []int,
 	yinit []int) (core.VarId, core.VarId) {
 	X := core.CreateIntVarIvValues("X", store, xinit)
 	Y := core.CreateIntVarIvValues("Y", store, yinit)
-
 	return X, Y
 }
 
 func createTestVars(inits [][]int, names []string) []core.VarId {
 	varids := make([]core.VarId, len(inits))
-
 	for i, _ := range inits {
 		varids[i] = core.CreateIntVarIvValues(names[i], store, inits[i])
 	}
-
 	return varids
 }

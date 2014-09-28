@@ -42,10 +42,8 @@ func Test_XeqC_clone(t *testing.T) {
 	setup()
 	defer teardown()
 	log("XeqC_clone")
-
 	xinit := []int{1, 2, 3, 4, 5}
 	x := core.CreateIntVarIvValues("X", store, xinit)
 	c := CreateXeqC(x, 5)
-
 	clone_test(t, store, c)
 }

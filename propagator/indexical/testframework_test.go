@@ -54,7 +54,7 @@ func domainEquals_test(t *testing.T, test string,
 	want := core.CreateIvDomainFromIntArr(values)
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
-		msg := "%s %s: Domain calculated = %v, want %v"
+		msg := "%s %s: domain got %s, want %s"
 		t.Errorf(msg, test, store.GetName(id), got.String(), want.String())
 	}
 }
@@ -63,7 +63,7 @@ func DomainEquals_test(t *testing.T, test string, id core.VarId,
 	want core.Domain) {
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
-		msg := "%s %s: Domain calculated = %v, want %v"
+		msg := "%s %s: domain got %s, want %s"
 		t.Errorf(msg, test, store.GetName(id), got.String(), want.String())
 	}
 }
@@ -71,7 +71,7 @@ func DomainEquals_test(t *testing.T, test string, id core.VarId,
 // equalsInt_test checks two int-values, if they are equal.
 func equalsInt_test(t *testing.T, test string, val int, expval int) {
 	if val != expval {
-		msg := "%s: value calculated = %v, want %v"
+		msg := "%s: value got %v, want %v"
 		t.Errorf(msg, test, val, expval)
 	}
 }
@@ -81,7 +81,7 @@ func equalsInt_test(t *testing.T, test string, val int, expval int) {
 func result_count_test(t *testing.T, test string,
 	resultSet map[int]map[core.VarId]int, expCount int) {
 	if len(resultSet) != expCount {
-		msg := "%s: result_count %v, want %v"
+		msg := "%s: result_count got %v, want %v"
 		t.Errorf(msg, test, len(resultSet), expCount)
 	}
 }
@@ -98,7 +98,7 @@ func resultSet_test(t *testing.T, test string,
 		t.Errorf(msg, test)
 	}
 	if resultSet[result_id][var_id] != expValue {
-		t.Errorf("chicken and rabbit: result = %v, want %v",
+		t.Errorf("resultSet_test: got %v, want %v",
 			resultSet[result_id][var_id], expValue)
 	}
 }
@@ -107,8 +107,7 @@ func resultSet_test(t *testing.T, test string,
 // (true: solution found, false: propagation failed)
 func ready_test(t *testing.T, test string, ready bool, expready bool) {
 	if ready != expready {
-		msg := "%s: ready = %v, want %v"
-
+		msg := "%s: ready goz %v, want %v"
 		t.Errorf(msg, test, ready, expready)
 	}
 }
@@ -140,16 +139,16 @@ func clone_test(t *testing.T, store1 *core.Store, c1 core.Constraint) {
 	ready1 := store1.IsConsistent()
 	ready2 := store2.IsConsistent()
 	if ready1 != ready2 {
-		msg := "%s - Clone-Test failed, ready1 = %v, ready2 = %v"
-		t.Errorf(msg, c1, ready1, ready2)
+		msg := "%s: clone test ready got %v, want %v"
+		t.Errorf(msg, c1, ready2, ready1)
 	}
 	varids := store1.GetVariableIDs()
 	for _, vid := range varids {
 		d1 := store1.GetDomain(vid)
 		d2 := store2.GetDomain(vid)
 		if !d1.Equals(d2) {
-			msg := "%s - Clone-Test failed, d1 = %v, d2 = %v"
-			t.Errorf(msg, c1, d1, d2)
+			msg := "%s: clone test domain got %s, want %s"
+			t.Errorf(msg, c1, d2.String(), d1.String())
 		}
 	}
 }
