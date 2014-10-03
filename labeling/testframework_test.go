@@ -10,7 +10,6 @@ import (
 	"bitbucket.org/gofd/gofd/core"
 	"fmt"
 	"runtime"
-	"testing"
 	"time"
 )
 
