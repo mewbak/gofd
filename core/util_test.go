@@ -140,3 +140,87 @@ func checkSameOutput(t *testing.T, msg string, a []int, want string) {
 		fmt.Printf("  BO(%v) = %s\n", a, want)
 	}
 }
+
+func Test_IntSliceToStringSlice(t *testing.T) {
+	got := IntSliceToStringSlice([]int{1, 5, 10, 100, 1000})
+	want := []string{"1", "5", "10", "100", "1000"}
+	checkStrings(t, "IntSliceToStringSlice: got %s, want %s", got, want)
+	got = IntSliceToStringSlice([]int{0})
+	want = []string{"0"}
+	checkStrings(t, "IntSliceToStringSlice: got %v, want %v", got, want)
+}
+
+func Test_IntSliceToStringSliceFormatted(t *testing.T) {
+	got := IntSliceToStringSliceFormatted([]int{1, 5, 10, 100, 1000},
+		"test_%d:test")
+	want := []string{"test_1:test", "test_5:test", "test_10:test",
+		"test_100:test", "test_1000:test"}
+	checkStrings(t, "IntSliceToStringSlice: got %v, want %v", got, want)
+}
+
+func checkStrings(t *testing.T, msg string, got []string, want []string) {
+	if len(got) != len(want) {
+		t.Errorf(msg, got, want)
+	}
+	for i, _ := range got {
+		if got[i] != want[i] {
+			t.Errorf(msg, got, want)
+		}
+	}
+}
+
+func Test_Keys_MapVarIdsToBool(t *testing.T) {
+	values := make(map[VarId]Domain)
+	values[1] = CreateIvDomainFromTo(0, 10)
+	values[2] = CreateIvDomainFromTo(50, 50)
+	gotVarids := Keys_MapVarIdsToBool(values)
+	wantVarids := []VarId{1, 2}
+	checkVarids(t, "Keys_MapVarIdsToBool: got %v, want %v", gotVarids, wantVarids)
+}
+
+func Test_SortedKeys_MapVarIdToInt(t *testing.T) {
+	values := make(map[VarId]int)
+	values[1] = 5
+	values[3] = 10
+	values[2] = 50
+	gotVarids := SortedKeys_MapVarIdToInt(values)
+	wantVarids := []VarId{1, 2, 3}
+	checkVarids(t, "SortedKeys_MapVarIdToInt: got %v, want %v",
+		gotVarids, wantVarids)
+	values = make(map[VarId]int)
+	values[1] = 5
+	gotVarids = SortedKeys_MapVarIdToInt(values)
+	wantVarids = []VarId{1}
+	checkVarids(t, "SortedKeys_MapVarIdToInt: got %v, want %v",
+		gotVarids, wantVarids)
+}
+
+func checkVarids(t *testing.T, msg string, got []VarId, want []VarId) {
+	if len(got) != len(want) {
+		t.Errorf(msg, got, want)
+	}
+	for i, _ := range got {
+		if got[i] != want[i] {
+			t.Errorf(msg, got, want)
+		}
+	}
+}
+
+func Test_SliceToKeys_MapIntToBool(t *testing.T) {
+	vals := []int{1, 4, 6, 2}
+	m := SliceToKeys_MapIntToBool(vals)
+	mapContainsCheck(t, "SliceToKeys_MapIntToBool: have ints %v, got map %v",
+		vals, m)
+	vals = []int{1}
+	m = SliceToKeys_MapIntToBool(vals)
+	mapContainsCheck(t, "SliceToKeys_MapIntToBool: have ints %v, got map %v",
+		vals, m)
+}
+
+func mapContainsCheck(t *testing.T, msg string, vals []int, m map[int]bool) {
+	for _, v := range vals {
+		if _, ok := m[v]; !ok {
+			t.Errorf(msg, vals, m)
+		}
+	}
+}
