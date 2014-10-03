@@ -17,20 +17,18 @@ func fmtIntSlice(is []int) string {
 
 func Alldifferent_Offset_test(t *testing.T, inits [][]int, names []string,
 	offsets []int, exps [][]int, expready bool) {
-	msg := "Alldifferent_Offset_test "
-	sForm := make([]string, len(inits)+1)
+	msg := "Alldifferent_Offset_test %s"
 
 	s := make([]string, len(inits)+1)
 	i := 0
 	for _, init := range inits {
 		s[i] = fmtIntSliceName(names[i], init)
-		sForm[i] = "%s"
 		i = i + 1
 	}
-	s[i] = fmtIntSlice(offsets)
-	sForm[i] = "offsets=%s"
+	s[i] = fmtIntSliceName("offsets",offsets)
 
-	msg = fmt.Sprintf(msg+strings.Join(sForm, " "), strings.Join(s, " "))
+	//msg = fmt.Sprintf(msg+strings.Join(sForm, " "), strings.Join(s, " "))
+	msg = fmt.Sprintf(msg, strings.Join(s, " "))
 	log(msg)
 
 	vars := createTestVars(inits, names)
