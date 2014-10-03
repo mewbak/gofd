@@ -25,7 +25,7 @@ func Alldifferent_Offset_test(t *testing.T, inits [][]int, names []string,
 		s[i] = fmtIntSliceName(names[i], init)
 		i = i + 1
 	}
-	s[i] = fmtIntSliceName("offsets",offsets)
+	s[i] = fmtIntSliceName("offsets", offsets)
 
 	//msg = fmt.Sprintf(msg+strings.Join(sForm, " "), strings.Join(s, " "))
 	msg = fmt.Sprintf(msg, strings.Join(s, " "))
