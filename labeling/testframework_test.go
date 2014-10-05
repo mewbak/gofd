@@ -21,6 +21,11 @@ var test_counter int = 0
 const TEST_VERBOSE = true
 const TEST_PARALLEL = false
 
+func init() {
+	logger = core.GetLogger()
+	logger.SetLoggingLevel(core.LOG_ERROR)
+}
+
 func setup() {
 	if TEST_PARALLEL {
 		runtime.GOMAXPROCS(runtime.NumCPU()) // use the cores
@@ -30,8 +35,6 @@ func setup() {
 	if TEST_VERBOSE {
 		fmt.Printf("%3d >>> \n", test_counter)
 	}
-	logger = core.GetLogger()
-	logger.SetLoggingLevel(core.LOG_ERROR)
 	store = core.CreateStore()
 }
 

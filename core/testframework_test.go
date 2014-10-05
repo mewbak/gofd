@@ -19,6 +19,13 @@ var test_counter int = 0
 
 const TEST_VERBOSE = true
 
+// initialize global testing variables
+// avoids race conditions
+func init() {
+	test_logger = GetLogger()
+	test_logger.SetLoggingLevel(LOG_ERROR)
+}
+
 // setup shall be called before any test
 func setup() {
 	test_counter += 1
@@ -26,8 +33,6 @@ func setup() {
 	if TEST_VERBOSE {
 		fmt.Printf("%3d >>> \n", test_counter)
 	}
-	test_logger = GetLogger()
-	test_logger.SetLoggingLevel(LOG_ERROR)
 	store = CreateStore()
 }
 
