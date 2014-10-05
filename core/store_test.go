@@ -182,8 +182,9 @@ func Test_CounterLock(t *testing.T) {
 	log("CounterLock")
 	vars := make(map[VarId]bool)
 	lock := new(sync.RWMutex)
+	localstore := store // local copy to avoid race condition
 	varCreator := func() {
-		x := CreateAuxIntVarValues(store, []int{1, 2, 3})
+		x := CreateAuxIntVarValues(localstore, []int{1, 2, 3})
 		lock.Lock()
 		if _, ok := vars[x]; !ok {
 			vars[x] = true
