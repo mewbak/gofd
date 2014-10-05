@@ -173,9 +173,10 @@ func Test_Keys_MapVarIdsToBool(t *testing.T) {
 	values := make(map[VarId]Domain)
 	values[1] = CreateIvDomainFromTo(0, 10)
 	values[2] = CreateIvDomainFromTo(50, 50)
-	gotVarids := Keys_MapVarIdsToBool(values)
-	wantVarids := []VarId{1, 2}
-	checkVarids(t, "Keys_MapVarIdsToBool: got %v, want %v", gotVarids, wantVarids)
+	gotVarIds := Keys_MapVarIdsToBool(values)
+	SortVarIdArr(gotVarIds)
+	wantVarIds := []VarId{1, 2}
+	checkVarIds(t, "Keys_MapVarIdsToBool: got %v, want %v", gotVarIds, wantVarIds)
 }
 
 func Test_SortedKeys_MapVarIdToInt(t *testing.T) {
@@ -183,19 +184,19 @@ func Test_SortedKeys_MapVarIdToInt(t *testing.T) {
 	values[1] = 5
 	values[3] = 10
 	values[2] = 50
-	gotVarids := SortedKeys_MapVarIdToInt(values)
-	wantVarids := []VarId{1, 2, 3}
-	checkVarids(t, "SortedKeys_MapVarIdToInt: got %v, want %v",
-		gotVarids, wantVarids)
+	gotVarIds := SortedKeys_MapVarIdToInt(values)
+	wantVarIds := []VarId{1, 2, 3}
+	checkVarIds(t, "SortedKeys_MapVarIdToInt: got %v, want %v",
+		gotVarIds, wantVarIds)
 	values = make(map[VarId]int)
 	values[1] = 5
-	gotVarids = SortedKeys_MapVarIdToInt(values)
-	wantVarids = []VarId{1}
-	checkVarids(t, "SortedKeys_MapVarIdToInt: got %v, want %v",
-		gotVarids, wantVarids)
+	gotVarIds = SortedKeys_MapVarIdToInt(values)
+	wantVarIds = []VarId{1}
+	checkVarIds(t, "SortedKeys_MapVarIdToInt: got %v, want %v",
+		gotVarIds, wantVarIds)
 }
 
-func checkVarids(t *testing.T, msg string, got []VarId, want []VarId) {
+func checkVarIds(t *testing.T, msg string, got []VarId, want []VarId) {
 	if len(got) != len(want) {
 		t.Errorf(msg, got, want)
 	}

@@ -132,21 +132,18 @@ func SliceToKeys_MapIntToBool(values []int) map[int]bool {
 	return m
 }
 
-// SortedKeys_MapVarIdToInt provides a slice of values in ascending order.
+// SortedKeys_MapVarIdToInt provides a slice of VarIds in ascending order.
 func SortedKeys_MapVarIdToInt(vals map[VarId]int) []VarId {
 	keys := Keys_MapVarIdToInt(vals)
-	ikeys := make([]int, len(keys))
-	for i, key := range keys { // copy as ints
-		ikeys[i] = int(key)
-	}
-	sort.Sort(SortableIntSlice(ikeys)) // sorts ascending
-	for i, ikey := range ikeys {       // copy as VarId
-		keys[i] = VarId(ikey)
-	}
+	SortVarIdArr(keys)
 	return keys
 }
 
-// Keys_MapVarIdToInt provides a slice of values.
+func SortVarIdArr(varIds []VarId) {
+	sort.Sort(SortableVarIdSlice(varIds))
+}
+
+// Keys_MapVarIdToInt provides a slice of VarIds.
 func Keys_MapVarIdToInt(values map[VarId]int) []VarId {
 	keys := make([]VarId, len(values))
 	i := 0
@@ -157,7 +154,7 @@ func Keys_MapVarIdToInt(values map[VarId]int) []VarId {
 	return keys
 }
 
-// makes a one-dim slice of two-dim-interval
+// makes a one-dim slice of a two-dim interval
 // e.g. from {{1,10}} --> {1,2,3,4,5,6,7,8,9,10}
 func makeTwoDim_OneDim(values [][]int) []int {
 	valuesRes := make([]int, 0)
@@ -196,5 +193,18 @@ func (this SortableIntSlice) Less(i, j int) bool {
 	return this[i] < this[j]
 }
 func (this SortableIntSlice) Swap(i, j int) {
+	this[i], this[j] = this[j], this[i]
+}
+
+// type to implement sort.Interface for a VarId slice
+type SortableVarIdSlice []VarId
+
+func (this SortableVarIdSlice) Len() int {
+	return len(this)
+}
+func (this SortableVarIdSlice) Less(i, j int) bool {
+	return this[i] < this[j]
+}
+func (this SortableVarIdSlice) Swap(i, j int) {
 	this[i], this[j] = this[j], this[i]
 }
