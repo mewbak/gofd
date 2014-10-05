@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 )
@@ -180,12 +181,15 @@ func Test_CounterLock(t *testing.T) {
 	defer teardown()
 	log("CounterLock")
 	vars := make(map[VarId]bool)
+	lock := new(sync.RWMutex)
 	varCreator := func() {
 		x := CreateAuxIntVarValues(store, []int{1, 2, 3})
-		if vars[x] {
+		lock.Lock()
+		if _, ok := vars[x]; !ok {
+			vars[x] = true
+		} else {
 			t.Errorf("Store.CounterLock: same varid allocated several times")
 		}
-		vars[x] = true
 	}
 	for i := 0; i < 1000; i++ {
 		go varCreator()
