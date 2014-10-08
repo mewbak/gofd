@@ -16,8 +16,7 @@ func Labeling(store *core.Store, resultQuery ResultQuery,
 	// ToDo: what happens, if store is closed?
 	// see also: event.go, function "run"
 
-	// bad... cloning a store, while he is propagating results in
-	// two stores, which are propagating (performance baaaaad)
+	store.IsConsistent()
 	newStore := store.Clone(nil)
 	strategy := InDomainRange        // default strategy
 	varSelect := SmallestDomainFirst // default variable selection
