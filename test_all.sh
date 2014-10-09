@@ -9,16 +9,36 @@ PACKAGES=$PACKAGES:demo:labeling
 # which cmd to use to run go
 GOCMD=go
 
+PRECSECS=10000 
+# compute a milli second precision time stamp
+# cycling every PRECSECS seconds
+function msecs {
+stamp=$(($(date +%s)%$PRECSECS))$((date +%N) | cut -c 1-3)
+echo $stamp
+}
+
+# compute a time difference between now and an older time stamp
+function diffmsecs {
+stamp=$1
+now=$(msecs)
+if [ $now -gt $1 ]
+then 
+	timediff=$((now-stamp))
+else
+	timediff=$(((PRECSECS+now)-stamp))
+   fi
+echo $timediff
+}
+
 function test_package {
-    start=$(date +%s)
+    start=$(msecs)
     printf "%25s : " $1
     pushd $1 > /dev/null
     $GOCMD clean -i
     $GOCMD test -i
-    printf $($GOCMD test 2>&1 | egrep "PASS|FAIL")
-    end=$(date +%s)
-    used_time=$((end-start))
-    printf "%3d sec" $used_time
+    printf "%s" $($GOCMD test 2>&1 | egrep "PASS|FAIL")
+    used_time=$(diffmsecs $start)
+    printf " %5d msecs" $used_time
     echo
     popd > /dev/null
 }
@@ -43,12 +63,13 @@ else
     PKGARGS=$PACKAGES 
 fi
 
-gstart=$(date +%s)
+gstart=$(msecs)
 IFS=':' read -ra ARRPKG <<< "$PKGARGS"
 echo "Testing all packages with : $GOCMD"
 for PACKAGE in "${ARRPKG[@]}"; do
     test_package $PACKAGE
 done
-gend=$(date +%s)
-gused_time=$((gend-gstart))
-echo "Duration: "$gused_time" sec"
+gused_time=$(diffmsecs $gstart)
+secs=$(($gused_time / 1000)) 
+decmsecs=$((($gused_time%1000)/10))
+printf "Duration: %3d.%02d secs\n" $secs $decmsecs
