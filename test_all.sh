@@ -8,7 +8,7 @@ PACKAGES=$PACKAGES:demo:labeling
 
 # which cmd to use to run go
 GOCMD=go
-# do not clean by default
+# do not clean and install by default
 GOCLEAN=
 
 PRECSECS=10000
@@ -63,7 +63,8 @@ while getopts "cg:" arg; do
 case "$arg" in
 	g) GOCMD="$OPTARG";;
 	c) GOCLEAN="do some cleaning first";;
-	[?]) print >&2 "Usage: $0 [-g gocmd (go)] [-c(lean)] [packages] "
+	[?]) echo >&2 "Usage: $0 [-g gocmd (go)] [-c] [packages]"
+         echo >&2 "   add -c to clean first when using different gocmd"
 	    exit 1;;
     esac
 done
