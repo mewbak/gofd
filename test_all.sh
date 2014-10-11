@@ -8,8 +8,10 @@ PACKAGES=$PACKAGES:demo:labeling
 
 # which cmd to use to run go
 GOCMD=go
+# do not clean by default
+GOCLEAN=
 
-PRECSECS=10000 
+PRECSECS=10000
 # compute a milli second precision time stamp
 # cycling every PRECSECS seconds
 function msecs {
@@ -34,13 +36,22 @@ function test_package {
     start=$(msecs)
     printf "%25s : " $1
     pushd $1 > /dev/null
+if [ -n "$GOCLEAN" ]; then 
     $GOCMD clean -i
+fi
     $GOCMD test -i
     printf "%s" $($GOCMD test 2>&1 | egrep "PASS|FAIL")
-    used_time=$(diffmsecs $start)
-    printf " %5d msecs" $used_time
+    printf_usedtime $(diffmsecs $start) 
     echo
     popd > /dev/null
+}
+
+# formatted print of used time in msecs resolution
+# with prefix $2 and postfix $3
+function printf_usedtime {
+ut_secs=$(($1/1000)) 
+ut_msecs=$((($1%1000)))
+printf $2"%3d.%03ds"$3 $ut_secs $ut_msecs
 }
 
 # http://stackoverflow.com/questions/1527049/bash-join-elements-of-an-array
@@ -48,10 +59,11 @@ function join {
     local IFS="$1"; shift; echo "$*"; 
 }
 
-while getopts "g:" arg; do
+while getopts "cg:" arg; do
 case "$arg" in
 	g) GOCMD="$OPTARG";;
-	[?]) print >&2 "Usage: $0 [-g gocmd (go)] [packages] "
+	c) GOCLEAN="do some cleaning first";;
+	[?]) print >&2 "Usage: $0 [-g gocmd (go)] [-c(lean)] [packages] "
 	    exit 1;;
     esac
 done
@@ -65,11 +77,8 @@ fi
 
 gstart=$(msecs)
 IFS=':' read -ra ARRPKG <<< "$PKGARGS"
-echo "Testing all packages with : $GOCMD"
+echo "Testing all packages with : $GOCMD    "$GOCLEAN
 for PACKAGE in "${ARRPKG[@]}"; do
     test_package $PACKAGE
 done
-gused_time=$(diffmsecs $gstart)
-secs=$(($gused_time / 1000)) 
-decmsecs=$((($gused_time%1000)/10))
-printf "Duration: %3d.%02d secs\n" $secs $decmsecs
+printf_usedtime $(diffmsecs $gstart) "Duration:" "\n"
