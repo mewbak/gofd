@@ -24,13 +24,15 @@ func testPythForSpecificC(t *testing.T, Cval int, N int, noSols int) {
 	C := core.CreateIntVarFromTo("C", store, Cval, Cval)
 	AA := core.CreateIntVarFromTo("AA", store, 1, N*N)
 	BB := core.CreateIntVarFromTo("BB", store, 1, N*N)
-	CC := core.CreateIntVarFromTo("CC", store, N*N, N*N)
+	CC := core.CreateIntVarFromTo("CC", store, Cval*Cval, Cval*Cval)
 	store.AddPropagator(propagator.CreateXmultYeqZ(A, A, AA))
 	store.AddPropagator(propagator.CreateXmultYeqZ(B, B, BB))
-	store.AddPropagator(propagator.CreateXmultYeqZ(C, C, CC))
-	store.AddPropagator(propagator.CreateXplusYeqZ(AA, BB, CC))
 	store.AddPropagator(propagator.CreateXgteqY(B, A))
 	store.AddPropagator(propagator.CreateXgteqY(C, B))
+	// Should be last as this one might fail already (e.g. C==4)
+	// ToDo: Shouldn't it be possible to add propagators to a
+	//       failed store? That would mean we mustn't close it?
+	store.AddPropagator(propagator.CreateXplusYeqZ(AA, BB, CC))
 	query := labeling.CreateSearchAllQuery()
 	result := labeling.Labeling(store, query,
 		labeling.SmallestDomainFirst, labeling.InDomainMin)

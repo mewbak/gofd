@@ -262,7 +262,6 @@ func (this *Store) propagate() {
 				logger.Df("STORE_controlEvent caught: %s", event)
 			}
 			event.run(this) // execute task in central thread
-			//this.iDToIntVar[0].Domain
 			if this.loggingStats {
 				this.stat.LogWorkingTime()
 			}
