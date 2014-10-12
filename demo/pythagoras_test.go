@@ -24,7 +24,7 @@ func testPythForSpecificC(t *testing.T, Cval int, N int, noSols int) {
 	C := core.CreateIntVarFromTo("C", store, Cval, Cval)
 	AA := core.CreateIntVarFromTo("AA", store, 1, N*N)
 	BB := core.CreateIntVarFromTo("BB", store, 1, N*N)
-	CC := core.CreateIntVarFromTo("CC", store, 1, N*N)
+	CC := core.CreateIntVarFromTo("CC", store, N*N, N*N)
 	store.AddPropagator(propagator.CreateXmultYeqZ(A, A, AA))
 	store.AddPropagator(propagator.CreateXmultYeqZ(B, B, BB))
 	store.AddPropagator(propagator.CreateXmultYeqZ(C, C, CC))
@@ -38,6 +38,10 @@ func testPythForSpecificC(t *testing.T, Cval int, N int, noSols int) {
 	if len(query.GetResultSet()) != noSols {
 		t.Errorf("pythagorean triple, number of solutions = %d, want %d",
 			len(query.GetResultSet()), noSols)
+		for i, result := range query.GetResultSet() {
+			t.Errorf("  %d: %d**2 + %d**2 = %d**2\n",
+				i, result[A], result[B], result[C])
+		}
 	}
 	if logger.GetLoggingLevel() <= core.LOG_NONE {
 		searchStat(query.GetSearchStatistics())

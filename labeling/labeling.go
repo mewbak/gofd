@@ -16,7 +16,7 @@ func Labeling(store *core.Store, resultQuery ResultQuery,
 	// ToDo: what happens, if store is closed?
 	// see also: event.go, function "run"
 
-	store.IsConsistent()
+	store.IsConsistent() // finalize propagation
 	newStore := store.Clone(nil)
 	strategy := InDomainRange        // default strategy
 	varSelect := SmallestDomainFirst // default variable selection
@@ -53,7 +53,7 @@ func fix(store *core.Store, resultQuery ResultQuery,
 	strategy func(domain core.Domain) chan int,
 	varSelect func(store *core.Store) (core.VarId, bool)) bool {
 	stat := resultQuery.GetSearchStatistics()
-	consistent := store.IsConsistent() // here we finalize propagation
+	consistent := store.IsConsistent() // finalize propagation
 	//println(store.String())
 	//println(store.StringWithSpecVarIds([]core.VarId{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14}),"\r\n")
 	if store.GetLoggingStat() {
