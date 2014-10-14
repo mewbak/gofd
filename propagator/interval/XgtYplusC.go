@@ -68,7 +68,6 @@ func (this *XgtYplusC) xinYout(evt *core.ChangeEvent) {
 
 func (this *XgtYplusC) yinXout(evt *core.ChangeEvent) {
 	yminmc := this.y_Domain.GetMin() + this.c
-
 	if (this.x_Domain.GetMin()) <= yminmc {
 		rDom := core.CreateIvDomainFromTo(this.x_Domain.GetMin(), yminmc)
 		chEntry := core.CreateChangeEntryWithValues(this.x, rDom)
@@ -81,11 +80,8 @@ func (this *XgtYplusC) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap([]core.VarId{this.x, this.y}, this.id)
-
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.x_Domain = varidToDomainMap[this.x]
-	this.y_Domain = varidToDomainMap[this.y]
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
+	this.y_Domain = core.GetVaridToIntervalDomain(domains[this.y])
 	this.store = store
 }
 

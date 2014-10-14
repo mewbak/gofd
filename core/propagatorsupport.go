@@ -39,6 +39,18 @@ func LogPropagationOfConstraint(c Constraint) {
 	}
 }
 
+func GetVaridToIntervalDomain(domain Domain) *IvDomain {
+	if ivdomain, ok := domain.(*IvDomain); ok {
+		return ivdomain
+	} else {
+		if exdomain, ok := domain.(*ExDomain); ok {
+			return CreateIvDomainFromDomain(exdomain)
+		} else {
+			panic("GetVaridToIntervalDomain: neiterh IvDomain nor ExDomain")
+		}
+	}
+}
+
 // GetVaridToIntervalDomains from any domain implementation (no new instance)
 func GetVaridToIntervalDomains(idoms map[VarId]Domain) map[VarId]*IvDomain {
 	intervalDoms := make(map[VarId]*IvDomain, len(idoms))

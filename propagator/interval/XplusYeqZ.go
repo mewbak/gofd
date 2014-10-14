@@ -22,38 +22,38 @@ func (this *XplusYeqZ) Clone() core.Constraint {
 }
 
 func (this *XplusYeqZ) Start(store *core.Store) {
-
 	// initial check
 	evt := core.CreateChangeEvent()
-	ivsecondInResultInFirstOut(this.y_Domain, this.z_Domain, this.x_Domain, this.x, evt)
-	ivfirstInResultInSecondOut(this.x_Domain, this.z_Domain, this.y_Domain, this.y, evt)
-	ivfirstInSecondInResultOut(this.x_Domain, this.y_Domain, this.z_Domain, this.z, evt)
+	ivsecondInResultInFirstOut(this.y_Domain, this.z_Domain, this.x_Domain,
+		this.x, evt)
+	ivfirstInResultInSecondOut(this.x_Domain, this.z_Domain, this.y_Domain,
+		this.y, evt)
+	ivfirstInSecondInResultOut(this.x_Domain, this.y_Domain, this.z_Domain,
+		this.z, evt)
 	core.SendChangesToStore(evt, this)
-
 	for changeEntry := range this.inCh {
 		core.LogIncomingChange(this, store, changeEntry)
-
 		evt = core.CreateChangeEvent()
-
 		switch var_id := changeEntry.GetID(); var_id {
 		case this.x:
 			this.x_Domain.Removes(changeEntry.GetValues())
-			ivfirstInResultInSecondOut(this.x_Domain, this.y_Domain, this.z_Domain, this.y, evt)
-			ivfirstInSecondInResultOut(this.x_Domain, this.y_Domain, this.z_Domain, this.z, evt)
-
+			ivfirstInResultInSecondOut(this.x_Domain, this.y_Domain,
+				this.z_Domain, this.y, evt)
+			ivfirstInSecondInResultOut(this.x_Domain, this.y_Domain,
+				this.z_Domain, this.z, evt)
 		case this.y:
 			this.y_Domain.Removes(changeEntry.GetValues())
-
-			ivsecondInResultInFirstOut(this.x_Domain, this.y_Domain, this.z_Domain, this.x, evt)
-			ivfirstInSecondInResultOut(this.x_Domain, this.y_Domain, this.z_Domain, this.z, evt)
-
+			ivsecondInResultInFirstOut(this.x_Domain, this.y_Domain,
+				this.z_Domain, this.x, evt)
+			ivfirstInSecondInResultOut(this.x_Domain, this.y_Domain,
+				this.z_Domain, this.z, evt)
 		case this.z:
 			this.z_Domain.Removes(changeEntry.GetValues())
-
-			ivsecondInResultInFirstOut(this.x_Domain, this.y_Domain, this.z_Domain, this.x, evt)
-			ivfirstInResultInSecondOut(this.x_Domain, this.y_Domain, this.z_Domain, this.y, evt)
+			ivsecondInResultInFirstOut(this.x_Domain, this.y_Domain,
+				this.z_Domain, this.x, evt)
+			ivfirstInResultInSecondOut(this.x_Domain, this.y_Domain,
+				this.z_Domain, this.y, evt)
 		}
-
 		core.SendChangesToStore(evt, this)
 	}
 }
@@ -62,13 +62,11 @@ func (this *XplusYeqZ) Start(store *core.Store) {
 func (this *XplusYeqZ) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap([]core.VarId{this.x, this.y, this.z}, this.id)
-
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.x_Domain = varidToDomainMap[this.x]
-	this.y_Domain = varidToDomainMap[this.y]
-	this.z_Domain = varidToDomainMap[this.z]
+		store.RegisterPropagatorMap([]core.VarId{this.x, this.y, this.z},
+		this.id)
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
+	this.y_Domain = core.GetVaridToIntervalDomain(domains[this.y])
+	this.z_Domain = core.GetVaridToIntervalDomain(domains[this.z])
 	this.store = store
 }
 

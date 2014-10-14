@@ -25,18 +25,14 @@ func (this *XplusCneqY) Clone() core.Constraint {
 }
 
 func (this *XplusCneqY) Start(store *core.Store) {
-
 	// initial check
 	evt := core.CreateChangeEvent()
 	this.xinYout(evt)
 	this.yinXout(evt)
 	core.SendChangesToStore(evt, this)
-
 	for changeEntry := range this.inCh {
 		core.LogIncomingChange(this, store, changeEntry)
-
 		evt = core.CreateChangeEvent()
-
 		switch var_id := changeEntry.GetID(); var_id {
 		case this.x:
 			this.x_Domain.Removes(changeEntry.GetValues())
@@ -53,7 +49,6 @@ func (this *XplusCneqY) Start(store *core.Store) {
 // xinYout removes fixed values X+c from Y
 // Example with C=1: X:{5}, Y:{6,7} --> X:{5}, Y:{7}
 func (this *XplusCneqY) xinYout(evt *core.ChangeEvent) {
-
 	if this.x_Domain.IsGround() {
 		fixed_val := this.x_Domain.GetMin() + this.c
 		if this.y_Domain.Contains(fixed_val) {
@@ -67,7 +62,6 @@ func (this *XplusCneqY) xinYout(evt *core.ChangeEvent) {
 
 // yinXout see xinYout, but vice versa
 func (this *XplusCneqY) yinXout(evt *core.ChangeEvent) {
-
 	if this.y_Domain.IsGround() {
 		fixed_val := this.y_Domain.GetMin() - this.c
 		if this.x_Domain.Contains(fixed_val) {
@@ -84,11 +78,8 @@ func (this *XplusCneqY) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap([]core.VarId{this.x, this.y}, this.id)
-
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.x_Domain = varidToDomainMap[this.x]
-	this.y_Domain = varidToDomainMap[this.y]
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
+	this.y_Domain = core.GetVaridToIntervalDomain(domains[this.y])
 	this.store = store
 }
 

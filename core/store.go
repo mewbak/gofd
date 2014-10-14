@@ -166,7 +166,6 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	varIdSet := make(VarIdSet, lenvarIds)
 	channelSize := 0
 	loggerDebug := logger.DoDebug()
-
 	for i, varId := range varIds {
 		if loggerDebug {
 			logger.Df("STORE_registerPropagator: var %s for propId %d",

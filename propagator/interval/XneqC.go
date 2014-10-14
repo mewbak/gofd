@@ -56,10 +56,7 @@ func (this *XneqC) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap([]core.VarId{this.x}, this.id)
-
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.x_Domain = varidToDomainMap[this.x]
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
 	this.store = store
 }
 

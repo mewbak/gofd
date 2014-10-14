@@ -214,13 +214,11 @@ func (this *C1XplusC2YeqC3ZBounds) sendChangesToStore(evt *core.ChangeEvent) {
 func (this *C1XplusC2YeqC3ZBounds) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap([]core.VarId{this.x, this.y, this.z}, this.id)
-
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.x_Domain = varidToDomainMap[this.x]
-	this.y_Domain = varidToDomainMap[this.y]
-	this.z_Domain = varidToDomainMap[this.z]
+		store.RegisterPropagatorMap([]core.VarId{this.x, this.y, this.z},
+		this.id)
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
+	this.y_Domain = core.GetVaridToIntervalDomain(domains[this.y])
+	this.z_Domain = core.GetVaridToIntervalDomain(domains[this.z])
 	this.store = store
 }
 
