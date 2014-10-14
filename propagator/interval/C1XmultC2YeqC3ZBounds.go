@@ -223,7 +223,7 @@ func (this *C1XmultC2YeqC3ZBounds) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap([]core.VarId{this.x, this.y, this.z},
-		this.id)
+			this.id)
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
 	this.y_Domain = core.GetVaridToIntervalDomain(domains[this.y])
 	this.z_Domain = core.GetVaridToIntervalDomain(domains[this.z])
