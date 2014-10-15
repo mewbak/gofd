@@ -220,13 +220,13 @@ func (this *C1XmultC2YeqC3ZBounds) yinZinXout(evt *core.ChangeEvent) {
 
 // Register registers the propagator at the store.
 func (this *C1XmultC2YeqC3ZBounds) Register(store *core.Store) {
-	var domains map[core.VarId]core.Domain
+	var domains []core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap([]core.VarId{this.x, this.y, this.z},
+		store.RegisterPropagator([]core.VarId{this.x, this.y, this.z},
 			this.id)
-	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
-	this.y_Domain = core.GetVaridToIntervalDomain(domains[this.y])
-	this.z_Domain = core.GetVaridToIntervalDomain(domains[this.z])
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
+	this.y_Domain = core.GetVaridToIntervalDomain(domains[1])
+	this.z_Domain = core.GetVaridToIntervalDomain(domains[2])
 	this.store = store
 }
 

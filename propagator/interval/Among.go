@@ -261,9 +261,7 @@ func (this *Among) Register(store *core.Store) {
 	var domains map[core.VarId]core.Domain
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(allvars, this.id)
-
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
-
 	this.store = store
 }
 

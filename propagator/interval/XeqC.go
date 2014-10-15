@@ -54,10 +54,10 @@ func (this *XeqC) xin(evt *core.ChangeEvent) {
 
 // Register registers the propagator at the store.
 func (this *XeqC) Register(store *core.Store) {
-	var domains map[core.VarId]core.Domain
+	var domains []core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap([]core.VarId{this.x}, this.id)
-	this.x_Domain = core.GetVaridToIntervalDomain(domains[this.x])
+		store.RegisterPropagator([]core.VarId{this.x}, this.id)
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
 	this.store = store
 }
 
