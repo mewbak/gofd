@@ -98,7 +98,7 @@ func CreateAuxIntVarExValues(store *Store, values []int) VarId {
 // CreateAuxIntVarFromTo creates a new auxiliary IntVar object with domain
 // values from and to inclusive and adds it to the store.
 func CreateAuxIntVarFromTo(store *Store, from, to int) VarId {
-	return CreateAuxIntVarExFromTo(store, from, to) // ToDo: default Iv
+	return CreateAuxIntVarIvFromTo(store, from, to) // default interval domain
 }
 
 // CreateAuxIntVarIvFromTo creates a new auxiliary IntVar object with interval
