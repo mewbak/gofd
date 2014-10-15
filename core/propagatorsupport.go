@@ -45,10 +45,9 @@ func GetVaridToIntervalDomain(domain Domain) *IvDomain {
 	} else {
 		if exdomain, ok := domain.(*ExDomain); ok {
 			return CreateIvDomainFromDomain(exdomain)
-		} else {
-			panic("GetVaridToIntervalDomain: neiterh IvDomain nor ExDomain")
 		}
 	}
+	panic("GetVaridToIntervalDomain: unkown Domain type")
 }
 
 // GetVaridToIntervalDomains from any domain implementation (no new instance)
