@@ -43,7 +43,10 @@ func (this *XplusYeqZ) Register(store *core.Store) {
 	this.Init(store, domains)
 }
 
-// bounds-consistency: X in min(Z)-max(Y)..max(Z)-min(Y), Y in min(Z)-max(X)..max(Z)-min(X),
+// MakeXplusYeqZBoundsIndexicals returns indexicals for providing bounds
+// consistency with
+// X in min(Z)-max(Y)..max(Z)-min(Y) 
+// Y in min(Z)-max(X)..max(Z)-min(X)
 // Z in min(Y)+min(X)..max(Y)+max(X)
 func (this *XplusYeqZ) MakeXplusYeqZBoundsIndexicals() []*indexical.Indexical {
 
@@ -76,7 +79,11 @@ func (this *XplusYeqZ) MakeXplusYeqZBoundsIndexicals() []*indexical.Indexical {
 	return indexicals
 }
 
-// arc-consistency: X in dom(Z) - dom(Y), Y in dom(Z) - dom(X), Z in dom(Y) + dom(X)
+// MakeXplusYeqZArcIndexicals returns indexicals for providing arc
+// consistency with
+// X in dom(Z) - dom(Y)
+// Y in dom(Z) - dom(X) 
+// Z in dom(Y) + dom(X)
 func (this *XplusYeqZ) MakeXplusYeqZArcIndexicals() []*indexical.Indexical {
 
 	indexicals := make([]*indexical.Indexical, 3)

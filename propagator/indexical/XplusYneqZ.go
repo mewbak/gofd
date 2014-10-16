@@ -53,7 +53,10 @@ func (this *XplusYneqZ) Register(store *core.Store) {
 	this.Init(store, domains)
 }
 
-// arc-consistency: X in not(val(Z)-val(Y)), Y in not(val(Z)-val(X)),
+// MakeXplusYneqZArcIndexicals returns indexicals for providing arc
+// consistency with
+// X in not(val(Z)-val(Y))
+// Y in not(val(Z)-val(X))
 // Z in not(val(X)+val(Y))
 func (this *XplusYneqZ) MakeXplusYneqZArcIndexicals() []*indexical.Indexical {
 	indexicals := make([]*indexical.Indexical, 3)
