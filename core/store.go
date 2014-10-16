@@ -56,6 +56,7 @@ func CreateStoreWithoutLogging() *Store {
 	store.communicating = false
 	store.closed = false
 	store.stat = CreateStoreStatistics()
+	CreateNameRegistry()
 	go store.propagate() // always start the store main loop
 	return store
 }
@@ -80,6 +81,7 @@ func CreateStore() *Store {
 	store.communicating = false
 	store.closed = false
 	store.stat = CreateStoreStatistics()
+	CreateNameRegistry()
 	go store.propagate() // always start the store main loop
 	return store
 }
