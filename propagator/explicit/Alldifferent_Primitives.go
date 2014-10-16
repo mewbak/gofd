@@ -20,7 +20,6 @@ type Alldifferent_Primitives struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.ExDomain
 	id               core.PropId
-	store            *core.Store
 }
 
 func (this *Alldifferent_Primitives) Start(store *core.Store) {
@@ -36,7 +35,7 @@ func (this *Alldifferent_Primitives) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, store.GetName(changeEntry.GetID()))
+				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
 		}
 		varidChanged := changeEntry.GetID()
 		changedDomain := this.varidToDomainMap[varidChanged]
@@ -72,7 +71,7 @@ func (this *Alldifferent_Primitives) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(this.vars, this.id)
 	this.varidToDomainMap = core.GetVaridToExplicitDomainsMap(domains)
-	this.store = store
+
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -88,7 +87,7 @@ func (this *Alldifferent_Primitives) GetID() core.PropId {
 func (this *Alldifferent_Primitives) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = this.store.GetName(var_id)
+		vars_str[i] = core.GetNameRegistry().GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s",
 		this.id, strings.Join(vars_str, "!="))

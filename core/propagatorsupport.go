@@ -14,7 +14,7 @@ func LogIncomingChange(caller Constraint, store *Store,
 	changeEntry *ChangeEntry) {
 	if GetLogger().DoDebug() {
 		msg := "%s_Start_'Incoming Change for %s'"
-		GetLogger().Df(msg, caller, store.GetName(changeEntry.GetID()))
+		GetLogger().Df(msg, caller, GetNameRegistry().GetName(changeEntry.GetID()))
 	}
 }
 

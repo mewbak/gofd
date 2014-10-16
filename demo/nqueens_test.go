@@ -27,7 +27,8 @@ func show_nqueens_results(resultSet map[int]map[core.VarId]int) {
 	for i, result := range resultSet {
 		fmt.Printf("Sol %d:", i)
 		for _, varId := range core.SortedKeys_MapVarIdToInt(result) {
-			fmt.Printf(" %s=%d", store.GetName(varId), result[varId])
+			fmt.Printf(" %s=%d", 
+				core.GetNameRegistry().GetName(varId), result[varId])
 		}
 		fmt.Printf("\n")
 	}

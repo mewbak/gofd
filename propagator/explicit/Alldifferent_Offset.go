@@ -13,7 +13,6 @@ type Alldifferent_Offset struct {
 	varidToOffsetMap map[core.VarId]int
 	varidToDomainMap map[core.VarId]*core.ExDomain
 	id               core.PropId
-	store            *core.Store
 }
 
 func (this *Alldifferent_Offset) Start(store *core.Store) {
@@ -107,7 +106,7 @@ func (this *Alldifferent_Offset) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(this.vars, this.id)
 	this.varidToDomainMap = core.GetVaridToExplicitDomainsMap(domains)
-	this.store = store
+
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it

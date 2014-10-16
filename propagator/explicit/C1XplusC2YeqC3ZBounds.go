@@ -13,7 +13,6 @@ type C1XplusC2YeqC3ZBounds struct {
 	inCh                         <-chan *core.ChangeEntry
 	x_Domain, y_Domain, z_Domain *core.ExDomain
 	id                           core.PropId
-	store                        *core.Store
 }
 
 func (this *C1XplusC2YeqC3ZBounds) Clone() core.Constraint {
@@ -45,7 +44,7 @@ func (this *C1XplusC2YeqC3ZBounds) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -220,7 +219,7 @@ func (this *C1XplusC2YeqC3ZBounds) Register(store *core.Store) {
 	this.x_Domain = varidToDomainMap[this.x]
 	this.y_Domain = varidToDomainMap[this.y]
 	this.z_Domain = varidToDomainMap[this.z]
-	this.store = store
+
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -264,9 +263,9 @@ func CreateXplusYeqZBounds(x core.VarId, y core.VarId, z core.VarId) *C1XplusC2Y
 
 func (this *C1XplusC2YeqC3ZBounds) String() string {
 	return fmt.Sprintf("PROP_%d %d*%s+%d*%s=%d*%s",
-		this.id, this.c1, this.store.GetName(this.x),
-		this.c2, this.store.GetName(this.y),
-		this.c2, this.store.GetName(this.z))
+		this.id, this.c1, core.GetNameRegistry().GetName(this.x),
+		this.c2, core.GetNameRegistry().GetName(this.y),
+		this.c2, core.GetNameRegistry().GetName(this.z))
 }
 
 func (this *C1XplusC2YeqC3ZBounds) GetVarIds() []core.VarId {

@@ -39,7 +39,7 @@ func (this *AmongSimple) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -114,7 +114,7 @@ func (this *AmongSimple) Register(store *core.Store) {
 		this.xi_Domains[idSlice[i]] = domains[i]
 	}
 	this.n_Domain = domains[len(idSlice)-1]
-	this.store = store
+
 }
 
 func (this *AmongSimple) SetID(propID core.PropId) {
@@ -139,7 +139,7 @@ func CreateAmongSimple(xi []core.VarId, k []int, n core.VarId) *AmongSimple {
 func (this *AmongSimple) String() string {
 	var s string
 	for i := 0; i < len(this.xi); i++ {
-		s += this.store.GetName(this.xi[i])
+		s += core.GetNameRegistry().GetName(this.xi[i])
 	}
 	var kstring string
 	for val, _ := range this.k.Values_asMap() {
@@ -148,7 +148,7 @@ func (this *AmongSimple) String() string {
 	return fmt.Sprintf("PROP_AMONG({%s}, {%s}, %s)",
 		s,
 		kstring,
-		this.store.GetName(this.n))
+		core.GetNameRegistry().GetName(this.n))
 }
 
 func (this *AmongSimple) GetVarIds() []core.VarId {

@@ -19,9 +19,9 @@ type Sum struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
-	store            *core.Store
-	iColl            *indexical.IndexicalCollection
-	pseudoProps      []*XplusYeqZ_Rel //with pseudoFinalProp
+
+	iColl       *indexical.IndexicalCollection
+	pseudoProps []*XplusYeqZ_Rel //with pseudoFinalProp
 }
 
 func (this *Sum) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -59,8 +59,6 @@ func (this *Sum) Register(store *core.Store) {
 		store.RegisterPropagatorMap(allvars, this.id)
 
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
-
-	this.store = store
 
 	this.iColl = indexical.CreateIndexicalCollection()
 
@@ -223,11 +221,11 @@ func (this *Sum) Clone() core.Constraint {
 func (this *Sum) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = this.store.GetName(var_id)
+		vars_str[i] = core.GetNameRegistry().GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s = %s",
 		this.id, strings.Join(vars_str, "+"),
-		this.store.GetName(this.resultVar))
+		core.GetNameRegistry().GetName(this.resultVar))
 }
 
 func (this *Sum) GetVarIds() []core.VarId {

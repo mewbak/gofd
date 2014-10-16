@@ -14,27 +14,6 @@ type ControlEvent interface {
 
 // --- Info-Events ---
 
-// GetNameEvent retrieves information about a variable name.
-type GetNameEvent struct {
-	varId   VarId
-	channel chan string
-}
-
-func createGetNameEvent(varId VarId) *GetNameEvent {
-	infoEvent := new(GetNameEvent)
-	infoEvent.varId = varId
-	infoEvent.channel = make(chan string)
-	return infoEvent
-}
-
-func (this *GetNameEvent) run(store *Store) {
-	this.channel <- store.iDToName[this.varId]
-}
-
-func (this *GetNameEvent) String() string {
-	return fmt.Sprintf("GetNameEvent: varid %d", this.varId)
-}
-
 // GetNewIdEvent generates a new name, if a variable is named incorrectly.
 type GetNewIdEvent struct {
 	channel chan VarId
@@ -331,9 +310,6 @@ func (this *CloneEvent) run(store *Store) {
 		make(map[VarId]IntChannelSet, len(store.iDToWriteChannel))
 	newStore.propagators =
 		make(map[PropId]Constraint, len(store.propagators))
-	// use old variable IDs and name mapping
-	newStore.nameToID = this.store.nameToID
-	newStore.iDToName = this.store.iDToName
 	newStore.iDCounter = this.store.iDCounter
 	newStore.loggingStats = this.store.GetLoggingStat()
 	// use new propIds

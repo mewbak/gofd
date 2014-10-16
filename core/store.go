@@ -16,8 +16,6 @@ type Store struct {
 	iDToWriteChannel map[VarId]IntChannelSet // multiplexer
 	propagators      map[PropId]Constraint
 	propCounter      PropId
-	nameToID         map[string]VarId // variable names
-	iDToName         map[VarId]string // variable names back
 	iDCounter        VarId
 	// propVarIds, varids of unfixed variables per propagator
 	propVarIds     map[PropId]VarIdSet
@@ -48,8 +46,6 @@ func CreateStoreWithoutLogging() *Store {
 	store.iDToIntVar = make(map[VarId]*IntVar)
 	store.iDToWriteChannel = make(map[VarId]IntChannelSet)
 	store.propagators = make(map[PropId]Constraint)
-	store.nameToID = make(map[string]VarId)
-	store.iDToName = make(map[VarId]string)
 	store.readyChannel = make(chan bool)
 	store.readChannel = make(chan *ChangeEvent, ReadChannelBuffer)
 	store.controlChannel = make(chan ControlEvent)
@@ -74,8 +70,6 @@ func CreateStore() *Store {
 	store.iDToIntVar = make(map[VarId]*IntVar)
 	store.iDToWriteChannel = make(map[VarId]IntChannelSet)
 	store.propagators = make(map[PropId]Constraint)
-	store.nameToID = make(map[string]VarId)
-	store.iDToName = make(map[VarId]string)
 	store.readyChannel = make(chan bool)
 	store.readChannel = make(chan *ChangeEvent, ReadChannelBuffer)
 	store.controlChannel = make(chan ControlEvent)
@@ -169,7 +163,7 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	for i, varId := range varIds {
 		if loggerDebug {
 			logger.Df("STORE_registerPropagator: var %s for propId %d",
-				this.iDToName[varId], propId)
+				GetNameRegistry().GetName(varId), propId)
 		}
 		domains[i] = this.iDToIntVar[varId].Domain.Copy()
 		channelSize += domains[i].Size()
@@ -327,7 +321,8 @@ func (this *Store) processChanges(changes []*ChangeEntry, loggerDebug bool) {
 		}
 		if domain.IsGround() {
 			if loggerDebug {
-				logger.Df("STORE_fixed domain, var: %s", this.iDToName[varId])
+				logger.Df("STORE_fixed domain, var: %s",
+					GetNameRegistry().GetName(varId))
 			}
 			for propId := range this.iDToWriteChannel[varId] {
 				// propagator no longer listens to fixed variable
@@ -371,7 +366,7 @@ func (this *Store) isInconsistent() bool {
 func (this *Store) multiplex(changeEntry *ChangeEntry) {
 	if logger.DoDebug() {
 		logger.Df("STORE_multiplex change on %s, value %s to %v channels",
-			this.iDToName[changeEntry.varId], changeEntry,
+			GetNameRegistry().GetName(changeEntry.varId), changeEntry,
 			len(this.iDToWriteChannel[changeEntry.varId]))
 	}
 	this.eventCounter += len(this.iDToWriteChannel[changeEntry.varId])
@@ -423,17 +418,6 @@ func (this *Store) getVariableIDs() []VarId {
 		i += 1
 	}
 	return value_slice
-}
-
-// GetName returns the name of the IntVar with the given id
-func (this *Store) GetName(id VarId) string {
-	// It is safe to do directly as names never change
-	return this.iDToName[id]
-	// ToDo: really no race condition during construction?
-	// Alternative:
-	// evt := createGetNameEvent(id)
-	// this.controlChannel <- evt
-	// return <-evt.channel
 }
 
 // GetIntVar returns a pointer to an IntVar represented by given varId
@@ -491,7 +475,7 @@ func (this *Store) GetStat() *StoreStatistics {
 
 func (this *Store) String() string {
 	s := ""
-	for id, name := range this.iDToName {
+	for id, name := range GetNameRegistry().GetAll() {
 		s += fmt.Sprintf("%s   %s\n", name, this.iDToIntVar[id].Domain)
 	}
 	msg := "---Store-Status---\n"
@@ -505,7 +489,7 @@ func (this *Store) String() string {
 func (this *Store) StringWithSpecVarIds(varids []VarId) string {
 	s := ""
 	for _, id := range varids {
-		if name, k := this.iDToName[id]; k {
+		if name, k := GetNameRegistry().HasName(id); k {
 			s += fmt.Sprintf("%s   %s\n", name, this.iDToIntVar[id].Domain)
 		}
 	}

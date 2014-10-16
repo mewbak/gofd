@@ -16,7 +16,6 @@ type XgtY struct {
 	outCh              chan<- *core.ChangeEvent
 	inCh               <-chan *core.ChangeEntry
 	id                 core.PropId
-	store              *core.Store
 }
 
 func (this *XgtY) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -46,7 +45,6 @@ func (this *XgtY) Register(store *core.Store) {
 
 	this.x_Domain = varidToDomainMap[this.x]
 	this.y_Domain = varidToDomainMap[this.y]
-	this.store = store
 
 	this.iColl = indexical.CreateIndexicalCollection()
 
@@ -106,5 +104,5 @@ func CreateXgtY(x core.VarId, y core.VarId) *XgtY {
 
 func (this *XgtY) String() string {
 	return fmt.Sprintf("PROP_%d %s > %s",
-		this.id, this.store.GetName(this.x), this.store.GetName(this.y))
+		this.id, core.GetNameRegistry().GetName(this.x), core.GetNameRegistry().GetName(this.y))
 }

@@ -16,7 +16,6 @@ type Among struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
-	store            *core.Store
 	lb, ub           int
 	minN, maxN       int
 }
@@ -41,7 +40,7 @@ func (this *Among) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
 		}
 		//handle incoming events and propagate if necessary
 		evt = core.CreateChangeEvent()
@@ -262,7 +261,6 @@ func (this *Among) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(allvars, this.id)
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
-	this.store = store
 }
 
 func (this *Among) SetID(propID core.PropId) {
@@ -287,7 +285,7 @@ func CreateAmong(xi []core.VarId, k []int, n core.VarId) *Among {
 func (this *Among) String() string {
 	var s string
 	for i := 0; i < len(this.xi); i++ {
-		s += this.store.GetName(this.xi[i])
+		s += core.GetNameRegistry().GetName(this.xi[i])
 	}
 	var kstring string
 	for val, _ := range this.k.Values {
@@ -296,7 +294,7 @@ func (this *Among) String() string {
 	return fmt.Sprintf("PROP_AMONG({%s}, {%s}, %s)",
 		s,
 		kstring,
-		this.store.GetName(this.n))
+		core.GetNameRegistry().GetName(this.n))
 }
 
 func (this *Among) GetVarIds() []core.VarId {

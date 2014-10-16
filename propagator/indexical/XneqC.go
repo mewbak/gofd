@@ -35,16 +35,12 @@ func (this *XneqC) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator([]core.VarId{this.x}, this.id)
 
-	this.Init(store, domains)
+	this.Init(domains)
 }
 
-func (this *XneqC) Init(store *core.Store, domains []core.Domain) {
-	this.store = store
-
+func (this *XneqC) Init(domains []core.Domain) {
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
-
 	this.iColl = indexical.CreateIndexicalCollection()
-
 	cTerm := ixterm.CreateValueTerm(this.c)
 	r := ixrange.CreateSingleValueRange(cTerm)
 	negR := ixrange.CreateNotRange(r)
@@ -68,7 +64,7 @@ func (this *XneqC) GetID() core.PropId {
 
 func (this *XneqC) String() string {
 	return fmt.Sprintf("IC_%d %s != %d",
-		this.id, this.store.GetName(this.x), this.c)
+		this.id, core.GetNameRegistry().GetName(this.x), this.c)
 }
 
 func (this *XneqC) GetVarIds() []core.VarId {

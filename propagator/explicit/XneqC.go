@@ -26,7 +26,7 @@ func (this *XneqC) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_Start_'Incoming Change for %s'",
-				this, store.GetName(changeEntry.GetID()))
+				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
 		}
 		evt := core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -57,7 +57,7 @@ func (this *XneqC) Register(store *core.Store) {
 		store.RegisterPropagatorMap([]core.VarId{this.x}, this.id)
 	varidToDomainMap := core.GetVaridToExplicitDomainsMap(domains)
 	this.x_Domain = varidToDomainMap[this.x]
-	this.store = store
+
 }
 
 func (this *XneqC) Clone() core.Constraint {
@@ -87,7 +87,7 @@ func CreateXneqC(x core.VarId, c int) *XneqC {
 
 func (this *XneqC) String() string {
 	return fmt.Sprintf("PROP_%d %s != %d",
-		this.id, this.store.GetName(this.x), this.c)
+		this.id, core.GetNameRegistry().GetName(this.x), this.c)
 }
 
 func (this *XneqC) GetVarIds() []core.VarId {

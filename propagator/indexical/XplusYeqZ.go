@@ -14,9 +14,9 @@ type XplusYeqZ struct {
 	outCh                        chan<- *core.ChangeEvent
 	inCh                         <-chan *core.ChangeEntry
 	id                           core.PropId
-	store                        *core.Store
-	iColl                        *indexical.IndexicalCollection
-	checkingIndexical            *indexical.CheckingIndexical
+
+	iColl             *indexical.IndexicalCollection
+	checkingIndexical *indexical.CheckingIndexical
 }
 
 func (this *XplusYeqZ) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -40,12 +40,12 @@ func (this *XplusYeqZ) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator(allvars, this.id)
 
-	this.Init(store, domains)
+	this.Init(domains)
 }
 
 // MakeXplusYeqZBoundsIndexicals returns indexicals for providing bounds
 // consistency with
-// X in min(Z)-max(Y)..max(Z)-min(Y) 
+// X in min(Z)-max(Y)..max(Z)-min(Y)
 // Y in min(Z)-max(X)..max(Z)-min(X)
 // Z in min(Y)+min(X)..max(Y)+max(X)
 func (this *XplusYeqZ) MakeXplusYeqZBoundsIndexicals() []*indexical.Indexical {
@@ -82,7 +82,7 @@ func (this *XplusYeqZ) MakeXplusYeqZBoundsIndexicals() []*indexical.Indexical {
 // MakeXplusYeqZArcIndexicals returns indexicals for providing arc
 // consistency with
 // X in dom(Z) - dom(Y)
-// Y in dom(Z) - dom(X) 
+// Y in dom(Z) - dom(X)
 // Z in dom(Y) + dom(X)
 func (this *XplusYeqZ) MakeXplusYeqZArcIndexicals() []*indexical.Indexical {
 
@@ -106,8 +106,8 @@ func (this *XplusYeqZ) IsEntailed() bool {
 	return this.checkingIndexical.IsEntailed()
 }
 
-func (this *XplusYeqZ) Init(store *core.Store, domains []core.Domain) {
-	this.store = store
+func (this *XplusYeqZ) Init(domains []core.Domain) {
+
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
 	this.y_Domain = core.GetVaridToIntervalDomain(domains[1])
 	this.z_Domain = core.GetVaridToIntervalDomain(domains[2])
@@ -156,8 +156,8 @@ func (this *XplusYeqZ) Clone() core.Constraint {
 
 func (this *XplusYeqZ) String() string {
 	return fmt.Sprintf("PROP_%d %s + %s = %s",
-		this.id, this.store.GetName(this.x),
-		this.store.GetName(this.y), this.store.GetName(this.z))
+		this.id, core.GetNameRegistry().GetName(this.x),
+		core.GetNameRegistry().GetName(this.y), core.GetNameRegistry().GetName(this.z))
 }
 
 func (this *XplusYeqZ) GetVarIds() []core.VarId {

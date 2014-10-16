@@ -12,7 +12,6 @@ type XgtY struct {
 	inCh               <-chan *core.ChangeEntry
 	x_Domain, y_Domain *core.ExDomain
 	id                 core.PropId
-	store              *core.Store
 }
 
 func (this *XgtY) Clone() core.Constraint {
@@ -35,7 +34,7 @@ func (this *XgtY) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'", this,
-				store.GetName(changeEntry.GetID()))
+				core.GetNameRegistry().GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -105,7 +104,7 @@ func (this *XgtY) Register(store *core.Store) {
 		store.RegisterPropagator([]core.VarId{this.x, this.y}, this.id)
 	this.x_Domain = domains[0].(*core.ExDomain)
 	this.y_Domain = domains[1].(*core.ExDomain)
-	this.store = store
+
 }
 
 func (this *XgtY) SetID(propID core.PropId) {
@@ -129,7 +128,7 @@ func CreateXgtY(x core.VarId, y core.VarId) *XgtY {
 
 func (this *XgtY) String() string {
 	return fmt.Sprintf("PROP_%d %s > %s",
-		this.id, this.store.GetName(this.x), this.store.GetName(this.y))
+		this.id, core.GetNameRegistry().GetName(this.x), core.GetNameRegistry().GetName(this.y))
 }
 
 func (this *XgtY) GetVarIds() []core.VarId {

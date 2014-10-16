@@ -23,7 +23,6 @@ type Alldifferent struct {
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
 	iColl            *indexical.IndexicalCollection
-	store            *core.Store
 }
 
 func (this *Alldifferent) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -45,8 +44,6 @@ func (this *Alldifferent) Register(store *core.Store) {
 		store.RegisterPropagatorMap(this.vars, this.id)
 
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
-
-	this.store = store
 
 	this.iColl = indexical.CreateIndexicalCollection()
 
@@ -86,7 +83,7 @@ func (this *Alldifferent) GetID() core.PropId {
 func (this *Alldifferent) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = this.store.GetName(var_id)
+		vars_str[i] = core.GetNameRegistry().GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s",
 		this.id, strings.Join(vars_str, "!="))

@@ -17,10 +17,10 @@ type WeightedSum struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
-	store            *core.Store
-	iColl            *indexical.IndexicalCollection
-	pseudoPropsXCY   []*XmultCeqY_Rel
-	pseudoPropsXYZ   []*XplusYeqZ_Rel
+
+	iColl          *indexical.IndexicalCollection
+	pseudoPropsXCY []*XmultCeqY_Rel
+	pseudoPropsXYZ []*XplusYeqZ_Rel
 }
 
 func (this *WeightedSum) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -57,8 +57,6 @@ func (this *WeightedSum) Register(store *core.Store) {
 		store.RegisterPropagatorMap(allvars, this.id)
 
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
-
-	this.store = store
 
 	this.iColl = indexical.CreateIndexicalCollection()
 
@@ -137,11 +135,11 @@ func (this *WeightedSum) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
 		vars_str[i] = fmt.Sprintf("%v*%s",
-			this.cs[i], this.store.GetName(var_id))
+			this.cs[i], core.GetNameRegistry().GetName(var_id))
 	}
 	return fmt.Sprintf("PROP_%d %s = %s",
 		this.id, strings.Join(vars_str, "+"),
-		this.store.GetName(this.resultVar))
+		core.GetNameRegistry().GetName(this.resultVar))
 }
 
 func (this *WeightedSum) Clone() core.Constraint {

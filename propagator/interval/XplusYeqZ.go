@@ -12,7 +12,6 @@ type XplusYeqZ struct {
 	inCh                         <-chan *core.ChangeEntry
 	x_Domain, y_Domain, z_Domain *core.IvDomain
 	id                           core.PropId
-	store                        *core.Store
 }
 
 func (this *XplusYeqZ) Clone() core.Constraint {
@@ -67,7 +66,6 @@ func (this *XplusYeqZ) Register(store *core.Store) {
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
 	this.y_Domain = core.GetVaridToIntervalDomain(domains[1])
 	this.z_Domain = core.GetVaridToIntervalDomain(domains[2])
-	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -91,8 +89,8 @@ func CreateXplusYeqZ(x core.VarId, y core.VarId, z core.VarId) *XplusYeqZ {
 
 func (this *XplusYeqZ) String() string {
 	return fmt.Sprintf("PROP_%d %s+%s=%s",
-		this.id, this.store.GetName(this.x), this.store.GetName(this.y),
-		this.store.GetName(this.z))
+		this.id, core.GetNameRegistry().GetName(this.x), core.GetNameRegistry().GetName(this.y),
+		core.GetNameRegistry().GetName(this.z))
 }
 
 func (this *XplusYeqZ) GetVarIds() []core.VarId {
