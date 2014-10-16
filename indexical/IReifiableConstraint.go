@@ -13,7 +13,7 @@ type IReifiableConstraint interface {
 	// Init to initialize a ReifiableConstraint. A ReifiableConstraint doesn't
 	// register itself at the store. The ReifiedConstraints sets Domains and
 	// store with this function.
-	Init(store *core.Store, domains map[core.VarId]*core.IvDomain)
+	Init(store *core.Store, domains []core.Domain)
 	// GetNegation returns the negated Constraints for propagating
 	GetNegation() IReifiableConstraint
 }

@@ -31,13 +31,11 @@ func (this *XeqC) Start(store *core.Store) {
 
 // Register registers the propagator at the store.
 func (this *XeqC) Register(store *core.Store) {
-	var domains map[core.VarId]core.Domain
+	var domains []core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap([]core.VarId{this.x}, this.id)
+		store.RegisterPropagator([]core.VarId{this.x}, this.id)
 
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.Init(store, varidToDomainMap)
+	this.Init(store, domains)
 }
 
 func (this *XeqC) Clone() core.Constraint {
@@ -68,10 +66,10 @@ func (this *XeqC) GetDomains() []core.Domain {
 	return []core.Domain{this.x_Domain}
 }
 
-func (this *XeqC) Init(store *core.Store, domains map[core.VarId]*core.IvDomain) {
+func (this *XeqC) Init(store *core.Store, domains []core.Domain) {
 	this.store = store
 
-	this.x_Domain = domains[this.x]
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
 
 	this.iColl = indexical.CreateIndexicalCollection()
 

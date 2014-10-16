@@ -11,14 +11,14 @@ import (
 // idea: X+Y+Q=Z, --> X+Y=H1, --> H1+Q=Z
 
 type XplusYneqZ struct {
-	x, y, z           core.VarId
-	outCh             chan<- *core.ChangeEvent
-	inCh              <-chan *core.ChangeEntry
-	varidToDomainMap  map[core.VarId]*core.IvDomain
-	id                core.PropId
-	store             *core.Store
-	iColl             *indexical.IndexicalCollection
-	checkingIndexical *indexical.CheckingIndexical
+	x, y, z           				core.VarId
+	x_Domain, y_Domain, z_Domain 	*core.IvDomain
+	outCh             				chan<- *core.ChangeEvent
+	inCh              				<-chan *core.ChangeEntry
+	id                				core.PropId
+	store             				*core.Store
+	iColl             				*indexical.IndexicalCollection
+	checkingIndexical 				*indexical.CheckingIndexical
 }
 
 func (this *XplusYneqZ) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -46,46 +46,38 @@ func (this *XplusYneqZ) GetAllVars() []core.VarId {
 // and all vars will be registered at store and get domains and channels
 func (this *XplusYneqZ) Register(store *core.Store) {
 	allvars := this.GetAllVars()
-	var domains map[core.VarId]core.Domain
+	var domains []core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap(allvars, this.id)
+		store.RegisterPropagator(allvars, this.id)
 
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.Init(store, varidToDomainMap)
+	this.Init(store, domains)
 }
 
 // arc-consistency: X in not(val(Z)-val(Y)), Y in not(val(Z)-val(X)),
 // Z in not(val(X)+val(Y))
-func (this *XplusYneqZ) MakeXplusYneqZArcIndexicals(varidToDomainMap map[core.VarId]*core.IvDomain) []*indexical.Indexical {
-	var xDom, yDom, zDom *core.IvDomain
+func (this *XplusYneqZ) MakeXplusYneqZArcIndexicals() []*indexical.Indexical {
 	indexicals := make([]*indexical.Indexical, 3)
-	X := this.x
-	Y := this.y
-	Z := this.z
-	xDom = varidToDomainMap[X]
-	yDom = varidToDomainMap[Y]
-	zDom = varidToDomainMap[Z]
+
 	// X in not(val(Z)-val(Y))
-	valZ := ixterm.CreateValTerm(Z, zDom)
-	valY := ixterm.CreateValTerm(Y, yDom)
+	valZ := ixterm.CreateValTerm(this.z, this.z_Domain)
+	valY := ixterm.CreateValTerm(this.y, this.y_Domain)
 	subT := ixterm.CreateSubtractionTerm(valZ, valY)
 	notR := ixrange.CreateNotRange(ixrange.CreateSingleValueRange(subT))
-	ind := indexical.CreateIndexical(X, xDom, notR)
+	ind := indexical.CreateIndexical(this.x, this.x_Domain, notR)
 	indexicals[0] = ind
 	//Y in not(val(Z)-val(X))
-	valZ = ixterm.CreateValTerm(Z, zDom)
-	valX := ixterm.CreateValTerm(X, xDom)
+	valZ = ixterm.CreateValTerm(this.z, this.z_Domain)
+	valX := ixterm.CreateValTerm(this.x, this.x_Domain)
 	subT = ixterm.CreateSubtractionTerm(valZ, valX)
 	notR = ixrange.CreateNotRange(ixrange.CreateSingleValueRange(subT))
-	ind = indexical.CreateIndexical(Y, yDom, notR)
+	ind = indexical.CreateIndexical(this.y, this.y_Domain, notR)
 	indexicals[1] = ind
 	//Z in not(val(X)+val(Y))
-	valY = ixterm.CreateValTerm(Y, yDom)
-	valX = ixterm.CreateValTerm(X, xDom)
+	valY = ixterm.CreateValTerm(this.y, this.y_Domain)
+	valX = ixterm.CreateValTerm(this.x, this.x_Domain)
 	addT := ixterm.CreateAdditionTerm(valY, valX)
 	notR = ixrange.CreateNotRange(ixrange.CreateSingleValueRange(addT))
-	ind = indexical.CreateIndexical(Z, zDom, notR)
+	ind = indexical.CreateIndexical(this.z, this.z_Domain, notR)
 	indexicals[2] = ind
 	return indexicals
 }
@@ -94,11 +86,13 @@ func (this *XplusYneqZ) IsEntailed() bool {
 	return this.checkingIndexical.IsEntailed()
 }
 
-func (this *XplusYneqZ) Init(store *core.Store, domains map[core.VarId]*core.IvDomain) {
+func (this *XplusYneqZ) Init(store *core.Store, domains []core.Domain) {
 	this.store = store
-	this.varidToDomainMap = domains
+	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
+	this.y_Domain = core.GetVaridToIntervalDomain(domains[1])
+	this.z_Domain = core.GetVaridToIntervalDomain(domains[2])
 	this.iColl = indexical.CreateIndexicalCollection()
-	arcIndexicals := this.MakeXplusYneqZArcIndexicals(this.varidToDomainMap)
+	arcIndexicals := this.MakeXplusYneqZArcIndexicals()
 	this.checkingIndexical = arcIndexicals[0].GetCheckingIndexical()
 	this.iColl.AddIndexicalsAtPrio(arcIndexicals, indexical.HIGH)
 }
@@ -147,7 +141,7 @@ func (this *XplusYneqZ) GetVarIds() []core.VarId {
 }
 
 func (this *XplusYneqZ) GetDomains() []core.Domain {
-	return core.ValuesOfMapVarIdToIvDomain(this.GetAllVars(), this.varidToDomainMap)
+	return []core.Domain{this.x_Domain,this.y_Domain,this.z_Domain}
 }
 
 func (this *XplusYneqZ) GetInCh() <-chan *core.ChangeEntry {

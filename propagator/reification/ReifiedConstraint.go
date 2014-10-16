@@ -103,20 +103,18 @@ func (this *ReifiedConstraint) Start(store *core.Store) {
 
 // Register registers the propagator at the store.
 func (this *ReifiedConstraint) Register(store *core.Store) {
-	var domains map[core.VarId]core.Domain
+	var domains []core.Domain
 	this.inCh, domains, this.outCh =
-		store.RegisterPropagatorMap(this.GetVarIds(), this.id)
+		store.RegisterPropagator(this.GetVarIds(), this.id)
 
-	varidToDomainMap := core.GetVaridToIntervalDomains(domains)
-
-	this.b_Domain = varidToDomainMap[this.b]
+	this.b_Domain = core.GetVaridToIntervalDomain(domains[0])
 
 	if this.b_Domain.GetMax() > 1 || this.b_Domain.GetMin() < 0 {
 		panic("Reified Constraint: bool-Domain has invalid values (must be 0 and/or 1)!")
 	}
 
-	this.c.Init(store, varidToDomainMap)
-	this.negC.Init(store, varidToDomainMap)
+	this.c.Init(store, domains[1:])
+	this.negC.Init(store, domains[1:])
 	this.store = store
 }
 
