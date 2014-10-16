@@ -31,9 +31,9 @@ func (*NameRegistry) HasName(id VarId) (string, bool) {
 
 // SetName sets the human readable name for VarId id
 func (*NameRegistry) SetName(id VarId, name string) {
-	if _, exists := nr.iDToName[id]; exists{
-		panic("Same varId may not be used twice") 	
-	}else{
+	if _, exists := nr.iDToName[id]; exists {
+		panic("Same varId may not be used twice")
+	} else {
 		nr.iDToName[id] = name
 	}
 }

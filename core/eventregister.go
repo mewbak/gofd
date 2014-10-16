@@ -41,7 +41,6 @@ func registerOneIntVar(store *Store, name string, intvar *IntVar) VarId {
 	if name == "" {
 		name = store.generateAuxVariableName(varId) // provide a name
 	}
-	
 	GetNameRegistry().SetName(intvar.ID, name)
 	if logger.DoDebug() {
 		logger.Df("STORE_register[Aux]IntVar: %d, %s", varId, name)
