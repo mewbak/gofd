@@ -9,14 +9,14 @@ import (
 )
 
 type XplusYeqZ struct {
-	x, y, z           				core.VarId
-	x_Domain, y_Domain, z_Domain 	*core.IvDomain
-	outCh             				chan<- *core.ChangeEvent
-	inCh              				<-chan *core.ChangeEntry
-	id                				core.PropId
-	store             				*core.Store
-	iColl             				*indexical.IndexicalCollection
-	checkingIndexical 				*indexical.CheckingIndexical
+	x, y, z                      core.VarId
+	x_Domain, y_Domain, z_Domain *core.IvDomain
+	outCh                        chan<- *core.ChangeEvent
+	inCh                         <-chan *core.ChangeEntry
+	id                           core.PropId
+	store                        *core.Store
+	iColl                        *indexical.IndexicalCollection
+	checkingIndexical            *indexical.CheckingIndexical
 }
 
 func (this *XplusYeqZ) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -39,7 +39,7 @@ func (this *XplusYeqZ) Register(store *core.Store) {
 	var domains []core.Domain
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator(allvars, this.id)
-	
+
 	this.Init(store, domains)
 }
 
@@ -78,7 +78,7 @@ func (this *XplusYeqZ) MakeXplusYeqZBoundsIndexicals() []*indexical.Indexical {
 
 // arc-consistency: X in dom(Z) - dom(Y), Y in dom(Z) - dom(X), Z in dom(Y) + dom(X)
 func (this *XplusYeqZ) MakeXplusYeqZArcIndexicals() []*indexical.Indexical {
-	
+
 	indexicals := make([]*indexical.Indexical, 3)
 	domXRange := ixrange.CreateDomRange(this.x, this.x_Domain)
 	domYRange := ixrange.CreateDomRange(this.y, this.y_Domain)
@@ -158,7 +158,7 @@ func (this *XplusYeqZ) GetVarIds() []core.VarId {
 }
 
 func (this *XplusYeqZ) GetDomains() []core.Domain {
-	return []core.Domain{this.x_Domain,this.y_Domain,this.z_Domain}
+	return []core.Domain{this.x_Domain, this.y_Domain, this.z_Domain}
 }
 
 func (this *XplusYeqZ) GetInCh() <-chan *core.ChangeEntry {

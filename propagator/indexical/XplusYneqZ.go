@@ -11,14 +11,14 @@ import (
 // idea: X+Y+Q=Z, --> X+Y=H1, --> H1+Q=Z
 
 type XplusYneqZ struct {
-	x, y, z           				core.VarId
-	x_Domain, y_Domain, z_Domain 	*core.IvDomain
-	outCh             				chan<- *core.ChangeEvent
-	inCh              				<-chan *core.ChangeEntry
-	id                				core.PropId
-	store             				*core.Store
-	iColl             				*indexical.IndexicalCollection
-	checkingIndexical 				*indexical.CheckingIndexical
+	x, y, z                      core.VarId
+	x_Domain, y_Domain, z_Domain *core.IvDomain
+	outCh                        chan<- *core.ChangeEvent
+	inCh                         <-chan *core.ChangeEntry
+	id                           core.PropId
+	store                        *core.Store
+	iColl                        *indexical.IndexicalCollection
+	checkingIndexical            *indexical.CheckingIndexical
 }
 
 func (this *XplusYneqZ) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -141,7 +141,7 @@ func (this *XplusYneqZ) GetVarIds() []core.VarId {
 }
 
 func (this *XplusYneqZ) GetDomains() []core.Domain {
-	return []core.Domain{this.x_Domain,this.y_Domain,this.z_Domain}
+	return []core.Domain{this.x_Domain, this.y_Domain, this.z_Domain}
 }
 
 func (this *XplusYneqZ) GetInCh() <-chan *core.ChangeEntry {
