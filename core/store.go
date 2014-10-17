@@ -196,7 +196,7 @@ func (this *Store) RegisterPropagatorMap(varIds []VarId,
 	inCh, domains, outCh := this.RegisterPropagator(varIds, propId)
 	domainsMap := make(map[VarId]Domain, len(varIds))
 	for i, varId := range varIds {
-		domainsMap[varId] = domains[i].Copy()
+		domainsMap[varId] = domains[i]
 	}
 	return inCh, domainsMap, outCh
 }
