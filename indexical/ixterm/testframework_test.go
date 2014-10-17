@@ -57,7 +57,7 @@ func domainEquals_test(t *testing.T, test string, id core.VarId, values []int) {
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
 		msg := "%s %s: Domain calculated = %v, want %v"
-		t.Errorf(msg, test, core.GetNameRegistry().GetName(id), got.String(), want.String())
+		t.Errorf(msg, test, store.GetName(id), got.String(), want.String())
 	}
 }
 
@@ -66,7 +66,7 @@ func DomainEquals_test(t *testing.T, test string, id core.VarId,
 	got := store.GetDomain(id)
 	if !got.Equals(want) {
 		msg := "%s %s: Domain calculated = %v, want %v"
-		t.Errorf(msg, test, core.GetNameRegistry().GetName(id), got.String(), want.String())
+		t.Errorf(msg, test, store.GetName(id), got.String(), want.String())
 	}
 }
 

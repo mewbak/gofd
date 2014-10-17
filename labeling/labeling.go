@@ -95,7 +95,7 @@ func fix(store *core.Store, resultQuery ResultQuery,
 			if loggerDoInfo {
 				for _, id := range store.GetVariableIDs() {
 					logger.If("Variable %s (id=%v) assigned to %v",
-					core.GetNameRegistry().GetName(id), id, store.GetDomain(id))
+					store.GetName(id), id, store.GetDomain(id))
 				}
 			}
 			return resultQuery.onResult(store)

@@ -22,6 +22,7 @@ func Test_XgtY1(t *testing.T) {
 	setup()
 	defer teardown()
 	log("XgtY1: X>Y, X:0..9, Y:0..9")
+
 	xinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	yinit := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	expx := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}

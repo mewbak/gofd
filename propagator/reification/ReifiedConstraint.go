@@ -113,9 +113,9 @@ func (this *ReifiedConstraint) Register(store *core.Store) {
 		panic("Reified Constraint: bool-Domain has invalid values (must be 0 and/or 1)!")
 	}
 
-	this.c.Init(domains[1:])
-	this.negC.Init(domains[1:])
-
+	this.c.Init(store, domains[1:])
+	this.negC.Init(store, domains[1:])
+	this.store = store
 }
 
 func (this *ReifiedConstraint) SetID(propID core.PropId) {

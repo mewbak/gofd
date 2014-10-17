@@ -23,11 +23,13 @@ type Sum struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
+	store            *core.Store
 	pseudoProps      []*PseudoXplusYeqZ //with pseudoFinalProp
 }
 
 func (this *Sum) Start(store *core.Store) {
 	core.LogInitConsistency(this)
+
 	// initial check
 	evt := core.CreateChangeEvent()
 	this.ivsumInitialCheck(evt)
@@ -136,6 +138,7 @@ func (this *Sum) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(allvars, this.id)
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -199,11 +202,11 @@ func (this *Sum) Clone() core.Constraint {
 func (this *Sum) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = core.GetNameRegistry().GetName(var_id)
+		vars_str[i] = this.store.GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s = %s",
 		this.id, strings.Join(vars_str, "+"),
-		core.GetNameRegistry().GetName(this.resultVar))
+		this.store.GetName(this.resultVar))
 }
 
 //propagate-functions

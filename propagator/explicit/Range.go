@@ -19,6 +19,7 @@ type Range struct {
 	xi_Domains         map[core.VarId]core.Domain
 	s_Domain, t_Domain core.Domain
 	id                 core.PropId
+	store              *core.Store
 }
 
 func (this *Range) Clone() core.Constraint {
@@ -38,7 +39,7 @@ func (this *Range) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -175,7 +176,7 @@ func (this *Range) Register(store *core.Store) {
 	}
 	this.s_Domain = domains[len(idSlice)-2]
 	this.t_Domain = domains[len(idSlice)-1]
-
+	this.store = store
 }
 
 func (this *Range) SetID(propID core.PropId) {
@@ -200,12 +201,12 @@ func CreateRange(xi []core.VarId, s core.VarId, t core.VarId) *Range {
 func (this *Range) String() string {
 	var s string
 	for i := 0; i < len(this.xi); i++ {
-		s += core.GetNameRegistry().GetName(this.xi[i])
+		s += this.store.GetName(this.xi[i])
 	}
 	return fmt.Sprintf("PROP_RANGE({%s}, {%s}, %s)",
 		s,
-		core.GetNameRegistry().GetName(this.s),
-		core.GetNameRegistry().GetName(this.t))
+		this.store.GetName(this.s),
+		this.store.GetName(this.t))
 }
 
 func (this *Range) GetVarIds() []core.VarId {

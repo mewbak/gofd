@@ -24,6 +24,7 @@ type AllDistinct struct {
 	// for each value in nonGroundValues in which variables it occurs
 	witness map[int]map[core.VarId]bool
 	id      core.PropId
+	store   *core.Store
 }
 
 func (this *AllDistinct) Start(store *core.Store) {
@@ -40,7 +41,7 @@ func (this *AllDistinct) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+				this, store.GetName(changeEntry.GetID()))
 		}
 		varidChanged := changeEntry.GetID()
 		evt = core.CreateChangeEvent()
@@ -63,7 +64,7 @@ func (this *AllDistinct) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(this.vars, this.id)
 	this.varidToDomainMap = core.GetVaridToExplicitDomainsMap(domains)
-
+	this.store = store
 }
 
 // SetID is only used by the store to set the propagator's ID
@@ -78,7 +79,7 @@ func (this *AllDistinct) GetID() core.PropId {
 func (this *AllDistinct) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = core.GetNameRegistry().GetName(var_id)
+		vars_str[i] = this.store.GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s",
 		this.id, strings.Join(vars_str, "!!="))
@@ -88,7 +89,7 @@ func (this *AllDistinct) StringDomains() string {
 	vars_domains_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
 		vars_domains_str[i] = fmt.Sprintf("%s{%s} ",
-			core.GetNameRegistry().GetName(var_id),
+			this.store.GetName(var_id),
 			this.varidToDomainMap[var_id].String())
 	}
 	return fmt.Sprintf("PROP_%d %s\n  nonGVars %d, nonGValues %s",

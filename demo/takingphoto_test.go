@@ -139,7 +139,7 @@ func DoAlignInOneRow(t *testing.T, minSatisfyingConstraints int, expReady bool) 
 			if varid == B || varid == C || varid == D || varid == F ||
 				varid == G || varid == M || varid == P {
 				logger.Iln(fmt.Sprintf("%s: %v",
-					core.GetNameRegistry().GetName(varid), value))
+					store.GetName(varid), value))
 			}
 		}
 	}
@@ -180,7 +180,7 @@ func DoAlignInOneRowVERYSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 		for varid, value := range set[0] {
 			if varid == B || varid == C {
 				logger.Iln(fmt.Sprintf("%s: %v",
-					core.GetNameRegistry().GetName(varid), value))
+					store.GetName(varid), value))
 			}
 		}
 	}
@@ -224,7 +224,7 @@ func DoAlignInOneRowSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 		for varid, value := range set[0] {
 			if varid == B || varid == C || varid == D {
 				logger.Iln(fmt.Sprintf("%s: %v",
-					core.GetNameRegistry().GetName(varid), value))
+					store.GetName(varid), value))
 			}
 		}
 	}

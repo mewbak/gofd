@@ -18,6 +18,7 @@ type Alldifferent_Offset struct {
 	varidToOffsetMap map[core.VarId]int
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
+	store            *core.Store
 }
 
 func (this *Alldifferent_Offset) Start(store *core.Store) {
@@ -111,6 +112,7 @@ func (this *Alldifferent_Offset) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(this.vars, this.id)
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -127,7 +129,7 @@ func (this *Alldifferent_Offset) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
 		vars_str[i] = fmt.Sprintf("%d*%s",
-			this.varidToOffsetMap[var_id], core.GetNameRegistry().GetName(var_id))
+			this.varidToOffsetMap[var_id], this.store.GetName(var_id))
 	}
 	return fmt.Sprintf("PROP_Alldifferent_Offset %d %s",
 		this.id, strings.Join(vars_str, ", "))

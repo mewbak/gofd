@@ -16,9 +16,9 @@ type Sum struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.ExDomain
 	id               core.PropId
-
-	pseudoProps []*XPlusYEqZ
-	finalProp   *XplusCeqY
+	store            *core.Store
+	pseudoProps      []*XPlusYEqZ
+	finalProp        *XplusCeqY
 }
 
 func (this *Sum) Start(store *core.Store) {
@@ -33,7 +33,7 @@ func (this *Sum) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()
@@ -111,7 +111,7 @@ func (this *Sum) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(allvars, this.id)
 	this.varidToDomainMap = core.GetVaridToExplicitDomainsMap(domains)
-
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -169,11 +169,11 @@ func (this *Sum) Clone() core.Constraint {
 func (this *Sum) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = core.GetNameRegistry().GetName(var_id)
+		vars_str[i] = this.store.GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s = %s",
 		this.id, strings.Join(vars_str, "+"),
-		core.GetNameRegistry().GetName(this.resultVar))
+		this.store.GetName(this.resultVar))
 }
 
 //propagate-functions

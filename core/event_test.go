@@ -118,7 +118,7 @@ func Test_ChangeEvent(t *testing.T) {
 	}
 }
 
-/*func Test_GetNameEvent(t *testing.T) {
+func Test_GetNameEvent(t *testing.T) {
 	setup()
 	defer teardown()
 	log("GetNameEvent")
@@ -137,11 +137,11 @@ func Test_ChangeEvent(t *testing.T) {
 		t.Errorf("GetNameEvent.Name: got %s, want %s", name, "X")
 	}
 	// through public API, which is implemented by direct access
-	name = GetNameRegistry().GetName(Yid)
+	name = store.GetName(Yid)
 	if name != "Y" {
 		t.Errorf("GetNameEvent.Name: got %s, want %s", name, "Y")
 	}
-}*/
+}
 
 func Test_GetNewIdEvent(t *testing.T) {
 	setup()

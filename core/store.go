@@ -423,6 +423,17 @@ func (this *Store) getVariableIDs() []VarId {
 	return value_slice
 }
 
+// GetName returns the name of the IntVar with the given id
+func (this *Store) GetName(id VarId) string {
+	// It is safe to do directly as names never change
+	return this.registryStore.GetVarName(id)
+	// ToDo: really no race condition during construction?
+	// Alternative:
+	// evt := createGetNameEvent(id)
+	// this.controlChannel <- evt
+	// return <-evt.channel
+}
+
 // GetIntVar returns a pointer to an IntVar represented by given varId
 func (this *Store) GetIntVar(id VarId) (*IntVar, bool) {
 	evt := createGetIntVarEvent(id)

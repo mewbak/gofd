@@ -37,7 +37,7 @@ func Test_GetSetHasName(t *testing.T) {
 		t.Error("RegistryStore.GetName/SetName works incorrectly")
 	}
 
-	v, k := nr.HasVarName(1)
+	v, k := rs.HasVarName(1)
 	if !k || v != "X" {
 		t.Error("RegistryStore.HasName worked incorrectly")
 	}

@@ -42,7 +42,7 @@ func (this *Among) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
 		}
 		// handle incoming events and propagate if necessary
 		evt = core.CreateChangeEvent()
@@ -269,7 +269,7 @@ func (this *Among) Register(store *core.Store) {
 		this.xi_Domains[idSlice[i]] = ds[i]
 	}
 	this.n_Domain = domains[i].(*core.ExDomain)
-
+	this.store = store
 }
 
 func (this *Among) SetID(propID core.PropId) {
@@ -294,7 +294,7 @@ func CreateAmong(xi []core.VarId, k []int, n core.VarId) *Among {
 func (this *Among) String() string {
 	var s string
 	for i := 0; i < len(this.xi); i++ {
-		s += core.GetNameRegistry().GetName(this.xi[i])
+		s += this.store.GetName(this.xi[i])
 	}
 	var kstring string
 	for val, _ := range this.k.Values {
@@ -303,7 +303,7 @@ func (this *Among) String() string {
 	return fmt.Sprintf("PROP_AMONG({%s}, {%s}, %s)",
 		s,
 		kstring,
-		core.GetNameRegistry().GetName(this.n))
+		this.store.GetName(this.n))
 }
 
 func (this *Among) GetVarIds() []core.VarId {

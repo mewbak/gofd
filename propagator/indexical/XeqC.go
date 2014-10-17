@@ -35,7 +35,7 @@ func (this *XeqC) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator([]core.VarId{this.x}, this.id)
 
-	this.Init(domains)
+	this.Init(store, domains)
 }
 
 func (this *XeqC) Clone() core.Constraint {
@@ -55,7 +55,7 @@ func (this *XeqC) GetID() core.PropId {
 
 func (this *XeqC) String() string {
 	return fmt.Sprintf("XeqC_%d %s = %d",
-		this.id, core.GetNameRegistry().GetName(this.x), this.c)
+		this.id, this.store.GetName(this.x), this.c)
 }
 
 func (this *XeqC) GetVarIds() []core.VarId {
@@ -66,9 +66,13 @@ func (this *XeqC) GetDomains() []core.Domain {
 	return []core.Domain{this.x_Domain}
 }
 
-func (this *XeqC) Init(domains []core.Domain) {
+func (this *XeqC) Init(store *core.Store, domains []core.Domain) {
+	this.store = store
+
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
+
 	this.iColl = indexical.CreateIndexicalCollection()
+
 	cTerm := ixterm.CreateValueTerm(this.c)
 	r := ixrange.CreateSingleValueRange(cTerm)
 	this.iColl.CreateAndAddIndexical(this.x, this.x_Domain, r, indexical.HIGHEST)

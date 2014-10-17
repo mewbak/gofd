@@ -21,6 +21,7 @@ type WeightedSumBounds struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
+	store            *core.Store
 	pseudoPropsXCY   []*PseudoXmultCeqY
 	pseudoPropsXYZ   []*PseudoXplusYeqZ
 	consistency      int
@@ -115,6 +116,7 @@ func (this *WeightedSumBounds) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(allvars, this.id)
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -166,11 +168,11 @@ func (this *WeightedSumBounds) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
 		vars_str[i] = fmt.Sprintf("%v*%s",
-			this.cs[i], core.GetNameRegistry().GetName(var_id))
+			this.cs[i], this.store.GetName(var_id))
 	}
 	return fmt.Sprintf("PROP_%d %s = %s",
 		this.id, strings.Join(vars_str, "+"),
-		core.GetNameRegistry().GetName(this.resultVar))
+		this.store.GetName(this.resultVar))
 }
 
 func (this *WeightedSumBounds) Clone() core.Constraint {

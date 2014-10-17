@@ -18,6 +18,7 @@ type Roots struct {
 	xi_Domains         map[core.VarId]core.Domain
 	s_Domain, t_Domain core.Domain
 	id                 core.PropId
+	store              *core.Store
 }
 
 func (this *Roots) Clone() core.Constraint {
@@ -37,7 +38,7 @@ func (this *Roots) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -159,7 +160,7 @@ func (this *Roots) Register(store *core.Store) {
 	}
 	this.s_Domain = domains[len(idSlice)-2]
 	this.t_Domain = domains[len(idSlice)-1]
-
+	this.store = store
 }
 
 func (this *Roots) SetID(propID core.PropId) {
@@ -184,12 +185,12 @@ func CreateRoots(xi []core.VarId, s core.VarId, t core.VarId) *Roots {
 func (this *Roots) String() string {
 	var s string
 	for i := 0; i < len(this.xi); i++ {
-		s += core.GetNameRegistry().GetName(this.xi[i])
+		s += this.store.GetName(this.xi[i])
 	}
 	return fmt.Sprintf("PROP_ROOTS({%s}, {%s}, %s)",
 		s,
-		core.GetNameRegistry().GetName(this.s),
-		core.GetNameRegistry().GetName(this.t))
+		this.store.GetName(this.s),
+		this.store.GetName(this.t))
 }
 
 func (this *Roots) GetVarIds() []core.VarId {

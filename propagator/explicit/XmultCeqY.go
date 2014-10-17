@@ -13,6 +13,7 @@ type XmultCeqY struct {
 	inCh               <-chan *core.ChangeEntry
 	x_Domain, y_Domain *core.ExDomain
 	id                 core.PropId
+	store              *core.Store
 }
 
 func (this *XmultCeqY) Clone() core.Constraint {
@@ -36,7 +37,7 @@ func (this *XmultCeqY) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'", this,
-				core.GetNameRegistry().GetName(changeEntry.GetID()))
+				store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -104,7 +105,7 @@ func (this *XmultCeqY) Register(store *core.Store) {
 	varidToDomainMap := core.GetVaridToExplicitDomainsMap(domains)
 	this.x_Domain = varidToDomainMap[this.x]
 	this.y_Domain = varidToDomainMap[this.y]
-
+	this.store = store
 }
 
 func (this *XmultCeqY) SetID(propID core.PropId) {
@@ -128,8 +129,8 @@ func CreateXmultCeqY(x core.VarId, c int, y core.VarId) *XmultCeqY {
 
 func (this *XmultCeqY) String() string {
 	return fmt.Sprintf("PROP_%d  %s*%d = %s",
-		this.id, core.GetNameRegistry().GetName(this.x), this.c,
-		core.GetNameRegistry().GetName(this.y))
+		this.id, this.store.GetName(this.x), this.c,
+		this.store.GetName(this.y))
 }
 
 func (this *XmultCeqY) GetVarIds() []core.VarId {

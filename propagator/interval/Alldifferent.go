@@ -20,10 +20,12 @@ type Alldifferent struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.IvDomain
 	id               core.PropId
+	store            *core.Store
 }
 
 func (this *Alldifferent) Start(store *core.Store) {
 	core.LogInitConsistency(this)
+
 	// initial check
 	evt := core.CreateChangeEvent()
 	this.initialCheck(evt)
@@ -56,6 +58,7 @@ func (this *Alldifferent) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(this.vars, this.id)
 	this.varidToDomainMap = core.GetVaridToIntervalDomains(domains)
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -71,7 +74,7 @@ func (this *Alldifferent) GetID() core.PropId {
 func (this *Alldifferent) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
-		vars_str[i] = core.GetNameRegistry().GetName(var_id)
+		vars_str[i] = this.store.GetName(var_id)
 	}
 	return fmt.Sprintf("PROP_%d %s",
 		this.id, strings.Join(vars_str, "!="))

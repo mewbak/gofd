@@ -15,10 +15,10 @@ type WeightedSum struct {
 	inCh             <-chan *core.ChangeEntry
 	varidToDomainMap map[core.VarId]*core.ExDomain
 	id               core.PropId
-
-	pseudoPropsXCY []*XmultCeqY
-	pseudoPropsXYZ []*XPlusYEqZ
-	finalProp      *XplusCeqY
+	store            *core.Store
+	pseudoPropsXCY   []*XmultCeqY
+	pseudoPropsXYZ   []*XPlusYEqZ
+	finalProp        *XplusCeqY
 }
 
 func (this *WeightedSum) Start(store *core.Store) {
@@ -35,7 +35,7 @@ func (this *WeightedSum) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+				this, store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()
@@ -105,7 +105,7 @@ func (this *WeightedSum) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagatorMap(allvars, this.id)
 	this.varidToDomainMap = core.GetVaridToExplicitDomainsMap(domains)
-
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID, don't use it
@@ -153,11 +153,11 @@ func (this *WeightedSum) String() string {
 	vars_str := make([]string, len(this.vars))
 	for i, var_id := range this.vars {
 		vars_str[i] = fmt.Sprintf("%v*%s",
-			this.cs[i], core.GetNameRegistry().GetName(var_id))
+			this.cs[i], this.store.GetName(var_id))
 	}
 	return fmt.Sprintf("PROP_%d %s = %s",
 		this.id, strings.Join(vars_str, "+"),
-		core.GetNameRegistry().GetName(this.resultVar))
+		this.store.GetName(this.resultVar))
 }
 
 func (this *WeightedSum) Clone() core.Constraint {

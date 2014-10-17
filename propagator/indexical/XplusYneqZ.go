@@ -16,9 +16,9 @@ type XplusYneqZ struct {
 	outCh                        chan<- *core.ChangeEvent
 	inCh                         <-chan *core.ChangeEntry
 	id                           core.PropId
-
-	iColl             *indexical.IndexicalCollection
-	checkingIndexical *indexical.CheckingIndexical
+	store                        *core.Store
+	iColl                        *indexical.IndexicalCollection
+	checkingIndexical            *indexical.CheckingIndexical
 }
 
 func (this *XplusYneqZ) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -50,7 +50,7 @@ func (this *XplusYneqZ) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator(allvars, this.id)
 
-	this.Init(domains)
+	this.Init(store, domains)
 }
 
 // MakeXplusYneqZArcIndexicals returns indexicals for providing arc
@@ -89,8 +89,8 @@ func (this *XplusYneqZ) IsEntailed() bool {
 	return this.checkingIndexical.IsEntailed()
 }
 
-func (this *XplusYneqZ) Init(domains []core.Domain) {
-
+func (this *XplusYneqZ) Init(store *core.Store, domains []core.Domain) {
+	this.store = store
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
 	this.y_Domain = core.GetVaridToIntervalDomain(domains[1])
 	this.z_Domain = core.GetVaridToIntervalDomain(domains[2])
@@ -135,8 +135,8 @@ func (this *XplusYneqZ) Clone() core.Constraint {
 
 func (this *XplusYneqZ) String() string {
 	return fmt.Sprintf("PROP_%d %s + %s = %s",
-		this.id, core.GetNameRegistry().GetName(this.x),
-		core.GetNameRegistry().GetName(this.y), core.GetNameRegistry().GetName(this.z))
+		this.id, this.store.GetName(this.x),
+		this.store.GetName(this.y), this.store.GetName(this.z))
 }
 
 func (this *XplusYneqZ) GetVarIds() []core.VarId {

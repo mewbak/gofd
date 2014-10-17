@@ -18,6 +18,7 @@ type XplusCeqY struct {
 	outCh              chan<- *core.ChangeEvent
 	inCh               <-chan *core.ChangeEntry
 	id                 core.PropId
+	store              *core.Store
 }
 
 func (this *XplusCeqY) GetIndexicalCollection() *indexical.IndexicalCollection {
@@ -47,6 +48,7 @@ func (this *XplusCeqY) Register(store *core.Store) {
 
 	this.x_Domain = varidToDomainMap[this.x]
 	this.y_Domain = varidToDomainMap[this.y]
+	this.store = store
 
 	this.iColl = indexical.CreateIndexicalCollection()
 
@@ -129,8 +131,8 @@ func (this *XplusCeqY) GetOutCh() chan<- *core.ChangeEvent {
 
 func (this *XplusCeqY) String() string {
 	return fmt.Sprintf("PROP_%d %s+%d = %s",
-		this.id, core.GetNameRegistry().GetName(this.x), this.c,
-		core.GetNameRegistry().GetName(this.y))
+		this.id, this.store.GetName(this.x), this.c,
+		this.store.GetName(this.y))
 }
 
 //X+C=Z

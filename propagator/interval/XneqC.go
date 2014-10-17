@@ -13,6 +13,7 @@ type XneqC struct {
 	inCh     <-chan *core.ChangeEntry
 	x_Domain *core.IvDomain
 	id       core.PropId
+	store    *core.Store
 }
 
 func (this *XneqC) Start(store *core.Store) {
@@ -26,7 +27,7 @@ func (this *XneqC) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_Start_'Incoming Change for %s'",
-				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+				this, store.GetName(changeEntry.GetID()))
 		}
 		evt := core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -56,6 +57,7 @@ func (this *XneqC) Register(store *core.Store) {
 	this.inCh, domains, this.outCh =
 		store.RegisterPropagator([]core.VarId{this.x}, this.id)
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
+	this.store = store
 }
 
 func (this *XneqC) Clone() core.Constraint {
@@ -85,7 +87,7 @@ func CreateXneqC(x core.VarId, c int) *XneqC {
 
 func (this *XneqC) String() string {
 	return fmt.Sprintf("PROP_%d %s != %d",
-		this.id, core.GetNameRegistry().GetName(this.x), this.c)
+		this.id, this.store.GetName(this.x), this.c)
 }
 
 func (this *XneqC) GetVarIds() []core.VarId {

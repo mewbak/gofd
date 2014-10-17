@@ -13,6 +13,7 @@ type XplusCneqY struct {
 	inCh               <-chan *core.ChangeEntry
 	x_Domain, y_Domain *core.IvDomain
 	id                 core.PropId
+	store              *core.Store
 }
 
 func (this *XplusCneqY) Clone() core.Constraint {
@@ -79,6 +80,7 @@ func (this *XplusCneqY) Register(store *core.Store) {
 		store.RegisterPropagator([]core.VarId{this.x, this.y}, this.id)
 	this.x_Domain = core.GetVaridToIntervalDomain(domains[0])
 	this.y_Domain = core.GetVaridToIntervalDomain(domains[1])
+	this.store = store
 }
 
 func (this *XplusCneqY) SetID(propID core.PropId) {
@@ -101,7 +103,7 @@ func CreateXplusCneqY(x core.VarId, c int, y core.VarId) *XplusCneqY {
 
 func (this *XplusCneqY) String() string {
 	return fmt.Sprintf("PROP_%d %s + %d != %s", this.id,
-		core.GetNameRegistry().GetName(this.x), this.c, core.GetNameRegistry().GetName(this.y))
+		this.store.GetName(this.x), this.c, this.store.GetName(this.y))
 }
 
 func (this *XplusCneqY) GetVarIds() []core.VarId {

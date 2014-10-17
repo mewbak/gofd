@@ -11,13 +11,13 @@ func Test_BasicVarNameTest(t *testing.T) {
 	defer teardown()
 	log("BasicVarNameTest")
 	X := CreateIntVarValues("_X", store, []int{1, 2, 3})
-	if "_X" == GetNameRegistry().GetName(X) {
+	if "_X" == store.GetName(X) {
 		t.Errorf("CreateIntVarValues: GetNameRegistry().GetName() == '%v'"+
 			", want != '%v'",
 			"_X", "_X")
 	}
 	Y := CreateIntVarValues("", store, []int{1, 2, 3})
-	if "" == GetNameRegistry().GetName(Y) {
+	if "" == store.GetName(Y) {
 		t.Errorf("CreateIntVarValues: GetNameRegistry().GetName() == '%v'"+
 			", want !='%v'",
 			"", "")

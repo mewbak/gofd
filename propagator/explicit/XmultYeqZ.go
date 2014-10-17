@@ -12,6 +12,7 @@ type XmultYeqZ struct {
 	inCh                         <-chan *core.ChangeEntry
 	x_Domain, y_Domain, z_Domain *core.ExDomain
 	id                           core.PropId
+	store                        *core.Store
 }
 
 func (this *XmultYeqZ) Clone() core.Constraint {
@@ -35,7 +36,7 @@ func (this *XmultYeqZ) Start(store *core.Store) {
 		// println("X_MULT_Y_EQ_Z")
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+				this, store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -151,7 +152,7 @@ func (this *XmultYeqZ) Register(store *core.Store) {
 	this.x_Domain = varidToDomainMap[this.x]
 	this.y_Domain = varidToDomainMap[this.y]
 	this.z_Domain = varidToDomainMap[this.z]
-
+	this.store = store
 }
 
 // SetID is used by the store to set the propagator's ID,
@@ -175,8 +176,8 @@ func CreateXmultYeqZ(x core.VarId, y core.VarId, z core.VarId) *XmultYeqZ {
 
 func (this *XmultYeqZ) String() string {
 	return fmt.Sprintf("PROP_%d %s*%s=%s", this.id,
-		core.GetNameRegistry().GetName(this.x), core.GetNameRegistry().GetName(this.y),
-		core.GetNameRegistry().GetName(this.z))
+		this.store.GetName(this.x), this.store.GetName(this.y),
+		this.store.GetName(this.z))
 }
 
 func (this *XmultYeqZ) GetVarIds() []core.VarId {

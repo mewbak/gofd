@@ -13,6 +13,7 @@ type XplusCneqY struct {
 	inCh               <-chan *core.ChangeEntry
 	x_Domain, y_Domain *core.ExDomain
 	id                 core.PropId
+	store              *core.Store
 }
 
 func (this *XplusCneqY) Clone() core.Constraint {
@@ -36,7 +37,7 @@ func (this *XplusCneqY) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, core.GetNameRegistry().GetName(changeEntry.GetID()))
+				this, store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
@@ -90,7 +91,7 @@ func (this *XplusCneqY) Register(store *core.Store) {
 	varidToDomainMap := core.GetVaridToExplicitDomainsMap(domains)
 	this.x_Domain = varidToDomainMap[this.x]
 	this.y_Domain = varidToDomainMap[this.y]
-
+	this.store = store
 }
 
 func (this *XplusCneqY) SetID(propID core.PropId) {
@@ -113,7 +114,7 @@ func CreateXplusCneqY(x core.VarId, c int, y core.VarId) *XplusCneqY {
 
 func (this *XplusCneqY) String() string {
 	return fmt.Sprintf("PROP_%d %s + %d != %s", this.id,
-		core.GetNameRegistry().GetName(this.x), this.c, core.GetNameRegistry().GetName(this.y))
+		this.store.GetName(this.x), this.c, this.store.GetName(this.y))
 }
 
 func (this *XplusCneqY) GetVarIds() []core.VarId {
