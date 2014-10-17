@@ -94,6 +94,7 @@ func (this *Store) close() {
 	if this.closed { // already closed
 		return
 	}
+
 	for propId, varIdSet := range this.propVarIds {
 		for varId := range varIdSet {
 			// propagator no longer listens to variable
@@ -116,6 +117,10 @@ func (this *Store) close() {
 	// longer a nil or deadlock, but for e.g. nqueens I get more solutions...
 	// this.iDToIntVar = make(map[VarId]*IntVar)
 	this.closed = true
+
+	if logger.DoDebug() {
+		logger.Df("STORE_Closed\r\n%s", this)
+	}
 }
 
 // IsConsistent checks whether the store is consistent by asking for

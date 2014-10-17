@@ -43,6 +43,10 @@ func Labeling(store *core.Store, resultQuery ResultQuery,
 		statSearch.setInitialVars(statStore.GetActVariables())
 	}
 	fix(newStore, resultQuery, strategy, varSelect)
+	logger := core.GetLogger()
+	if logger.DoDebug() {
+		logger.Dln("LABELING_Finished")
+	}
 	store.Close()
 	return resultQuery.getResultStatus()
 }
@@ -54,26 +58,25 @@ func fix(store *core.Store, resultQuery ResultQuery,
 	varSelect func(store *core.Store) (core.VarId, bool)) bool {
 	stat := resultQuery.GetSearchStatistics()
 	consistent := store.IsConsistent() // finalize propagation
-	//println(store.String())
-	//println(store.StringWithSpecVarIds([]core.VarId{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14}),"\r\n")
+
 	if store.GetLoggingStat() {
-		stat.UpdateStoreStatistics(store) // and update our cumulative statistics
+		stat.UpdateStoreStatistics(store) // update our cumulative statistics
 	}
 	if consistent { // expecting true for "idle" and false for "failed"
-		// println(store.StringWithSpecVarIds([]core.VarId{0,1,2,3,4,5,6,7,8}))
 		varId, hasNext := varSelect(store)
 		logger := core.GetLogger()
 		loggerDoInfo := logger.DoInfo()
 		if loggerDoInfo {
-			logger.If("Store is ready, start/continue labeling...")
-			logger.If("HasNext: %v VarId: %v", hasNext, varId)
+			logger.If("LABELING_Store is ready, start/continue labeling...")
+			logger.If("LABELING_HasNext: %v VarId: %v", hasNext, varId)
 		}
 		if hasNext {
 			variable, _ := store.GetIntVar(varId)
 			// println("\r\nSetze \r\n", variable.ID)
 			for value := range strategy(variable.Domain) {
 				if loggerDoInfo {
-					logger.If("FixVariable: %v value: %v", varId, value)
+					logger.If("LABELING_FixVariable: %v value: %v", varId,
+						value)
 				}
 				// changes is a ChangeEvent to fix a variable
 				changes := FixVariable(store, varId, value)
@@ -94,7 +97,7 @@ func fix(store *core.Store, resultQuery ResultQuery,
 		} else {
 			if loggerDoInfo {
 				for _, id := range store.GetVariableIDs() {
-					logger.If("Variable %s (id=%v) assigned to %v",
+					logger.If("LABELING_Variable %s (id=%v) assigned to %v",
 						store.GetName(id), id, store.GetDomain(id))
 				}
 			}
@@ -106,7 +109,8 @@ func fix(store *core.Store, resultQuery ResultQuery,
 }
 
 // LabelingSplit ...
-func LabelingSplit(store *core.Store, resultQuery ResultQuery, configurations ...interface{}) bool {
+func LabelingSplit(store *core.Store, resultQuery ResultQuery,
+	configurations ...interface{}) bool {
 	newStore := store.Clone(nil)
 	varSelect := SmallestDomainFirst
 	for _, configuration := range configurations {
@@ -120,7 +124,7 @@ func LabelingSplit(store *core.Store, resultQuery ResultQuery, configurations ..
 		}
 	}
 	if core.GetLogger().DoInfo() {
-		core.GetLogger().If("LX start Labeling Divide")
+		core.GetLogger().If("LABELING_LX start Labeling Divide")
 	}
 	if store.GetLoggingStat() {
 		stat := resultQuery.GetSearchStatistics()
@@ -143,14 +147,14 @@ func divide(store *core.Store, resultQuery ResultQuery,
 			min, max := domain.GetMin(), domain.GetMax()
 			middle := ((max - min) / 2) + min
 			if logInfo {
-				core.GetLogger().If("LX var %d %s", varId, domain)
-				core.GetLogger().If("LX min=%d middle=%d max=%d",
+				core.GetLogger().If("LABELING_LX var %d %s", varId, domain)
+				core.GetLogger().If("LABELING_LX min=%d middle=%d max=%d",
 					min, middle, max)
 			}
 			changesLeft := ResizeVariableDomain(store, varId, min, middle)
 			lessThanStore := store.Clone(changesLeft)
 			if logInfo {
-				core.GetLogger().If("LX divide")
+				core.GetLogger().If("LABELING_LX divide")
 			}
 			if store.GetLoggingStat() {
 				stat.IncNodes()
@@ -162,7 +166,8 @@ func divide(store *core.Store, resultQuery ResultQuery,
 			changesRight := ResizeVariableDomain(store, varId, middle+1, max)
 			greaterThanStore := store.Clone(changesRight)
 			if logInfo {
-				core.GetLogger().If("LX divide, left didnt work -> try right")
+				core.GetLogger().If("LABELING_LX divide, left didnt work" +
+					"-> try right")
 			}
 			if store.GetLoggingStat() {
 				stat.IncNodes()
@@ -172,7 +177,8 @@ func divide(store *core.Store, resultQuery ResultQuery,
 			}
 			greaterThanStore.Close()
 			if logInfo {
-				core.GetLogger().If("LX divide, non worked -> backstep")
+				core.GetLogger().If("LABELING_LX divide, non worked" +
+					" -> backstep")
 			}
 			stat.IncFailedNodes()
 			return false
@@ -181,7 +187,7 @@ func divide(store *core.Store, resultQuery ResultQuery,
 		}
 	}
 	if logInfo {
-		core.GetLogger().If("failed")
+		core.GetLogger().If("LABELING_failed")
 	}
 	stat.IncFailedNodes()
 	return false
