@@ -17,7 +17,7 @@ type Store struct {
 	propagators      map[PropId]Constraint
 	propCounter      PropId
 	iDCounter        VarId
-	registryStore	*RegistryStore
+	registryStore    *RegistryStore
 	// propVarIds, varids of unfixed variables per propagator
 	propVarIds     map[PropId]VarIdSet
 	readChannel    chan *ChangeEvent // incoming domain reductions

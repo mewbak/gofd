@@ -4,7 +4,7 @@ type RegistryStore struct {
 	iDToName map[VarId]string // variable names back
 }
 
-func CreateRegistryStore() *RegistryStore{
+func CreateRegistryStore() *RegistryStore {
 	return &RegistryStore{iDToName: make(map[VarId]string)}
 }
 
@@ -28,9 +28,9 @@ func (this *RegistryStore) HasVarName(id VarId) (string, bool) {
 
 // SetVarName sets the human readable name for VarId id
 func (this *RegistryStore) SetVarName(id VarId, name string) {
-	if _, exists := this.iDToName[id]; exists{
-		panic("Same varId may not be used twice") 	
-	}else{
+	if _, exists := this.iDToName[id]; exists {
+		panic("Same varId may not be used twice")
+	} else {
 		this.iDToName[id] = name
 	}
 }
