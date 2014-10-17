@@ -487,6 +487,7 @@ func (this *Store) GetStat() *StoreStatistics {
 	return <-evt.channel
 }
 
+// String returns the current state of the store as a string
 func (this *Store) String() string {
 	s := ""
 	for id, name := range this.registryStore.GetVarIdToNameMap() {
@@ -499,7 +500,10 @@ func (this *Store) String() string {
 	return fmt.Sprintf(msg, this.closed, this.communicating, s)
 }
 
-// StringWithSpecVarIds needs a comment ToDo
+// StringWithSpecVarIds returns the current state of the store as a string.
+// But in contrast to normal String function, the returned string only includes
+// the variable names of the given varids (for example to avoid
+// auxiliary variables in the returned string)
 func (this *Store) StringWithSpecVarIds(varids []VarId) string {
 	s := ""
 	for _, id := range varids {
