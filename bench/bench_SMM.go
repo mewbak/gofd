@@ -9,9 +9,7 @@ import (
 )
 
 func main() {
-	println("SEND+MORE=MONEY, normal")
 	benchd(bSMM, bc{"name": "SendMoreMoney", "size": "1"})
-	println("SEND+MORE=MONEY, indexical")
 	benchd(bSMMIndexical, bc{"name": "SendMoreMoneyIndexical", "size": "1"})
 }
 
@@ -32,10 +30,14 @@ func SMMImpl(b *testing.B) {
 		Y := core.CreateIntVarFromTo("Y", store, 0, 9)
 		alldiff_prop := interval.CreateAlldifferent(S, E, N, D, M, O, R, Y)
 		store.AddPropagators(alldiff_prop)
-		max := 1000*store.GetDomain(S).GetMax() + 100*store.GetDomain(E).GetMax() +
-			10*store.GetDomain(N).GetMax() + 1*store.GetDomain(D).GetMax() +
-			1000*store.GetDomain(M).GetMax() + 100*store.GetDomain(O).GetMax() +
-			10*store.GetDomain(R).GetMax() + 1*store.GetDomain(E).GetMax()
+		max := 1000*store.GetDomain(S).GetMax() +
+			100*store.GetDomain(E).GetMax() +
+			10*store.GetDomain(N).GetMax() +
+			1*store.GetDomain(D).GetMax() +
+			1000*store.GetDomain(M).GetMax() +
+			100*store.GetDomain(O).GetMax() +
+			10*store.GetDomain(R).GetMax() +
+			1*store.GetDomain(E).GetMax()
 		sum := core.CreateIntVarFromTo("sum", store, 0, max)
 		weights := []int{1000, 100, 10, 1, 1000, 100, 10, 1}
 		vars := []core.VarId{S, E, N, D, M, O, R, E}
@@ -49,7 +51,8 @@ func SMMImpl(b *testing.B) {
 		store.AddPropagators(money_props)
 		labeling.SetAllvars([]core.VarId{S, E, N, D, M, O, R, Y})
 		query := labeling.CreateSearchOneQuery()
-		labeling.Labeling(store, query, labeling.InDomainMin, labeling.VarSelect)
+		labeling.Labeling(store, query,
+			labeling.InDomainMin, labeling.VarSelect)
 	}
 }
 
@@ -70,10 +73,14 @@ func SMMIndexicalImpl(b *testing.B) {
 		Y := core.CreateIntVarFromTo("Y", store, 0, 9)
 		alldiff_prop := indexical.CreateAlldifferent(S, E, N, D, M, O, R, Y)
 		store.AddPropagators(alldiff_prop)
-		max := 1000*store.GetDomain(S).GetMax() + 100*store.GetDomain(E).GetMax() +
-			10*store.GetDomain(N).GetMax() + 1*store.GetDomain(D).GetMax() +
-			1000*store.GetDomain(M).GetMax() + 100*store.GetDomain(O).GetMax() +
-			10*store.GetDomain(R).GetMax() + 1*store.GetDomain(E).GetMax()
+		max := 1000*store.GetDomain(S).GetMax() +
+			100*store.GetDomain(E).GetMax() +
+			10*store.GetDomain(N).GetMax() +
+			1*store.GetDomain(D).GetMax() +
+			1000*store.GetDomain(M).GetMax() +
+			100*store.GetDomain(O).GetMax() +
+			10*store.GetDomain(R).GetMax() +
+			1*store.GetDomain(E).GetMax()
 		sum := core.CreateIntVarFromTo("sum", store, 0, max)
 		weights := []int{1000, 100, 10, 1, 1000, 100, 10, 1}
 		vars := []core.VarId{S, E, N, D, M, O, R, E}
@@ -86,6 +93,7 @@ func SMMIndexicalImpl(b *testing.B) {
 		store.AddPropagators(money_props)
 		labeling.SetAllvars([]core.VarId{S, E, N, D, M, O, R, Y})
 		query := labeling.CreateSearchOneQuery()
-		labeling.Labeling(store, query, labeling.InDomainMin, labeling.VarSelect)
+		labeling.Labeling(store, query,
+			labeling.InDomainMin, labeling.VarSelect)
 	}
 }

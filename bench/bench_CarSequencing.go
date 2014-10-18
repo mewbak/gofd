@@ -17,9 +17,12 @@ func main() {
 
 // the driver for everything benching CarSequencing
 func bench_CarSequencing() {
-	benchd(bCarSequencing1, bc{"name": "CarSequencing", "size": "10"})
-	benchd(bCarSequencing2, bc{"name": "CarSequencing", "size": "15"})
-	benchd(bCarSequencing3, bc{"name": "CarSequencing", "size": "20"})
+	benchd(bCarSequencing1,
+		bc{"name": "CarSequencing, Among", "size": "10"})
+	benchd(bCarSequencing2,
+		bc{"name": "CarSequencing, Among", "size": "15"})
+	benchd(bCarSequencing3,
+		bc{"name": "CarSequencing, Among", "size": "20"})
 }
 
 func bCarSequencing1(b *testing.B) {
@@ -122,13 +125,16 @@ func bCarSequencing(b *testing.B, carsPerClass []int, carsWithOptions [][]int,
 		query = labeling.CreateSearchOneQueryVariableSelect(cars)
 		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
 	}
-	println("among cars:", numberOfCars, "nodes:", query.GetSearchStatistics().GetNodes())
+	// println("among cars:", numberOfCars, "nodes:", query.GetSearchStatistics().GetNodes())
 }
 
 func bench_CarSequencingWithoutAmong() {
-	benchd(bCarSequencingWithoutAmong1, bc{"name": "CarSequencingWithoutAmong", "size": "10"})
-	benchd(bCarSequencingWithoutAmong2, bc{"name": "CarSequencingWithoutAmong", "size": "15"})
-	benchd(bCarSequencingWithoutAmong3, bc{"name": "CarSequencingWithoutAmong", "size": "20"})
+	benchd(bCarSequencingWithoutAmong1,
+		bc{"name": "CarSequencing, no Among", "size": "10"})
+	benchd(bCarSequencingWithoutAmong2,
+		bc{"name": "CarSequencing, no Among", "size": "15"})
+	benchd(bCarSequencingWithoutAmong3,
+		bc{"name": "CarSequencing, no Among", "size": "20"})
 }
 
 func bCarSequencingWithoutAmong1(b *testing.B) {
@@ -240,5 +246,5 @@ func bCarSequencingWithoutAmong(b *testing.B, carsPerClass []int, carsWithOption
 		query = labeling.CreateSearchOneQueryVariableSelect(cars)
 		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
 	}
-	println("primitive cars:", numberOfCars, "nodes:", query.GetSearchStatistics().GetNodes())
+	// println("primitive cars:", numberOfCars, "nodes:", query.GetSearchStatistics().GetNodes())
 }

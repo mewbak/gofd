@@ -11,9 +11,7 @@ import (
 
 func main() {
 	name := "NQueens"
-	println(name, 8)
 	benchd(b8Queens, bc{"name": name, "size": "8"})
-	println(name, 9)
 	benchd(b9Queens, bc{"name": name, "size": "9"})
 }
 

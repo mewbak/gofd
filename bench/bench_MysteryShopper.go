@@ -23,9 +23,15 @@ func bench_MysteryShopper() {
 	benchd(bMysteryShopper3, bc{"name": "MysteryShopper", "size": "12"})
 }
 
-func bMysteryShopper1(b *testing.B) { bMysteryShopper(b, []int{2, 1}, []int{2, 2}, 2) }
-func bMysteryShopper2(b *testing.B) { bMysteryShopper(b, []int{2, 1}, []int{2, 2, 2}, 2) }
-func bMysteryShopper3(b *testing.B) { bMysteryShopper(b, []int{2, 1}, []int{4, 4, 4}, 2) }
+func bMysteryShopper1(b *testing.B) {
+	bMysteryShopper(b, []int{2, 1}, []int{2, 2}, 2)
+}
+func bMysteryShopper2(b *testing.B) {
+	bMysteryShopper(b, []int{2, 1}, []int{2, 2, 2}, 2)
+}
+func bMysteryShopper3(b *testing.B) {
+	bMysteryShopper(b, []int{2, 1}, []int{4, 4, 4}, 2)
+}
 
 func bMysteryShopper(b *testing.B, locationsWithSalesladies []int,
 	groupsWithShoppers []int, numberOfVisits int) {
@@ -33,7 +39,6 @@ func bMysteryShopper(b *testing.B, locationsWithSalesladies []int,
 	b.StartTimer() // benchmark starts here
 	var query *labeling.SearchOneQuery
 	var numberOfSalesladies int
-	var numberOfShoppers int
 	for i := 0; i < b.N; i++ {
 		store := core.CreateStore()
 		numberOfSalesladies = 0
@@ -62,7 +67,6 @@ func bMysteryShopper(b *testing.B, locationsWithSalesladies []int,
 			}
 			allVisitsFromAllShoppers[shopper] = shopperIvisitVSalesladies
 		}
-
 		// determine which saleslady works in which shop:
 		// e.g. if locationsWithSalesladies looks like this {2,1},
 		// this means that two salesladies work at the first shop and one at
@@ -94,7 +98,8 @@ func bMysteryShopper(b *testing.B, locationsWithSalesladies []int,
 					core.CreateAuxIntVarExFromTo(store, 0, 1)))
 			}
 		}
-		//every saleslady is at least visited twice from shoppers from at least 2 different groups
+		// every saleslady is at least visited twice from shoppers from
+		// at least 2 different groups
 		currentLimit := 0
 		currentGroup := 0
 		i := 0
@@ -119,17 +124,19 @@ func bMysteryShopper(b *testing.B, locationsWithSalesladies []int,
 			}
 		}
 		store.IsConsistent()
-		// println("numberOfPropagators mystery among: ", store.GetNumPropagators())
 		query = labeling.CreateSearchOneQueryVariableSelect(allVisits)
-		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
+		labeling.Labeling(store, query,
+			labeling.VarSelect, labeling.InDomainMin)
 	}
-	println("among mystery:", numberOfShoppers, "nodes:", query.GetSearchStatistics().GetNodes())
 }
 
 func bench_MysteryShopperWithoutAmong() {
-	benchd(bMysteryShopperWithoutAmong1, bc{"name": "MysteryShopperWithoutAmong", "size": "4"})
-	benchd(bMysteryShopperWithoutAmong2, bc{"name": "MysteryShopperWithoutAmong", "size": "6"})
-	benchd(bMysteryShopperWithoutAmong3, bc{"name": "MysteryShopperWithoutAmong", "size": "12"})
+	benchd(bMysteryShopperWithoutAmong1,
+		bc{"name": "MysteryShopperWithoutAmong", "size": "4"})
+	benchd(bMysteryShopperWithoutAmong2,
+		bc{"name": "MysteryShopperWithoutAmong", "size": "6"})
+	benchd(bMysteryShopperWithoutAmong3,
+		bc{"name": "MysteryShopperWithoutAmong", "size": "12"})
 }
 
 func bMysteryShopperWithoutAmong1(b *testing.B) {
@@ -150,7 +157,6 @@ func bMysteryShopperWithoutAmong(b *testing.B, locationsWithSalesladies []int,
 	b.StartTimer() // benchmark starts here
 	var query *labeling.SearchOneQuery
 	var numberOfSalesladies int
-	var numberOfShoppers int
 	for i := 0; i < b.N; i++ {
 		store := core.CreateStore()
 		numberOfSalesladies = 0
@@ -173,7 +179,9 @@ func bMysteryShopperWithoutAmong(b *testing.B, locationsWithSalesladies []int,
 			shopperIvisitVSalesladies := make([]core.VarId, numberOfVisits)
 			for i := 0; i < numberOfVisits; i++ {
 				s := fmt.Sprintf("Shopper%vVisit%v", j+1, i+1)
-				shopperIvisitVSalesladies[i] = core.CreateIntVarIvFromTo(s, store, 1, numberOfSalesladies)
+				vi := core.CreateIntVarIvFromTo(s, store,
+					1, numberOfSalesladies)
+				shopperIvisitVSalesladies[i] = vi
 				allVisits = append(allVisits, shopperIvisitVSalesladies[i])
 			}
 			allVisitsFromAllShoppers[j] = shopperIvisitVSalesladies
@@ -200,29 +208,36 @@ func bMysteryShopperWithoutAmong(b *testing.B, locationsWithSalesladies []int,
 			for i := 0; i < numberOfVisits; i++ {
 				// array to store the results of the reified constraints per
 				// visit
-				ShopperXVisitISalesladies := make([]core.VarId, numberOfSalesladies)
+				ShopperXVisitISalesladies :=
+					make([]core.VarId, numberOfSalesladies)
 				for j := 0; j < numberOfSalesladies; j++ {
 					// create variable to store the results of the reified
 					// constraint per saleslady
-					ShopperXVisitISalesladyJ := core.CreateAuxIntVarIvFromTo(store, 0, 1)
+					ShopperXVisitISalesladyJ :=
+						core.CreateAuxIntVarIvFromTo(store, 0, 1)
 					ShopperXVisitISalesladies[j] = ShopperXVisitISalesladyJ
 					// only one visit per location
 					// shopper X visits location Y during visit J
-					xeqc := indexical.CreateXeqC(shopperIvisitVSalesladies[i], j+1)
-					reifiedConstraint := reification.CreateReifiedConstraint(xeqc, ShopperXVisitISalesladyJ)
-					store.AddPropagator(reifiedConstraint)
+					xeqc := indexical.CreateXeqC(shopperIvisitVSalesladies[i],
+						j+1)
+					reif := reification.CreateReifiedConstraint(xeqc,
+						ShopperXVisitISalesladyJ)
+					store.AddPropagator(reif)
 				}
 				// during visit I shopper X can only visit one of all the
 				// locations
-				ShopperXVisitILocationY[i] = core.CreateAuxIntVarIvFromTo(store, 1, numberOfLocations)
-				store.AddPropagator(interval.CreateWeightedSum(store, ShopperXVisitILocationY[i],
+				ShopperXVisitILocationY[i] =
+					core.CreateAuxIntVarIvFromTo(store, 1, numberOfLocations)
+				store.AddPropagator(interval.CreateWeightedSum(store,
+					ShopperXVisitILocationY[i],
 					weightedLocations, ShopperXVisitISalesladies...))
 			}
 			// shoppers visit always different locations
-			store.AddPropagator(interval.CreateAlldifferent(ShopperXVisitILocationY...))
+			prop := interval.CreateAlldifferent(ShopperXVisitILocationY...)
+			store.AddPropagator(prop)
 		}
-		// every saleslady is at least visited twice from shoppers from at least
-		// 2 different groups
+		// every saleslady is at least visited twice from shoppers from at
+		// least 2 different groups
 		// example: shopper 1 and 2 from group 1 must have visited saleslady 1
 		// at least 1 time and at most 2 times
 		// for every saleslady
@@ -230,7 +245,8 @@ func bMysteryShopperWithoutAmong(b *testing.B, locationsWithSalesladies []int,
 			x := 0
 			for y := 0; y < len(groupsWithShoppers); y++ {
 				g := 0
-				SalesladyIGroupXShopperYVisitJ := make([]core.VarId, groupsWithShoppers[y]*numberOfVisits)
+				n := groupsWithShoppers[y] * numberOfVisits
+				SalesladyIGroupXShopperYVisitJ := make([]core.VarId, n)
 				for ; x < len(allVisitsFromAllShoppers); x++ {
 					// every shopper in a group
 					shopperIvisitVSalesladies := allVisitsFromAllShoppers[x]
@@ -238,8 +254,9 @@ func bMysteryShopperWithoutAmong(b *testing.B, locationsWithSalesladies []int,
 						// visits the saleslady at most one time
 						SJGMSXVI := core.CreateAuxIntVarIvFromTo(store, 0, 1)
 						xeqc := indexical.CreateXeqC(shopperIvisitVSalesladies[i], j+1)
-						reifiedConstraint := reification.CreateReifiedConstraint(xeqc, SJGMSXVI)
-						store.AddPropagator(reifiedConstraint)
+						reif := reification.CreateReifiedConstraint(xeqc,
+							SJGMSXVI)
+						store.AddPropagator(reif)
 						SalesladyIGroupXShopperYVisitJ[g] = SJGMSXVI
 						g += 1
 					}
@@ -247,14 +264,15 @@ func bMysteryShopperWithoutAmong(b *testing.B, locationsWithSalesladies []int,
 						break
 					}
 				}
-				V1G2 := core.CreateAuxIntVarIvFromTo(store, 1, groupsWithShoppers[y])
-				store.AddPropagator(interval.CreateSum(store, V1G2, SalesladyIGroupXShopperYVisitJ))
+				V1G2 := core.CreateAuxIntVarIvFromTo(store,
+					1, groupsWithShoppers[y])
+				store.AddPropagator(interval.CreateSum(store,
+					V1G2, SalesladyIGroupXShopperYVisitJ))
 			}
 		}
 		store.IsConsistent()
-		// println("numberOfPropagators mystery primitive: ", store.GetNumPropagators())
 		query = labeling.CreateSearchOneQueryVariableSelect(allVisits)
-		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
+		labeling.Labeling(store, query,
+			labeling.VarSelect, labeling.InDomainMin)
 	}
-	println("primitive mystery:", numberOfShoppers, "nodes:", query.GetSearchStatistics().GetNodes())
 }

@@ -3,13 +3,18 @@ package main
 import (
 	"bitbucket.org/gofd/gofd/core"
 	"bitbucket.org/gofd/gofd/labeling"
-	"bitbucket.org/gofd/gofd/propagator/explicit"
+	"bitbucket.org/gofd/gofd/propagator"
 	"testing"
 )
 
+func main() {
+	bench_Among()
+}
+
 // the driver for everything benching IntVar
 func bench_Among() {
-	benchd(bAmong1, bc{"name": "Among", "size": "1"})
+	benchd(bAmong1,
+		bc{"name": "Among", "size": "1"})
 }
 
 func bAmong1(b *testing.B) {
@@ -42,7 +47,7 @@ func bAmong(b *testing.B, xiinit [][]int, kinit []int,
 			Xi[i] = core.CreateAuxIntVarValues(store, xiinit[i])
 		}
 		N := core.CreateIntVarValues("N", store, ninit)
-		store.AddPropagators(explicit.CreateAmong(Xi, kinit, N))
+		store.AddPropagators(propagator.CreateAmong(Xi, kinit, N))
 		query := labeling.CreateSearchOneQuery()
 		labeling.LabelingSplit(store, query, labeling.SmallestDomainFirst)
 	}

@@ -1,15 +1,16 @@
 package main
 
 // Mini bench framework benching single functions. We use the signature of the
-// golang test/bench framework, but run run the individual tests ourselves.
-// The functions to bench are organized in bench.go (the main/driver). We have
-// run everything with go run *.go in this directory.
+// golang test/bench framework, but run the individual tests manually.
+// The functions to bench are organized in bench.go (the main/driver).
+// We can run a single test with go run benchframework.go bench_<name>.go in
+// this directory.
 
 // A benchmark function may start with any initialization code whose execution
 // time is ignored. The following two lines
 //    BenchSetRuns(b.N)
 //    b.StartTimer() // benchmark starts here
-// must precede the actual code to be benchmarked, which is typically iterated #
+// must precede the actual code to be benchmarked, which is typically iterated
 // in a loop. This almost always forces a third line
 //    for i:=0; i < b.N; i++ {
 // and the code in the loop then is measured. Benchmarks shall not be executed
@@ -63,9 +64,36 @@ func bench_setup(c map[string]string) {
 	benchmark_config["runs"] = "1" // default, also means not available
 }
 
+func insert_separators(s string, every int, separator string) string {
+	a := make([]string, (len(s)+(every-1))/every)
+	initial_skip := len(s) % every
+	if initial_skip == 0 {
+		initial_skip = every
+	}
+	a[0] = s[0:initial_skip]
+	for i := 1; i < len(a); i++ {
+		a[i] = s[(i-1)*every+initial_skip : i*every+initial_skip]
+	}
+	return strings.Join(a, separator)
+}
+
+const bench_verbose = true
+
 // teardown shall be called after any test
 func bench_teardown(br testing.BenchmarkResult) {
 	benchmark_config[TIMEPERRUN] = fmt.Sprintf("%d", br.NsPerOp())
+	if bench_verbose {
+		fmt.Printf("%-28s: ",
+			benchmark_config[TASKNAME])
+		for key, value := range benchmark_config {
+			if strings.HasPrefix(key, TASK) && key != TASKNAME {
+				fmt.Printf("%s=%-8v  ", key[len(TASK)+2:], value)
+			}
+		}
+		fmt.Printf("%s: %14s ns\n", TIMEPERRUN,
+			insert_separators(benchmark_config[TIMEPERRUN], 3, "_"))
+		// fmt.Printf("%v\n", benchmark_config[TIMEPERRUN])
+	}
 	bench_write(benchmark_config)
 }
 

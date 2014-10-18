@@ -2,7 +2,7 @@ package main
 
 import (
 	"bitbucket.org/gofd/gofd/core"
-	"bitbucket.org/gofd/gofd/propagator/explicit"
+	"bitbucket.org/gofd/gofd/propagator"
 	"testing"
 )
 
@@ -25,7 +25,7 @@ func bGC1XeqC2Y(b *testing.B) {
 		X := core.CreateIntVarFromTo("X", store, 100, 10000)
 		Y := core.CreateIntVarFromTo("Y", store, 100, 1000)
 		c1, c2 := 1, 10
-		store.AddPropagator(explicit.CreateC1XeqC2YBounds(c1, X, c2, Y))
+		store.AddPropagator(propagator.CreateC1XeqC2YBounds(c1, X, c2, Y))
 		store.IsConsistent()
 	}
 }

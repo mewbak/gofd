@@ -46,9 +46,17 @@ func bStoreClone(b *testing.B, to int) {
 	}
 }
 
-func bStoreAddSimplePropagator1(b *testing.B)   { bStoreAddSimplePropagator(b, 1) }
-func bStoreAddSimplePropagator10(b *testing.B)  { bStoreAddSimplePropagator(b, 10) }
-func bStoreAddSimplePropagator100(b *testing.B) { bStoreAddSimplePropagator(b, 100) }
+func bStoreAddSimplePropagator1(b *testing.B) {
+	bStoreAddSimplePropagator(b, 1)
+}
+
+func bStoreAddSimplePropagator10(b *testing.B) {
+	bStoreAddSimplePropagator(b, 10)
+}
+
+func bStoreAddSimplePropagator100(b *testing.B) {
+	bStoreAddSimplePropagator(b, 100)
+}
 
 func bStoreAddSimplePropagator(b *testing.B, to int) {
 	//init
@@ -72,9 +80,17 @@ func bStoreAddSimplePropagator(b *testing.B, to int) {
 	}
 }
 
-func bStoreAddComplexPropagator1(b *testing.B)   { bStoreAddComplexPropagator(b, 1) }
-func bStoreAddComplexPropagator10(b *testing.B)  { bStoreAddComplexPropagator(b, 10) }
-func bStoreAddComplexPropagator100(b *testing.B) { bStoreAddComplexPropagator(b, 100) }
+func bStoreAddComplexPropagator1(b *testing.B) {
+	bStoreAddComplexPropagator(b, 1)
+}
+
+func bStoreAddComplexPropagator10(b *testing.B) {
+	bStoreAddComplexPropagator(b, 10)
+}
+
+func bStoreAddComplexPropagator100(b *testing.B) {
+	bStoreAddComplexPropagator(b, 100)
+}
 
 func bStoreAddComplexPropagator(b *testing.B, to int) {
 	//init

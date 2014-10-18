@@ -45,27 +45,35 @@ func bMagicSeries(b *testing.B, length int) {
 		for i := 0; i < len(variables); i++ {
 			variables[i] = core.CreateAuxIntVarExFromTo(store, 0, length)
 		}
-
 		// define constraints
 		// each value j can occur Xj times
 		for i := 0; i < len(variables); i++ {
-			store.AddPropagator(explicit.CreateAmong(variables, []int{i}, variables[i]))
+			prop := explicit.CreateAmong(variables, []int{i}, variables[i])
+			store.AddPropagator(prop)
 		}
-		//		println("numberOfPropagators magic among: ", store.GetNumPropagators())
 		query = labeling.CreateSearchOneQueryVariableSelect(variables)
-		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
+		labeling.Labeling(store, query,
+			labeling.VarSelect, labeling.InDomainMin)
 	}
-	println("among magic:", length, "nodes:", query.GetSearchStatistics().GetNodes())
+	// println("among magic:", length, "nodes:",
+	//	query.GetSearchStatistics().GetNodes())
 }
 
 func bench_MagicSeriesWithoutAmong() {
-	benchd(bMagicSeriesWithoutAmong1, bc{"name": "MagicSeriesWithoutAmong", "size": "3"})
-	benchd(bMagicSeriesWithoutAmong2, bc{"name": "MagicSeriesWithoutAmong", "size": "4"})
-	benchd(bMagicSeriesWithoutAmong3, bc{"name": "MagicSeriesWithoutAmong", "size": "5"})
-	benchd(bMagicSeriesWithoutAmong4, bc{"name": "MagicSeriesWithoutAmong", "size": "6"})
-	benchd(bMagicSeriesWithoutAmong5, bc{"name": "MagicSeriesWithoutAmong", "size": "7"})
-	benchd(bMagicSeriesWithoutAmong6, bc{"name": "MagicSeriesWithoutAmong", "size": "10"})
-	benchd(bMagicSeriesWithoutAmong7, bc{"name": "MagicSeriesWithoutAmong", "size": "17"})
+	benchd(bMagicSeriesWithoutAmong1,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "3"})
+	benchd(bMagicSeriesWithoutAmong2,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "4"})
+	benchd(bMagicSeriesWithoutAmong3,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "5"})
+	benchd(bMagicSeriesWithoutAmong4,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "6"})
+	benchd(bMagicSeriesWithoutAmong5,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "7"})
+	benchd(bMagicSeriesWithoutAmong6,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "10"})
+	benchd(bMagicSeriesWithoutAmong7,
+		bc{"name": "MagicSeriesWithoutAmong", "size": "17"})
 }
 
 func bMagicSeriesWithoutAmong1(b *testing.B) { bMagicSeriesWithoutAmong(b, 3) }
@@ -87,25 +95,26 @@ func bMagicSeriesWithoutAmong(b *testing.B, n int) {
 		for i := 0; i < len(variables); i++ {
 			variables[i] = core.CreateAuxIntVarIvFromTo(store, 0, n)
 		}
-
 		// define constraints
 		// each value j can occur Xj times
 		for i := 0; i < len(variables); i++ {
 			//array for reified constraints
 			variables := make([]core.VarId, len(variables))
 			for j := 0; j < len(variables); j++ {
-				//store in variables[j] whether Xj (variables[j]) takes the value i or not
+				// store in variables[j] whether Xj (variables[j])
+				// takes the value i or not
 				variables[j] = core.CreateAuxIntVarIvFromTo(store, 0, 1)
 				xeqc := indexical.CreateXeqC(variables[j], i)
-				reifiedConstraint := reification.CreateReifiedConstraint(xeqc, variables[j])
-				store.AddPropagator(reifiedConstraint)
+				reif := reification.CreateReifiedConstraint(xeqc, variables[j])
+				store.AddPropagator(reif)
 			}
-			// the amount of variables in X0,...,Xn that have taken the value i
-			// must correspond to Xi (variables[i])
-			store.AddPropagator(interval.CreateSum(store, variables[i], variables))
+			// the amount of variables in X0,...,Xn that have taken
+			// the value i must correspond to Xi (variables[i])
+			prop := interval.CreateSum(store, variables[i], variables)
+			store.AddPropagator(prop)
 		}
 		query = labeling.CreateSearchOneQueryVariableSelect(variables)
-		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
+		labeling.Labeling(store,
+			query, labeling.VarSelect, labeling.InDomainMin)
 	}
-	println("primitive magic:", n, "nodes:", query.GetSearchStatistics().GetNodes())
 }
