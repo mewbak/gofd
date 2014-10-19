@@ -3,6 +3,7 @@ package main
 import (
 	"bitbucket.org/gofd/gofd/core"
 	"bitbucket.org/gofd/gofd/propagator"
+	"runtime"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ func bStoreClone(b *testing.B, to int) {
 	// init
 	c := 5
 	for j := 0; j < to; j++ {
-		XId := core.CreateIntVarFromTo("X", store, 1, 10)
+		XId := core.CreateAuxIntVarFromTo(store, 1, 10)
 		xgtc := propagator.CreateXgtC(XId, c)
 		store.AddPropagator(xgtc)
 	}
@@ -44,6 +45,9 @@ func bStoreClone(b *testing.B, to int) {
 	for i := 0; i < b.N; i++ {
 		store.Clone(nil)
 	}
+	b.StopTimer()
+	// deinit, reclaim memory
+	runtime.GC() // not working good, as the store leaks..
 }
 
 func bStoreAddSimplePropagator1(b *testing.B) {
@@ -72,7 +76,7 @@ func bStoreAddSimplePropagator(b *testing.B, to int) {
 	for i := 0; i < b.N; i++ {
 		store := stores[i]
 		for j := 0; j < to; j++ {
-			XId := core.CreateIntVarFromTo("X", store, 1, 10)
+			XId := core.CreateAuxIntVarFromTo(store, 1, 10)
 			props[j] = propagator.CreateXgtC(XId, c)
 		}
 		store.AddPropagators(props...)
@@ -108,9 +112,9 @@ func bStoreAddComplexPropagator(b *testing.B, to int) {
 	for i := 0; i < b.N; i++ {
 		store := stores[i]
 		for j := 0; j < to; j++ {
-			XId := core.CreateIntVarValues("X", store, xinit)
-			YId := core.CreateIntVarValues("Y", store, yinit)
-			ZId := core.CreateIntVarValues("Z", store, zinit)
+			XId := core.CreateAuxIntVarValues(store, xinit)
+			YId := core.CreateAuxIntVarValues(store, yinit)
+			ZId := core.CreateAuxIntVarValues(store, zinit)
 			props[j] = propagator.CreateXmultYeqZ(XId, YId, ZId)
 		}
 		store.AddPropagators(props...)
