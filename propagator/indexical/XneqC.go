@@ -24,7 +24,7 @@ func (this *XneqC) GetIndexicalCollection() *indexical.IndexicalCollection {
 	return this.iColl
 }
 
-func (this *XneqC) Start(store *core.Store) {
+func (this *XneqC) Start() {
 	indexical.InitProcessConstraint(this, false)
 	indexical.ProcessConstraint(this, false)
 }
@@ -36,6 +36,7 @@ func (this *XneqC) Register(store *core.Store) {
 		store.RegisterPropagator([]core.VarId{this.x}, this.id)
 
 	this.Init(store, domains)
+	this.store = store
 }
 
 func (this *XneqC) Init(store *core.Store, domains []core.Domain) {

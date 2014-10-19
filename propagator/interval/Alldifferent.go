@@ -23,7 +23,7 @@ type Alldifferent struct {
 	store            *core.Store
 }
 
-func (this *Alldifferent) Start(store *core.Store) {
+func (this *Alldifferent) Start() {
 	core.LogInitConsistency(this)
 
 	// initial check
@@ -32,7 +32,7 @@ func (this *Alldifferent) Start(store *core.Store) {
 	core.SendChangesToStore(evt, this)
 
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 
 		varidChanged := changeEntry.GetID()
 		changedDomain := this.varidToDomainMap[varidChanged]

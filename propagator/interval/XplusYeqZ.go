@@ -21,7 +21,7 @@ func (this *XplusYeqZ) Clone() core.Constraint {
 	return prop
 }
 
-func (this *XplusYeqZ) Start(store *core.Store) {
+func (this *XplusYeqZ) Start() {
 	// initial check
 	evt := core.CreateChangeEvent()
 	ivsecondInResultInFirstOut(this.y_Domain, this.z_Domain, this.x_Domain,
@@ -32,7 +32,7 @@ func (this *XplusYeqZ) Start(store *core.Store) {
 		this.z, evt)
 	core.SendChangesToStore(evt, this)
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
 		case this.x:

@@ -27,7 +27,7 @@ type WeightedSumBounds struct {
 	consistency      int
 }
 
-func (this *WeightedSumBounds) Start(store *core.Store) {
+func (this *WeightedSumBounds) Start() {
 
 	// initial check
 	evt := core.CreateChangeEvent()
@@ -35,7 +35,7 @@ func (this *WeightedSumBounds) Start(store *core.Store) {
 	core.SendChangesToStore(evt, this)
 
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()

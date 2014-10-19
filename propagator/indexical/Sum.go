@@ -28,7 +28,7 @@ func (this *Sum) GetIndexicalCollection() *indexical.IndexicalCollection {
 	return this.iColl
 }
 
-func (this *Sum) Start(store *core.Store) {
+func (this *Sum) Start() {
 	indexical.InitProcessConstraint(this, true)
 	indexical.ProcessConstraint(this, true)
 }

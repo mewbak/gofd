@@ -30,7 +30,7 @@ func (this *Alldifferent) GetIndexicalCollection() *indexical.IndexicalCollectio
 	return this.iColl
 }
 
-func (this *Alldifferent) Start(store *core.Store) {
+func (this *Alldifferent) Start() {
 
 	indexical.InitProcessConstraint(this, false)
 	indexical.ProcessConstraint(this, false)

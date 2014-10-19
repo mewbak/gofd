@@ -121,7 +121,7 @@ func registerOnePropagator(store *Store, prop Constraint) PropId {
 	prop.SetID(propId)
 	prop.Register(store)    // weave into internal data structure
 	store.eventCounter += 1 // expect event from initial check
-	go prop.Start(store)    // make the propagator propagate
+	go prop.Start()    // make the propagator propagate
 	if logger.DoDebug() {
 		logger.If("Propagator registered (ec=%d)", store.eventCounter)
 	}

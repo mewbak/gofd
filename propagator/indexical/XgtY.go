@@ -30,7 +30,7 @@ func (this *XgtY) Clone() core.Constraint {
 	return prop
 }
 
-func (this *XgtY) Start(store *core.Store) {
+func (this *XgtY) Start() {
 
 	indexical.InitProcessConstraint(this, false)
 	indexical.ProcessConstraint(this, false)

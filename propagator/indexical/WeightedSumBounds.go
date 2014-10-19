@@ -27,7 +27,7 @@ func (this *WeightedSumBounds) GetIndexicalCollection() *indexical.IndexicalColl
 	return this.iColl
 }
 
-func (this *WeightedSumBounds) Start(store *core.Store) {
+func (this *WeightedSumBounds) Start() {
 	indexical.InitProcessConstraint(this, true)
 	indexical.ProcessConstraint(this, true)
 }

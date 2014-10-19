@@ -21,7 +21,7 @@ type WeightedSum struct {
 	finalProp        *XplusCeqY
 }
 
-func (this *WeightedSum) Start(store *core.Store) {
+func (this *WeightedSum) Start() {
 	loggerDebug := core.GetLogger().DoDebug()
 	if loggerDebug {
 		core.GetLogger().Dln("WeightedSum_'initial consistency check'")
@@ -35,7 +35,7 @@ func (this *WeightedSum) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, store.GetName(changeEntry.GetID()))
+				this, this.store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()

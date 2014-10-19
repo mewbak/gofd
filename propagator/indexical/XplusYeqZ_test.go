@@ -9,8 +9,8 @@ func xplusyeqz_ic_test(t *testing.T, vars []*VarMapping,
 	expready bool) {
 
 	x := core.CreateIntVarIvValues("X", store, vars[0].initDomain)
-	y := core.CreateIntVarIvValues("X", store, vars[1].initDomain)
-	z := core.CreateIntVarIvValues("X", store, vars[2].initDomain)
+	y := core.CreateIntVarIvValues("Y", store, vars[1].initDomain)
+	z := core.CreateIntVarIvValues("Z", store, vars[2].initDomain)
 
 	p := CreateXplusYeqZ(x, y, z)
 	store.AddPropagator(p)

@@ -21,7 +21,7 @@ func (this *XmultYeqZ) Clone() core.Constraint {
 	return prop
 }
 
-func (this *XmultYeqZ) Start(store *core.Store) {
+func (this *XmultYeqZ) Start() {
 	loggerDebug := core.GetLogger().DoDebug()
 	if loggerDebug {
 		core.GetLogger().Df("%s_'initial consistency check'", this)
@@ -36,7 +36,7 @@ func (this *XmultYeqZ) Start(store *core.Store) {
 		// println("X_MULT_Y_EQ_Z")
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, store.GetName(changeEntry.GetID()))
+				this, this.store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {

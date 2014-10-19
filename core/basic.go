@@ -9,7 +9,7 @@ type PropId int
 // for execution, registration, and copying in store
 type Constraint interface {
 	// Start starts propagator listening for events and propagating
-	Start(store *Store)
+	Start()
 	// Register registers itself at store and gets needed data from store
 	// (channel, domains)
 	Register(store *Store)

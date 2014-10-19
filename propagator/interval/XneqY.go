@@ -22,7 +22,7 @@ func (this *XneqY) Clone() core.Constraint {
 	return prop
 }
 
-func (this *XneqY) Start(store *core.Store) {
+func (this *XneqY) Start() {
 	loggerDebug := core.GetLogger().DoDebug()
 	if loggerDebug {
 		core.GetLogger().Df("%s_'initial consistency check'", this)
@@ -35,7 +35,7 @@ func (this *XneqY) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, store.GetName(changeEntry.GetID()))
+				this, this.store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {

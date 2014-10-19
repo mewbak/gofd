@@ -89,15 +89,15 @@ func (this *ReifiedConstraint) Process(store *core.Store, changeEntry *core.Chan
 	core.SendChangesToStore(evt, this)
 }
 
-func (this *ReifiedConstraint) Start(store *core.Store) {
+func (this *ReifiedConstraint) Start() {
 
 	core.LogInitConsistency(this)
-	this.Process(store, nil)
+	this.Process(this.store, nil)
 
 	for changeEntry := range this.inCh {
 
 		indexical.RemoveValues(this, changeEntry)
-		this.Process(store, changeEntry)
+		this.Process(this.store, changeEntry)
 	}
 }
 

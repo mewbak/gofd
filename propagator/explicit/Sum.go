@@ -21,7 +21,7 @@ type Sum struct {
 	finalProp        *XplusCeqY
 }
 
-func (this *Sum) Start(store *core.Store) {
+func (this *Sum) Start() {
 	loggerDebug := core.GetLogger().DoDebug()
 	if loggerDebug {
 		core.GetLogger().Dln("Sum_'initial consistency check'")
@@ -33,7 +33,8 @@ func (this *Sum) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, 
+				this.store.GetName(changeEntry.GetID()))
 		}
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()

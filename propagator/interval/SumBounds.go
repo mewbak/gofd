@@ -25,7 +25,7 @@ type SumBounds struct {
 	pseudoProps      []*PseudoXplusYeqZ //with pseudoFinalProp
 }
 
-func (this *SumBounds) Start(store *core.Store) {
+func (this *SumBounds) Start() {
 	core.LogInitConsistency(this)
 
 	// initial check
@@ -34,7 +34,7 @@ func (this *SumBounds) Start(store *core.Store) {
 	core.SendChangesToStore(evt, this)
 
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()

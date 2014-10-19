@@ -23,7 +23,7 @@ func (this *XplusYeqZ) GetIndexicalCollection() *indexical.IndexicalCollection {
 	return this.iColl
 }
 
-func (this *XplusYeqZ) Start(store *core.Store) {
+func (this *XplusYeqZ) Start() {
 	indexical.InitProcessConstraint(this, false)
 	indexical.ProcessConstraint(this, false)
 }
@@ -41,6 +41,7 @@ func (this *XplusYeqZ) Register(store *core.Store) {
 		store.RegisterPropagator(allvars, this.id)
 
 	this.Init(store, domains)
+	this.store = store
 }
 
 // MakeXplusYeqZBoundsIndexicals returns indexicals for providing bounds

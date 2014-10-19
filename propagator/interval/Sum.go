@@ -27,7 +27,7 @@ type Sum struct {
 	pseudoProps      []*PseudoXplusYeqZ //with pseudoFinalProp
 }
 
-func (this *Sum) Start(store *core.Store) {
+func (this *Sum) Start() {
 	core.LogInitConsistency(this)
 
 	// initial check
@@ -36,7 +36,7 @@ func (this *Sum) Start(store *core.Store) {
 	core.SendChangesToStore(evt, this)
 
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()

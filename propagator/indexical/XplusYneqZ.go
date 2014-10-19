@@ -25,7 +25,7 @@ func (this *XplusYneqZ) GetIndexicalCollection() *indexical.IndexicalCollection 
 	return this.iColl
 }
 
-func (this *XplusYneqZ) Start(store *core.Store) {
+func (this *XplusYneqZ) Start() {
 	core.LogInitConsistency(this)
 	iColl := this.GetIndexicalCollection()
 	evt := indexical.ProcessIndexicals(iColl, nil, true)
@@ -51,6 +51,7 @@ func (this *XplusYneqZ) Register(store *core.Store) {
 		store.RegisterPropagator(allvars, this.id)
 
 	this.Init(store, domains)
+	this.store = store
 }
 
 // MakeXplusYneqZArcIndexicals returns indexicals for providing arc

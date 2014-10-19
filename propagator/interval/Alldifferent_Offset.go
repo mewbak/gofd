@@ -21,14 +21,14 @@ type Alldifferent_Offset struct {
 	store            *core.Store
 }
 
-func (this *Alldifferent_Offset) Start(store *core.Store) {
+func (this *Alldifferent_Offset) Start() {
 	core.LogInitConsistency(this)
 	// initial check
 	evt := core.CreateChangeEvent()
 	this.initialCheck(evt)
 	core.SendChangesToStore(evt, this)
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 		varidChanged := changeEntry.GetID()
 		changedDomain := this.varidToDomainMap[varidChanged]
 		changedDomain.Removes(changeEntry.GetValues())

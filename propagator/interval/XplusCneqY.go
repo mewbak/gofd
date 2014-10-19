@@ -24,14 +24,14 @@ func (this *XplusCneqY) Clone() core.Constraint {
 	return prop
 }
 
-func (this *XplusCneqY) Start(store *core.Store) {
+func (this *XplusCneqY) Start() {
 	// initial check
 	evt := core.CreateChangeEvent()
 	this.xinYout(evt)
 	this.yinXout(evt)
 	core.SendChangesToStore(evt, this)
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 		evt = core.CreateChangeEvent()
 		switch var_id := changeEntry.GetID(); var_id {
 		case this.x:

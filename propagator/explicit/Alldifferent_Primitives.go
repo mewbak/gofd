@@ -23,7 +23,7 @@ type Alldifferent_Primitives struct {
 	store            *core.Store
 }
 
-func (this *Alldifferent_Primitives) Start(store *core.Store) {
+func (this *Alldifferent_Primitives) Start() {
 	loggerDebug := core.GetLogger().DoDebug()
 	if loggerDebug {
 		msg := "Alldifferent_Primitives_'initial consistency check'"
@@ -36,7 +36,7 @@ func (this *Alldifferent_Primitives) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			core.GetLogger().Df("%s_'Incoming Change for %s'",
-				this, store.GetName(changeEntry.GetID()))
+				this, this.store.GetName(changeEntry.GetID()))
 		}
 		varidChanged := changeEntry.GetID()
 		changedDomain := this.varidToDomainMap[varidChanged]

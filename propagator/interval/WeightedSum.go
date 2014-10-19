@@ -27,7 +27,7 @@ type WeightedSum struct {
 	pseudoPropsXYZ   []*PseudoXplusYeqZ
 }
 
-func (this *WeightedSum) Start(store *core.Store) {
+func (this *WeightedSum) Start() {
 
 	// initial check
 	evt := core.CreateChangeEvent()
@@ -35,7 +35,7 @@ func (this *WeightedSum) Start(store *core.Store) {
 	core.SendChangesToStore(evt, this)
 
 	for changeEntry := range this.inCh {
-		core.LogIncomingChange(this, store, changeEntry)
+		core.LogIncomingChange(this, this.store, changeEntry)
 
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()

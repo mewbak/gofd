@@ -30,7 +30,7 @@ func (this *Among) Clone() core.Constraint {
 
 // Start propagates for all variables initially and listens to channels
 // for incoming domain updates in order to propagate accordingly.
-func (this *Among) Start(store *core.Store) {
+func (this *Among) Start() {
 	loggerDebug := core.GetLogger().DoDebug()
 	if loggerDebug {
 		core.GetLogger().Df("%s_'initial consistency check'", this)
@@ -42,7 +42,8 @@ func (this *Among) Start(store *core.Store) {
 	for changeEntry := range this.inCh {
 		if loggerDebug {
 			msg := "%s_'Incoming Change for %s'"
-			core.GetLogger().Df(msg, this, store.GetName(changeEntry.GetID()))
+			core.GetLogger().Df(msg, this, 
+				this.store.GetName(changeEntry.GetID()))
 		}
 		// handle incoming events and propagate if necessary
 		evt = core.CreateChangeEvent()

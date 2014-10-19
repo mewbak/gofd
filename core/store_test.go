@@ -41,7 +41,7 @@ func (this *PropDummy) SetID(id PropId) {
 	this.id = id
 }
 
-func (this *PropDummy) Start(store *Store) {
+func (this *PropDummy) Start() {
 	this.out <- CreateChangeEvent() // "nothing happened" on first run
 	for _ = range this.in {         // answer to every ChangeEvent
 		println("PropDummy: Do Something")
