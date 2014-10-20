@@ -25,7 +25,7 @@ clean(){
   mkdir $BIN_FOLD
 }
 
-# preparation: setting up bench-environment, building go-files
+# preparation: setting up bench-environment, building executables
 build() {  
   #-- basic --
   $GO build -o ./$BIN_FOLD/bench_Domain bench_Domain.go benchframework.go
@@ -36,9 +36,7 @@ build() {
   $GO build -o ./$BIN_FOLD/bench_Store bench_Store.go benchframework.go
   $GO build -o ./$BIN_FOLD/bench_XmultCeqY bench_XmultCeqY.go benchframework.go
   #-- intervals --
-  $GO build -o ./$BIN_FOLD/bench_IvDomain_Good bench_IvDomain_Good.go Intervals_Domain.go benchframework.go
-  $GO build -o ./$BIN_FOLD/bench_IvDomain_Bad bench_IvDomain_Bad.go Intervals_Domain.go benchframework.go
-  $GO build -o ./$BIN_FOLD/bench_IvDomain_Trend bench_IvDomain_Trend.go Intervals_Domain.go benchframework.go
+  $GO build -o ./$BIN_FOLD/bench_IvDomain bench_IvDomain.go benchframework.go
   #-- applications --
   $GO build -o ./$BIN_FOLD/bench_CarSequencing bench_CarSequencing.go benchframework.go
   $GO build -o ./$BIN_FOLD/bench_MagicSeries bench_MagicSeries.go benchframework.go
@@ -47,50 +45,6 @@ build() {
   $GO build -o ./$BIN_FOLD/bench_SMM bench_SMM.go benchframework.go
 }
 
-#- bench functions -
-
-Basic_Bench() {
-  echo "benching Basic"
-  ./$BIN_FOLD/bench_Domain
-  ./$BIN_FOLD/bench_GC1XeqC2Y
-  ./$BIN_FOLD/bench_GC1XplusC2YeqC3Z
-  ./$BIN_FOLD/bench_IntVar
-  ./$BIN_FOLD/bench_Simple
-  ./$BIN_FOLD/bench_Store
-  ./$BIN_FOLD/bench_XmultCeqY
-}
-
-IVDomain_Bench() {
-  echo "benching IVDomain_"
-  ./$BIN_FOLD/bench_IvDomain_Good
-  ./$BIN_FOLD/bench_IvDomain_Bad
-  ./$BIN_FOLD/bench_IvDomain_Trend
-}
-
-CarSequencing_Bench() {
-  echo "benching CarSequencing"
-  ./$BIN_FOLD/bench_CarSequencing
-}
-
-MagicSeries_Bench() {
-  echo "benching MagicSeries"
-  ./$BIN_FOLD/bench_MagicSeries
-}
-
-MysteryShopper_Bench() {
-  echo "benching MysteryShopper"
-  ./$BIN_FOLD/bench_MysteryShopper
-}
-
-NQueens_Bench() {
-  echo "benching NQueens"
-  ./$BIN_FOLD/bench_NQueens
-}
-
-SMM_Bench() {
-  echo "benching Send+More=Money"
-  ./$BIN_FOLD/bench_SMM
-}
 
 #- bench execution (function calls) -
 set_local_test_environment
@@ -104,11 +58,17 @@ echo "warm up"
 $GO run warmup.go
 
 #- benching-
-Basic_Bench
-IVDomain_Bench
-CarSequencing_Bench
-MagicSeries_Bench
-MysteryShopper_Bench
-NQueens_Bench
-SMM_Bench
+./$BIN_FOLD/bench_Domain
+./$BIN_FOLD/bench_GC1XeqC2Y
+./$BIN_FOLD/bench_GC1XplusC2YeqC3Z
+./$BIN_FOLD/bench_IntVar
+./$BIN_FOLD/bench_Simple
+./$BIN_FOLD/bench_Store
+./$BIN_FOLD/bench_XmultCeqY
+./$BIN_FOLD/bench_IvDomain
+./$BIN_FOLD/bench_CarSequencing
+./$BIN_FOLD/bench_MagicSeries
+./$BIN_FOLD/bench_MysteryShopper
+./$BIN_FOLD/bench_NQueens
+./$BIN_FOLD/bench_SMM
 

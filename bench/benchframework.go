@@ -22,11 +22,13 @@ package main
 
 import (
 	"bitbucket.org/gofd/gofd/core"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 	"runtime"
+	"runtime/pprof"
 	"sort"
 	"strings"
 	"testing"
@@ -83,14 +85,14 @@ const bench_verbose = true
 func bench_teardown(br testing.BenchmarkResult) {
 	benchmark_config[TIMEPERRUN] = fmt.Sprintf("%d", br.NsPerOp())
 	if bench_verbose {
-		fmt.Printf("%-28s: ",
+		fmt.Printf("%-32s: ",
 			benchmark_config[TASKNAME])
 		for key, value := range benchmark_config {
 			if strings.HasPrefix(key, TASK) && key != TASKNAME {
 				fmt.Printf("%s=%-8v  ", key[len(TASK)+2:], value)
 			}
 		}
-		fmt.Printf("%s: %14s ns\n", TIMEPERRUN,
+		fmt.Printf("%s: %13s ns\n", TIMEPERRUN,
 			insert_separators(benchmark_config[TIMEPERRUN], 3, "_"))
 		// fmt.Printf("%v\n", benchmark_config[TIMEPERRUN])
 	}
@@ -236,6 +238,8 @@ func BenchSetRuns(n int) {
 	benchmark_config[RUNS] = fmt.Sprintf("%d", n)
 }
 
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+
 // run function with config for task, impl and more
 func bench(f func(b *testing.B), task bc, impl bc, more bc) {
 	c := make(bc)
@@ -259,12 +263,39 @@ func bench(f func(b *testing.B), task bc, impl bc, more bc) {
 		c[k] = v
 	}
 	bench_setup(c)
-	bench_teardown(testing.Benchmark(f))
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			panic(err)
+		}
+		pprof.StartCPUProfile(f)
+	}
+	result := testing.Benchmark(f)
+	if *cpuprofile != "" {
+		pprof.StopCPUProfile()
+	}
+	bench_teardown(result)
 }
 
-// default for impl and more
+// run the benchmark
+// - run it if there are no cmdline args or
+// - run it if any of the cmd line args match
+// skip otherwise
 func benchd(f func(b *testing.B), task bc) {
-	var bcg bc = bc{"": "gofd"}
-	var bce bc = bc{}
-	bench(f, task, bcg, bce)
+	flag.Parse()
+	runIt := len(flag.Args()) == 0
+	if !runIt {
+		name := task["name"]
+		for _, arg := range flag.Args() {
+			if strings.Contains(name, arg) {
+				runIt = true
+				break
+			}
+		}
+	}
+	if runIt {
+		var bcg bc = bc{"": "gofd"}
+		var bce bc = bc{}
+		bench(f, task, bcg, bce)
+	}
 }
