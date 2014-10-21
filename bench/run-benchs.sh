@@ -46,6 +46,8 @@ clean() {
   mkdir $BIN_FOLD
 }
 
+# do not profile by default
+DOPROFILE=
 function build_bench {
 	$GOCMD build -o ./$BIN_FOLD/bench_$1 benchframework.go bench_$1.go
 }
@@ -58,14 +60,19 @@ function warmup {
 function run_bench {
 	build_bench $1
     warmup
+if [ -n "$DOPROFILE" ]; then
+    ./$BIN_FOLD/bench_$1 -cpuprofile=./$LOG_FOLD/bench_$1.pprof "${*:2}"
+else
     ./$BIN_FOLD/bench_$1 "${*:2}"
+fi
 }
 
 
-# go through options, accept -c and -g <gocmd>
-while getopts "cg:" arg; do
+# go through options, accept -c -p and -g <gocmd>
+while getopts "cpg:" arg; do
 case "$arg" in
         g) GOCMD="$OPTARG";;
+        p) DOPROFILE=", profiling";;
         c) GOCLEAN="cleaning bin and logs first"; clean;;
         [?]) echo >&2 "Usage: $0 [-g gocmd (go)] [-c] [packages]"
          echo >&2 "   add -c to clean bin and log first"
@@ -78,7 +85,7 @@ echo "Benching with : $GOCMD    "$GOCLEAN
 ls bench_*.go | while read f; do 
 BENCH=$(echo $f | sed -r 's/(^bench_|\.go$)//g')
 if [[ $f == *$1* ]]; then # empty $1 automagically fits
-echo "=== Benching $BENCH ==="
+echo "=== Benching $BENCH$DOPROFILE ==="
 run_bench $BENCH "${*:2}"
 fi
 done
