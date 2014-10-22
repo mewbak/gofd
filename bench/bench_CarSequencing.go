@@ -11,18 +11,18 @@ import (
 )
 
 func main() {
-	bench_CarSequencing()
-	bench_CarSequencingWithoutAmong()
+	bench_CarSequencingWithAmong()
+	bench_CarSequencingNoAmong()
 }
 
 // the driver for everything benching CarSequencing
-func bench_CarSequencing() {
+func bench_CarSequencingWithAmong() {
 	benchd(bCarSequencing1,
-		bc{"name": "CarSequencing, Among", "size": "10"})
+		bc{"name": "CarSequencing", "type": "WithAmong", "size": "10"})
 	benchd(bCarSequencing2,
-		bc{"name": "CarSequencing, Among", "size": "15"})
+		bc{"name": "CarSequencing", "type": "WithAmong", "size": "15"})
 	benchd(bCarSequencing3,
-		bc{"name": "CarSequencing, Among", "size": "20"})
+		bc{"name": "CarSequencing", "type": "WithAmong", "size": "20"})
 }
 
 func bCarSequencing1(b *testing.B) {
@@ -85,20 +85,19 @@ func bCarSequencing(b *testing.B, carsPerClass []int, carsWithOptions [][]int,
 	for i := 0; i < b.N; i++ {
 		store := core.CreateStore()
 		numberOfDifferentClasses := len(carsPerClass)
-
 		cars := make([]core.VarId, numberOfCars)
 		for i := 0; i < len(cars); i++ {
-			cars[i] = core.CreateAuxIntVarExFromTo(store, 1, numberOfDifferentClasses)
+			cars[i] = core.CreateAuxIntVarExFromTo(store, 1,
+				numberOfDifferentClasses)
 		}
-
 		// define constraints
 		// every car belongs to one of a number of classes
 		// (all cars in a class have the same set of options)
 		for i := 0; i < numberOfDifferentClasses; i++ {
 			store.AddPropagator(explicit.CreateAmong(cars, []int{i + 1},
-				core.CreateAuxIntVarExFromTo(store, carsPerClass[i], carsPerClass[i])))
+				core.CreateAuxIntVarExFromTo(store,
+					carsPerClass[i], carsPerClass[i])))
 		}
-
 		// automated constraint modelling of problem
 		// j is used as index for arrays concerning the options
 		for j := 0; j < len(carsWithOptions); j++ {
@@ -120,21 +119,19 @@ func bCarSequencing(b *testing.B, carsPerClass []int, carsWithOptions [][]int,
 						howManyOfconsecutiveCarsAtMost[j])))
 			}
 		}
-
-		//		println("numberOfPropagators car sequencing: ", store.GetNumPropagators())
 		query = labeling.CreateSearchOneQueryVariableSelect(cars)
-		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
+		labeling.Labeling(store, query,
+			labeling.VarSelect, labeling.InDomainMin)
 	}
-	// println("among cars:", numberOfCars, "nodes:", query.GetSearchStatistics().GetNodes())
 }
 
-func bench_CarSequencingWithoutAmong() {
+func bench_CarSequencingNoAmong() {
 	benchd(bCarSequencingWithoutAmong1,
-		bc{"name": "CarSequencing, no Among", "size": "10"})
+		bc{"name": "CarSequencing", "type": "NoAmong", "size": "10"})
 	benchd(bCarSequencingWithoutAmong2,
-		bc{"name": "CarSequencing, no Among", "size": "15"})
+		bc{"name": "CarSequencing", "type": "NoAmong", "size": "15"})
 	benchd(bCarSequencingWithoutAmong3,
-		bc{"name": "CarSequencing, no Among", "size": "20"})
+		bc{"name": "CarSequencing", "type": "NoAmong", "size": "20"})
 }
 
 func bCarSequencingWithoutAmong1(b *testing.B) {
@@ -188,33 +185,40 @@ func bCarSequencingWithoutAmong3(b *testing.B) {
 		howManyOfconsecutiveCarsAtMost, numberOfCars)
 }
 
-func bCarSequencingWithoutAmong(b *testing.B, carsPerClass []int, carsWithOptions [][]int, consecutiveCars []int, howManyOfconsecutiveCarsAtLeast []int, howManyOfconsecutiveCarsAtMost []int, numberOfCars int) {
+func bCarSequencingWithoutAmong(b *testing.B,
+	carsPerClass []int, carsWithOptions [][]int, consecutiveCars []int,
+	howManyOfconsecutiveCarsAtLeast []int,
+	howManyOfconsecutiveCarsAtMost []int,
+	numberOfCars int) {
 	BenchSetRuns(b.N)
 	b.StartTimer() // benchmark starts here
 	var query *labeling.SearchOneQuery
 	for i := 0; i < b.N; i++ {
 		store := core.CreateStore()
 		numberOfDifferentClasses := len(carsPerClass)
-
 		// define car variables
 		cars := make([]core.VarId, numberOfCars)
 		for i := 0; i < len(cars); i++ {
-			cars[i] = core.CreateAuxIntVarIvFromTo(store, 1, numberOfDifferentClasses)
+			cars[i] = core.CreateAuxIntVarIvFromTo(store,
+				1, numberOfDifferentClasses)
 		}
-
 		// define constraints
-		// every car belongs to one of six classes (all cars in a class have the same set of options)
+		// every car belongs to one of six classes (all cars in a
+		// class have the same set of options)
 		for i := 0; i < numberOfDifferentClasses; i++ {
-			//array to store variables with a {0,1} domain which are needed for reification
+			// array to store variables with a {0,1} domain
+			// which are needed for reification
 			variables := make([]core.VarId, len(cars))
 			for j := 0; j < len(cars); j++ {
 				variables[j] = core.CreateAuxIntVarIvFromTo(store, 0, 1)
 				xeqc := indexical.CreateXeqC(cars[j], i+1)
-				reifiedConstraint := reification.CreateReifiedConstraint(xeqc, variables[j])
+				reifiedConstraint := reification.CreateReifiedConstraint(xeqc,
+					variables[j])
 				store.AddPropagator(reifiedConstraint)
 			}
 			store.AddPropagator(interval.CreateSum(store,
-				core.CreateAuxIntVarIvFromTo(store, carsPerClass[i], carsPerClass[i]), variables))
+				core.CreateAuxIntVarIvFromTo(store,
+					carsPerClass[i], carsPerClass[i]), variables))
 		}
 
 		// automated constraint modelling of problem
@@ -222,29 +226,35 @@ func bCarSequencingWithoutAmong(b *testing.B, carsPerClass []int, carsWithOption
 		for j := 0; j < len(carsWithOptions); j++ {
 			for i := 0; i < len(cars)-consecutiveCars[j]+1; i++ {
 				// create array to store the results of reification
-				// its size must be the number of consecutive cars that can have the option
+				// its size must be the number of consecutive cars
+				// that can have the option
 				// multiplied with the number of options the class has
 				currentCarsWithOptions := carsWithOptions[j]
-				variables := make([]core.VarId, consecutiveCars[j]*(len(currentCarsWithOptions)))
+				variables := make([]core.VarId,
+					consecutiveCars[j]*(len(currentCarsWithOptions)))
 				variablesIndex := 0
 				for n := 0; n < consecutiveCars[j]; n++ {
 					for opt := 0; opt < len(currentCarsWithOptions); opt++ {
-						variables[variablesIndex] = core.CreateAuxIntVarIvFromTo(store, 0, 1)
-						xeqc := indexical.CreateXeqC(cars[i+n], currentCarsWithOptions[opt])
-						reified := reification.CreateReifiedConstraint(xeqc, variables[variablesIndex])
+						variables[variablesIndex] =
+							core.CreateAuxIntVarIvFromTo(store, 0, 1)
+						xeqc := indexical.CreateXeqC(cars[i+n],
+							currentCarsWithOptions[opt])
+						reified := reification.CreateReifiedConstraint(xeqc,
+							variables[variablesIndex])
 						store.AddPropagator(reified)
 						variablesIndex += 1
 					}
 				}
 				// constrain how many consecutive cars can have the current
 				// option
-				store.AddPropagator(interval.CreateSum(store, core.CreateAuxIntVarIvFromTo(store,
-					howManyOfconsecutiveCarsAtLeast[j],
-					howManyOfconsecutiveCarsAtMost[j]), variables))
+				store.AddPropagator(interval.CreateSum(store,
+					core.CreateAuxIntVarIvFromTo(store,
+						howManyOfconsecutiveCarsAtLeast[j],
+						howManyOfconsecutiveCarsAtMost[j]), variables))
 			}
 		}
 		query = labeling.CreateSearchOneQueryVariableSelect(cars)
-		labeling.Labeling(store, query, labeling.VarSelect, labeling.InDomainMin)
+		labeling.Labeling(store, query,
+			labeling.VarSelect, labeling.InDomainMin)
 	}
-	// println("primitive cars:", numberOfCars, "nodes:", query.GetSearchStatistics().GetNodes())
 }

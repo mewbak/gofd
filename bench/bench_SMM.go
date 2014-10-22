@@ -9,8 +9,10 @@ import (
 )
 
 func main() {
-	benchd(bSMM, bc{"name": "SendMoreMoney", "size": "1"})
-	benchd(bSMMIndexical, bc{"name": "SendMoreMoneyIndexical", "size": "1"})
+	benchd(bSMM,
+		bc{"name": "SendMoreMoney", "type": "normal"})
+	benchd(bSMMIndexical,
+		bc{"name": "SendMoreMoney", "type": "indexical"})
 }
 
 func bSMM(b *testing.B) { SMMImpl(b) }

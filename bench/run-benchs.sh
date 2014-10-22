@@ -22,6 +22,10 @@
 # of these only the Bad.ExD ones
 # clean first as well
 # $ ./run-benchs.sh -c IvDomain Bad.ExD
+# only run the benchmarks in bench_IvDomain with the name 
+# containing IvD.Copy and of these the ones have type=bad
+# $ ./run-benchs.sh IvDomain IvD.Copy type=bad
+
 
 # We need to set manually the GOPATH, which is a couple of directories
 # above starting from bench; what a hack....
@@ -61,9 +65,9 @@ function run_bench {
 	build_bench $1
     warmup
 if [ -n "$DOPROFILE" ]; then
-    ./$BIN_FOLD/bench_$1 -cpuprofile=./$LOG_FOLD/bench_$1.pprof "${*:2}"
+    ./$BIN_FOLD/bench_$1 -cpuprofile=./$LOG_FOLD/bench_$1.pprof ${*:2}
 else
-    ./$BIN_FOLD/bench_$1 "${*:2}"
+    ./$BIN_FOLD/bench_$1 ${*:2}
 fi
 }
 
@@ -74,7 +78,7 @@ case "$arg" in
         g) GOCMD="$OPTARG";;
         p) DOPROFILE=", profiling";;
         c) GOCLEAN="cleaning bin and logs first"; clean;;
-        [?]) echo >&2 "Usage: $0 [-g gocmd (go)] [-c] [packages]"
+        [?]) echo >&2 "Usage: $0 [-g gocmd (go)] [-c] [program] [function] [key=val]*"
          echo >&2 "   add -c to clean bin and log first"
             exit 1;;
     esac

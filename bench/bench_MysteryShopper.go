@@ -18,9 +18,12 @@ func main() {
 
 // the driver for everything benching IntVar
 func bench_MysteryShopper() {
-	benchd(bMysteryShopper1, bc{"name": "MysteryShopper", "size": "4"})
-	benchd(bMysteryShopper2, bc{"name": "MysteryShopper", "size": "6"})
-	benchd(bMysteryShopper3, bc{"name": "MysteryShopper", "size": "12"})
+	benchd(bMysteryShopper1,
+		bc{"name": "MysteryShopper", "type": "WithAmong", "size": "4"})
+	benchd(bMysteryShopper2,
+		bc{"name": "MysteryShopper", "type": "WithAmong", "size": "6"})
+	benchd(bMysteryShopper3,
+		bc{"name": "MysteryShopper", "type": "WithAmong", "size": "12"})
 }
 
 func bMysteryShopper1(b *testing.B) {
@@ -132,11 +135,11 @@ func bMysteryShopper(b *testing.B, locationsWithSalesladies []int,
 
 func bench_MysteryShopperWithoutAmong() {
 	benchd(bMysteryShopperWithoutAmong1,
-		bc{"name": "MysteryShopperWithoutAmong", "size": "4"})
+		bc{"name": "MysteryShopper", "type": "NoAmong", "size": "4"})
 	benchd(bMysteryShopperWithoutAmong2,
-		bc{"name": "MysteryShopperWithoutAmong", "size": "6"})
+		bc{"name": "MysteryShopper", "type": "NoAmong", "size": "6"})
 	benchd(bMysteryShopperWithoutAmong3,
-		bc{"name": "MysteryShopperWithoutAmong", "size": "12"})
+		bc{"name": "MysteryShopper", "type": "NoAmong", "size": "12"})
 }
 
 func bMysteryShopperWithoutAmong1(b *testing.B) {

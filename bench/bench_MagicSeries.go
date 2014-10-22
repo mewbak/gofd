@@ -17,13 +17,20 @@ func main() {
 
 // the driver for everything benching IntVar
 func bench_MagicSeries() {
-	benchd(bMagicSeries1, bc{"name": "MagicSeries", "size": "3"})
-	benchd(bMagicSeries2, bc{"name": "MagicSeries", "size": "4"})
-	benchd(bMagicSeries3, bc{"name": "MagicSeries", "size": "5"})
-	benchd(bMagicSeries4, bc{"name": "MagicSeries", "size": "6"})
-	benchd(bMagicSeries5, bc{"name": "MagicSeries", "size": "7"})
-	benchd(bMagicSeries6, bc{"name": "MagicSeries", "size": "10"})
-	benchd(bMagicSeries7, bc{"name": "MagicSeries", "size": "17"})
+	benchd(bMagicSeries1,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "3"})
+	benchd(bMagicSeries2,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "4"})
+	benchd(bMagicSeries3,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "5"})
+	benchd(bMagicSeries4,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "6"})
+	benchd(bMagicSeries5,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "7"})
+	benchd(bMagicSeries6,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "10"})
+	benchd(bMagicSeries7,
+		bc{"name": "MagicSeries", "type": "WithAmong", "size": "17"})
 }
 
 func bMagicSeries1(b *testing.B) { bMagicSeries(b, 3) }
@@ -55,25 +62,23 @@ func bMagicSeries(b *testing.B, length int) {
 		labeling.Labeling(store, query,
 			labeling.VarSelect, labeling.InDomainMin)
 	}
-	// println("among magic:", length, "nodes:",
-	//	query.GetSearchStatistics().GetNodes())
 }
 
 func bench_MagicSeriesWithoutAmong() {
 	benchd(bMagicSeriesWithoutAmong1,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "3"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "3"})
 	benchd(bMagicSeriesWithoutAmong2,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "4"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "4"})
 	benchd(bMagicSeriesWithoutAmong3,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "5"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "5"})
 	benchd(bMagicSeriesWithoutAmong4,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "6"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "6"})
 	benchd(bMagicSeriesWithoutAmong5,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "7"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "7"})
 	benchd(bMagicSeriesWithoutAmong6,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "10"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "10"})
 	benchd(bMagicSeriesWithoutAmong7,
-		bc{"name": "MagicSeriesWithoutAmong", "size": "17"})
+		bc{"name": "MagicSeries", "type": "NoAmong", "size": "17"})
 }
 
 func bMagicSeriesWithoutAmong1(b *testing.B) { bMagicSeriesWithoutAmong(b, 3) }

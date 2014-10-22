@@ -35,30 +35,32 @@ func init() {
 
 // the driver for everything benching Interval_Bad
 func bench_Interval_Bad() {
-	name := fmt.Sprintf("Bad.ExD.Remove(%d)", removeVal)
-	benchd(bExRemoveBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.IvD.Remove(%d)", removeVal)
-	benchd(bIvRemoveBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.ExD.Removes(%v)", removeVals)
-	benchd(bExRemovesBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.IvD.Removes(%v)", removeVals)
-	benchd(bIvRemovesBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.ExD.Add(%d)", addVal)
-	benchd(bExAddBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.IvD.Add(%d)", addVal)
-	benchd(bIvAddBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.ExD.Contains(%d)", containsVal)
-	benchd(bExContainsBad, bc{"name": name, "type": "bad"})
-	name = fmt.Sprintf("Bad.IvD.Contains(%d", containsVal)
-	benchd(bIvContainsBad, bc{"name": name, "type": "bad"})
-	benchd(bExCopyBad, bc{"name": "Bad.ExD.Copy", "type": "bad"})
-	benchd(bIvCopyBad, bc{"name": "Bad.IvD.Copy", "type": "bad"})
-	benchd(bExMinBad, bc{"name": "Bad.ExD.GetMin", "type": "bad"})
-	benchd(bIvMinBad, bc{"name": "Bad.IvD.GetMin", "type": "bad"})
-	benchd(bExMaxBad, bc{"name": "Bad.ExD.GetMax", "type": "bad"})
-	benchd(bIvMaxBad, bc{"name": "Bad.IvD.GetMax", "type": "bad"})
-	benchd(bExIsEmptyBad, bc{"name": "Bad.ExD.IsEmpty", "type": "bad"})
-	benchd(bIvIsEmptyBad, bc{"name": "Bad.IvD.IsEmpty", "type": "bad"})
+	name := fmt.Sprintf("Remove(%d)", removeVal)
+	benchd(bExRemoveBad, bc{"name": name, "type": "bad", "domain": "Ex"})
+	name = fmt.Sprintf("Remove(%d)", removeVal)
+	benchd(bIvRemoveBad, bc{"name": name, "type": "bad", "domain": "Iv"})
+	name = fmt.Sprintf("Removes(%v)", removeVals)
+	benchd(bExRemovesBad, bc{"name": name, "type": "bad", "domain": "Ex"})
+	name = fmt.Sprintf("Removes(%v)", removeVals)
+	benchd(bIvRemovesBad, bc{"name": name, "type": "bad", "domain": "Iv"})
+	name = fmt.Sprintf("Add(%d)", addVal)
+	benchd(bExAddBad, bc{"name": name, "type": "bad", "domain": "Ex"})
+	name = fmt.Sprintf("Add(%d)", addVal)
+	benchd(bIvAddBad, bc{"name": name, "type": "bad", "domain": "Iv"})
+	name = fmt.Sprintf("Contains(%d)", containsVal)
+	benchd(bExContainsBad, bc{"name": name, "type": "bad", "domain": "Ex"})
+	name = fmt.Sprintf("Contains(%d", containsVal)
+	benchd(bIvContainsBad, bc{"name": name, "type": "bad", "domain": "Iv"})
+	benchd(bExCopyBad, bc{"name": "Copy", "type": "bad", "domain": "Ex"})
+	benchd(bIvCopyBad, bc{"name": "Copy", "type": "bad", "domain": "Iv"})
+	benchd(bExMinBad, bc{"name": "GetMin", "type": "bad", "domain": "Ex"})
+	benchd(bIvMinBad, bc{"name": "GetMin", "type": "bad", "domain": "Iv"})
+	benchd(bExMaxBad, bc{"name": "GetMax", "type": "bad", "domain": "Ex"})
+	benchd(bIvMaxBad, bc{"name": "GetMax", "type": "bad", "domain": "Iv"})
+	benchd(bExIsEmptyBad,
+		bc{"name": "IsEmpty", "type": "bad", "domain": "Ex"})
+	benchd(bIvIsEmptyBad,
+		bc{"name": "IsEmpty", "type": "bad", "domain": "Iv"})
 }
 
 func bExRemoveBad(b *testing.B) {
@@ -119,30 +121,30 @@ func bIvMaxBad(b *testing.B) {
 
 // the driver for everything benching Interval_Good
 func bench_Interval_Good() {
-	name := fmt.Sprintf("Good.ExD.Remove(%d)", removeVal)
-	benchd(bExRemoveGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.IvD.Remove(%d)", removeVal)
-	benchd(bIvRemoveGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.ExD.Removes(%v)", removeVals)
-	benchd(bExRemovesGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.IvD.Removes(%v)", removeVals)
-	benchd(bIvRemovesGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.ExD.Add(%d)", addVal)
-	benchd(bExAddGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.IvD.Add(%d)", addVal)
-	benchd(bIvAddGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.ExD.Contains(%d)", containsVal)
-	benchd(bExContainsGood, bc{"name": name, "type": "good"})
-	name = fmt.Sprintf("Good.IvD.Contains(%d)", containsVal)
-	benchd(bIvContainsGood, bc{"name": name, "type": "good"})
-	benchd(bExCopyGood, bc{"name": "Good.ExD.Copy", "type": "good"})
-	benchd(bIvCopyGood, bc{"name": "Good.IvD.Copy", "type": "good"})
-	benchd(bExMinGood, bc{"name": "Good.ExD.GetMin", "type": "good"})
-	benchd(bIvMinGood, bc{"name": "Good.IvD.GetMin", "type": "good"})
-	benchd(bExMaxGood, bc{"name": "Good.ExD.GetMax", "type": "good"})
-	benchd(bIvMaxGood, bc{"name": "Good.IvD.GetMax", "type": "good"})
-	benchd(bExIsEmptyGood, bc{"name": "Good.ExD.IsEmpty", "type": "good"})
-	benchd(bIvIsEmptyGood, bc{"name": "Good.IvD.IsEmpty", "type": "good"})
+	name := fmt.Sprintf("Remove(%d)", removeVal)
+	benchd(bExRemoveGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvRemoveGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = fmt.Sprintf("Removes(%v)", removeVals)
+	benchd(bExRemovesGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvRemovesGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = fmt.Sprintf("Add(%d)", addVal)
+	benchd(bExAddGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvAddGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = fmt.Sprintf("Contains(%d)", containsVal)
+	benchd(bExContainsGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvContainsGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = "Copy"
+	benchd(bExCopyGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvCopyGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = "GetMin"
+	benchd(bExMinGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvMinGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = "GetMax"
+	benchd(bExMaxGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvMaxGood, bc{"name": name, "type": "good", "domain": "Iv"})
+	name = "IsEmpty"
+	benchd(bExIsEmptyGood, bc{"name": name, "type": "good", "domain": "Ex"})
+	benchd(bIvIsEmptyGood, bc{"name": name, "type": "good", "domain": "Iv"})
 }
 
 func bExRemoveGood(b *testing.B) {
@@ -195,14 +197,17 @@ func bench_Interval_Trend() {
 	curIv = 1
 	curEx = 1
 	for z = 1; z <= 100001; z = z * 10 {
-		name := fmt.Sprintf("Trend.ExD.Removes(%v)", removeVals)
-		benchd(bExRemovesTrend, bc{"name": name, "size": strconv.Itoa(z)})
-		name = fmt.Sprintf("Trend.IvD.Removes(%v)", removeVals)
-		benchd(bIvRemovesTrend, bc{"name": name, "size": strconv.Itoa(z)})
-		name = fmt.Sprintf("Trend.ExD.Copy")
-		benchd(bExCopyTrend, bc{"name": name, "size": strconv.Itoa(z)})
-		name = fmt.Sprintf("Trend.IvD.Copy")
-		benchd(bIvCopyTrend, bc{"name": name, "size": strconv.Itoa(z)})
+		zs := strconv.Itoa(z)
+		name := fmt.Sprintf("Removes(%v)", removeVals)
+		benchd(bExRemovesTrend,
+			bc{"name": name, "type": "trend", "domain": "Ex", "size": zs})
+		benchd(bIvRemovesTrend,
+			bc{"name": name, "type": "trend", "domain": "Iv", "size": zs})
+		name = "Copy"
+		benchd(bExCopyTrend,
+			bc{"name": name, "type": "trend", "domain": "Ex", "size": zs})
+		benchd(bIvCopyTrend,
+			bc{"name": name, "type": "trend", "domain": "Iv", "size": zs})
 	}
 }
 

@@ -2,23 +2,25 @@ package main
 
 // Mini bench framework benching single functions. We use the signature of the
 // golang test/bench framework, but run the individual tests manually.
-// The functions to bench are organized in bench.go (the main/driver).
-// We can run a single test with go run benchframework.go bench_<name>.go in
-// this directory.
+// The functions to bench must be called in the main function.
+// We can run a single bench with a main function with
+// $ go run benchframework.go bench_<name>.go
+// in this directory.
 
-// A benchmark function may start with any initialization code whose execution
-// time is ignored. The following two lines
+// A benchmark function may start with any initialization code
+// whose execution time is ignored. The following two lines
 //    BenchSetRuns(b.N)
 //    b.StartTimer() // benchmark starts here
-// must precede the actual code to be benchmarked, which is typically iterated
-// in a loop. This almost always forces a third line
+// must precede the actual code to be benchmarked, which is
+// typically iterated in a loop. This almost always forces a third line
 //    for i:=0; i < b.N; i++ {
-// and the code in the loop then is measured. Benchmarks shall not be executed
-// concurrently.
-// Do not forget to provide information about the benchmark run to be stored
-// through a key/value map bc of strings. Set at least key "name", which will
-// appear in the bench logs as task, name. Use other keys which will all end up
-// under the "task, " prefix.
+// and the code in the loop then is measured.
+// Benchmarks shall not be executed concurrently.
+// Do not forget to provide information about the benchmark run stored
+// in a key/value map bc of strings. Set at least key "name",
+// which will appear in the bench logs as task, name. Use other keys,
+// which will all end up under the "task, " prefix and may be used
+// to select specific bench runs from the command line.
 
 import (
 	"bitbucket.org/gofd/gofd/core"
@@ -85,11 +87,11 @@ const bench_verbose = true
 func bench_teardown(br testing.BenchmarkResult) {
 	benchmark_config[TIMEPERRUN] = fmt.Sprintf("%d", br.NsPerOp())
 	if bench_verbose {
-		fmt.Printf("%-32s: ",
+		fmt.Printf("%-22s: ",
 			benchmark_config[TASKNAME])
 		for key, value := range benchmark_config {
 			if strings.HasPrefix(key, TASK) && key != TASKNAME {
-				fmt.Printf("%s=%-8v  ", key[len(TASK)+2:], value)
+				fmt.Printf("%s=%-10v  ", key[len(TASK)+2:], value)
 			}
 		}
 		fmt.Printf("%s: %13s ns\n", TIMEPERRUN,
@@ -130,7 +132,8 @@ func bench_writeremove(f *os.File, c bc, key string) {
 	panic(fmt.Sprintf("Did not find mandatory key %v in %v", key, c))
 }
 
-// adds system specific information
+// bench_addsystem adds runtime, operating system and
+// hardware specific information to the log file
 func bench_addsystem(c bc) {
 	c["lang, name"] = "golang"
 	c["lang, compiler"] = runtime.Compiler
@@ -212,6 +215,8 @@ func bench_write(c bc) {
 			panic(err)
 		}
 	}
+	// choose a unique filename (if benchs are not executed
+	// concurrently and run longer than a nanosecond)
 	filename := fmt.Sprintf("%s.%d.bench", c[TASKNAME], bench_time)
 	benchfile, err := os.Create(path.Join(DIR, filename))
 	if err != nil {
@@ -277,23 +282,36 @@ func bench(f func(b *testing.B), task bc, impl bc, more bc) {
 	bench_teardown(result)
 }
 
-// run the benchmark
-// - run it if there are no cmdline args or
-// - run it if any of the cmd line args match
-// skip otherwise
+// checkRunIt checks whether first arg is a substring of the
+// function name and all args are key=val pairs that as soon as
+// the corresponding key exists, the value must be a perfect match
+func checkRunIt(task bc, args []string) bool {
+	if len(args) == 0 {
+		return true // run it if there are no args
+	}
+	name := task["name"]
+	if !strings.Contains(name, args[0]) {
+		return false // function name does not fit
+	}
+	for _, kv := range args[1:] {
+		if strings.Contains(kv, "=") {
+			kva := strings.SplitN(kv, "=", 2)
+			key := kva[0]
+			value := kva[1]
+			if val, ok := task[key]; ok {
+				if val != value {
+					return false // key=value did not match exactly
+				}
+			} // otherwise ignore filter
+		} // otherwise ignore filter
+	}
+	return true // if none of the filters rule it out, run it
+}
+
+// run the benchmark if matched
 func benchd(f func(b *testing.B), task bc) {
 	flag.Parse()
-	runIt := len(flag.Args()) == 0
-	if !runIt {
-		name := task["name"]
-		for _, arg := range flag.Args() {
-			if strings.Contains(name, arg) {
-				runIt = true
-				break
-			}
-		}
-	}
-	if runIt {
+	if checkRunIt(task, flag.Args()) {
 		var bcg bc = bc{"": "gofd"}
 		var bce bc = bc{}
 		bench(f, task, bcg, bce)

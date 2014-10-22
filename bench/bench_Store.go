@@ -13,15 +13,16 @@ func main() {
 
 // the driver for everything benching IntVar
 func bench_Store() {
-	name := "Store.Clone"
+	name := "Clone"
+	// Too much memory...
 	//benchd(bStoreClone1, bc{"name": name, "size": "1"})
 	//benchd(bStoreClone10, bc{"name": name, "size": "10"})
 	//benchd(bStoreClone100, bc{"name": name, "size": "100"})
-	name = "Store.AddSimplePropagator"
+	name = "AddSimplePropagator"
 	benchd(bStoreAddSimplePropagator1, bc{"name": name, "size": "1"})
 	benchd(bStoreAddSimplePropagator10, bc{"name": name, "size": "10"})
 	benchd(bStoreAddSimplePropagator100, bc{"name": name, "size": "100"})
-	name = "Store.AddComplexPropagator"
+	name = "AddComplexPropagator"
 	benchd(bStoreAddComplexPropagator1, bc{"name": name, "size": "1"})
 	benchd(bStoreAddComplexPropagator10, bc{"name": name, "size": "10"})
 	benchd(bStoreAddComplexPropagator100, bc{"name": name, "size": "100"})

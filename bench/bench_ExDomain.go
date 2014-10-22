@@ -15,11 +15,11 @@ func bench_Domain() {
 	benchd(bCreateExDomainAdds1, bc{"name": name, "size": "1"})
 	benchd(bCreateExDomainAdds10, bc{"name": name, "size": "10"})
 	benchd(bCreateExDomainAdds100, bc{"name": name, "size": "100"})
-	name = "Domain.GetMin"
+	name = "ExDomain.GetMin"
 	benchd(bDomainMin1, bc{"name": name, "size": "1"})
 	benchd(bDomainMin10, bc{"name": name, "size": "10"})
 	benchd(bDomainMin100, bc{"name": name, "size": "100"})
-	name = "Domain.Equals"
+	name = "ExDomain.Equals"
 	benchd(bDomainEquals1, bc{"name": name, "size": "1"})
 	benchd(bDomainEquals10, bc{"name": name, "size": "10"})
 	benchd(bDomainEquals100, bc{"name": name, "size": "100"})

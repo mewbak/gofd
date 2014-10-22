@@ -13,8 +13,9 @@ func main() {
 
 // the driver for everything benching XmultCeqY
 func bench_XmultCeqY() {
-	benchd(b_XmultCeqYex, bc{"name": "explicit.XmultCeqY", "size": "1"})
-	benchd(b_XmultCeqYiv, bc{"name": "interval.XmultCeqY", "size": "1"})
+	name := "XmultCeqY"
+	benchd(b_XmultCeqYex, bc{"name": name, "domain": "Ex"})
+	benchd(b_XmultCeqYiv, bc{"name": name, "domain": "Iv"})
 }
 
 func b_XmultCeqYex(b *testing.B) {
