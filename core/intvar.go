@@ -119,6 +119,14 @@ func CreateAuxIntVarExFromTo(store *Store, from, to int) VarId {
 
 /* more convencience functions */
 
+// CreateIntVarsFromTo sets the given IntVars (*VarId). The same interval
+// domain for all Intvars is used (from and to inclusive). IntVars will be
+// added it to the store. varids must be given as reference, not value.
+func CreateIntVarsFromTo(varids []*VarId, names []string,
+	store *Store, from int, to int) {
+	CreateIntVarsIvFromTo(varids, names, store, from, to)
+}
+
 // CreateIntVarsIvFromTo sets the given IntVars (*VarId). The same interval
 // domain for all Intvars is used (from and to inclusive). IntVars will be
 // added it to the store. varids must be given as reference, not value.
@@ -130,6 +138,14 @@ func CreateIntVarsIvFromTo(varids []*VarId, names []string,
 		name := intvarFixname(names[i], store)
 		(*varid) = store.registerIntVarAtStore(name, intvar)
 	}
+}
+
+// CreateIntVarsValues sets the given IntVars (*VarId). The same interval
+// domain for all Intvars is used (from and to inclusive). IntVars will be
+// added it to the store. varids must be given as reference, not value.
+func CreateIntVarsValues(varids []*VarId, names []string,
+	store *Store, values []int) {
+	CreateIntVarsIvValues(varids, names, store, values)
 }
 
 // CreateIntVarsIvValues sets the given IntVars (*VarId). The same interval

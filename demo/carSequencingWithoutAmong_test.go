@@ -24,7 +24,7 @@ func testCarSequencingWithoutAmong(t *testing.T, carsPerClass []int,
 	// define car variables
 	cars := make([]core.VarId, numberOfCars)
 	for i := 0; i < len(cars); i++ {
-		cars[i] = core.CreateAuxIntVarIvFromTo(store, 1, numberOfDiffClasses)
+		cars[i] = core.CreateAuxIntVarFromTo(store, 1, numberOfDiffClasses)
 	}
 	// define constraints
 	// every car belongs to one of six classes (all cars in a class have
@@ -34,13 +34,13 @@ func testCarSequencingWithoutAmong(t *testing.T, carsPerClass []int,
 		// which are needed for reification
 		variables := make([]core.VarId, len(cars))
 		for j := 0; j < len(cars); j++ {
-			variables[j] = core.CreateAuxIntVarIvFromTo(store, 0, 1)
+			variables[j] = core.CreateAuxIntVarFromTo(store, 0, 1)
 			xeqc := indexical.CreateXeqC(cars[j], i+1)
 			reif := reification.CreateReifiedConstraint(xeqc, variables[j])
 			store.AddPropagator(reif)
 		}
 		store.AddPropagator(interval.CreateSumBounds(store,
-			core.CreateAuxIntVarIvFromTo(store, carsPerClass[i],
+			core.CreateAuxIntVarFromTo(store, carsPerClass[i],
 				carsPerClass[i]), variables))
 	}
 	// automated constraint modelling of problem
@@ -57,7 +57,7 @@ func testCarSequencingWithoutAmong(t *testing.T, carsPerClass []int,
 			variablesIndex := 0
 			for n := 0; n < consecutiveCars[j]; n++ {
 				for opt := 0; opt < len(currentCarsWithOptions); opt++ {
-					aux := core.CreateAuxIntVarIvFromTo(store, 0, 1)
+					aux := core.CreateAuxIntVarFromTo(store, 0, 1)
 					variables[variablesIndex] = aux
 					xeqc := indexical.CreateXeqC(cars[i+n],
 						currentCarsWithOptions[opt])
@@ -71,7 +71,7 @@ func testCarSequencingWithoutAmong(t *testing.T, carsPerClass []int,
 			// constrain how many consecutive cars can have the current
 			// option
 			store.AddPropagator(interval.CreateSumBounds(store,
-				core.CreateAuxIntVarIvFromTo(store,
+				core.CreateAuxIntVarFromTo(store,
 					howManyOfconsecutiveCarsAtLeast[j],
 					howManyOfconsecutiveCarsAtMost[j]), variables))
 		}

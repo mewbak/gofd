@@ -21,7 +21,7 @@ func testMagicSeriesWithoutAmong(t *testing.T, n int, expectedResult bool) {
 	// define variables X0,...,Xn
 	variables := make([]core.VarId, n+1)
 	for i := 0; i < len(variables); i++ {
-		variables[i] = core.CreateAuxIntVarIvFromTo(store, 0, n)
+		variables[i] = core.CreateAuxIntVarFromTo(store, 0, n)
 	}
 	// define constraints
 	// each value j can occur Xj times
@@ -31,7 +31,7 @@ func testMagicSeriesWithoutAmong(t *testing.T, n int, expectedResult bool) {
 		for j := 0; j < len(variables); j++ {
 			// store in variables[j] whether Xj (variables[j]) takes
 			// the value i or not
-			variables[j] = core.CreateAuxIntVarIvFromTo(store, 0, 1)
+			variables[j] = core.CreateAuxIntVarFromTo(store, 0, 1)
 			xeqc := indexical.CreateXeqC(variables[j], i)
 			reifiedConstraint := reification.CreateReifiedConstraint(xeqc,
 				variables[j])

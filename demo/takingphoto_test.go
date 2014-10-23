@@ -80,16 +80,16 @@ func Test_takingphoto2(t *testing.T) {
 
 func DoAlignInOneRow(t *testing.T, minSatisfyingConstraints int, expReady bool) {
 	var B, C, D, F, G, M, P core.VarId
-	core.CreateIntVarsIvFromTo(
+	core.CreateIntVarsFromTo(
 		[]*core.VarId{&B, &C, &D, &F, &G, &M, &P},
 		[]string{"B", "C", "D", "F", "G", "M", "P"}, store, 0, 6)
 	var S0, S1, S2, S3, S4, S5, S6, S7 core.VarId
 	var Z0, Z1, Z2, Z3, Z4, Z5, Z6, Z7 core.VarId
-	core.CreateIntVarsIvFromTo(
+	core.CreateIntVarsFromTo(
 		[]*core.VarId{&S0, &S1, &S2, &S3, &S4, &S5, &S6, &S7},
 		[]string{"S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7"},
 		store, 0, 1)
-	core.CreateIntVarsIvValues(
+	core.CreateIntVarsValues(
 		[]*core.VarId{&Z0, &Z1, &Z2, &Z3, &Z4, &Z5, &Z6, &Z7},
 		[]string{"Z0", "Z1", "Z2", "Z3", "Z4", "Z5", "Z6", "Z7"},
 		store, []int{-1, 1})
@@ -118,7 +118,7 @@ func DoAlignInOneRow(t *testing.T, minSatisfyingConstraints int, expReady bool) 
 	dPD := indexical.CreateXplusYeqZ(P, Z7, D) // Paul next to Donald
 	store.AddPropagator(reification.CreateReifiedConstraint(dPD, S7))
 
-	S := core.CreateIntVarIvFromTo("S", store, minSatisfyingConstraints, 8)
+	S := core.CreateIntVarFromTo("S", store, minSatisfyingConstraints, 8)
 	card := reification.CreateCardinality(store, S,
 		[]core.VarId{S0, S1, S2, S3, S4, S5, S6, S7})
 	store.AddPropagator(card)
@@ -147,16 +147,16 @@ func DoAlignInOneRow(t *testing.T, minSatisfyingConstraints int, expReady bool) 
 
 func DoAlignInOneRowVERYSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 	var B, C core.VarId
-	core.CreateIntVarsIvFromTo(
+	core.CreateIntVarsFromTo(
 		[]*core.VarId{&B, &C},
 		[]string{"B", "C"}, store, 0, 1)
 	// C wants to be beside B
 	// B wants to be beside C
 	var S0, S1, Z0, Z1 core.VarId
-	core.CreateIntVarsIvFromTo(
+	core.CreateIntVarsFromTo(
 		[]*core.VarId{&S0, &S1},
 		[]string{"S0", "S1"}, store, 0, 1)
-	core.CreateIntVarsIvValues(
+	core.CreateIntVarsValues(
 		[]*core.VarId{&Z0, &Z1},
 		[]string{"Z0", "Z1"}, store, []int{-1, 1})
 	// Distance as X-Y = Z, Z = {-1, 1}
@@ -167,7 +167,7 @@ func DoAlignInOneRowVERYSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 	store.AddPropagator(reification.CreateReifiedConstraint(dBC, S1))
 	// C<->B<->D : 1, 0, 1
 	// B<->C<->D : 1, 1, 0
-	S := core.CreateIntVarIvFromTo("S", store, minSatisfied, 2)
+	S := core.CreateIntVarFromTo("S", store, minSatisfied, 2)
 	store.AddPropagator(
 		reification.CreateCardinality(store, S, []core.VarId{S0, S1}))
 	alldiff_prop := indexical.CreateAlldifferent(B, C)
@@ -188,17 +188,17 @@ func DoAlignInOneRowVERYSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 
 func DoAlignInOneRowSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 	var B, C, D core.VarId
-	core.CreateIntVarsIvFromTo(
+	core.CreateIntVarsFromTo(
 		[]*core.VarId{&B, &C, &D},
 		[]string{"B", "C", "D"}, store, 0, 2)
 	// C wants to be beside B
 	// B wants to be beside C
 	var S0, S1, S2 core.VarId
 	var Z0, Z1, Z2 core.VarId
-	core.CreateIntVarsIvFromTo(
+	core.CreateIntVarsFromTo(
 		[]*core.VarId{&S0, &S1, &S2},
 		[]string{"S0", "S1", "S2"}, store, 0, 1)
-	core.CreateIntVarsIvValues(
+	core.CreateIntVarsValues(
 		[]*core.VarId{&Z0, &Z1, &Z2},
 		[]string{"Z0", "Z1", "Z2"}, store, []int{-1, 1})
 	// distance as X - Y = Z, Z = {-1, 1}
@@ -211,7 +211,7 @@ func DoAlignInOneRowSIMPLE(t *testing.T, minSatisfied int, expReady bool) {
 	store.AddPropagator(reification.CreateReifiedConstraint(dBD, S2))
 	// C<->B<->D : 1, 0, 1
 	// B<->C<->D : 1, 1, 0
-	S := core.CreateIntVarIvFromTo("S", store, minSatisfied, 3)
+	S := core.CreateIntVarFromTo("S", store, minSatisfied, 3)
 	store.AddPropagator(
 		reification.CreateCardinality(store, S, []core.VarId{S0, S1, S2}))
 	alldiff_prop := indexical.CreateAlldifferent(B, C, D)

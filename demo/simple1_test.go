@@ -13,13 +13,13 @@ func Test_simple1_primitive(t *testing.T) {
 	setup()
 	defer teardown()
 	log("simple1_primitive: x+y=12 with many basic propagators")
-	X := core.CreateIntVarIvFromTo("X", store, 0, 9)
+	X := core.CreateIntVarFromTo("X", store, 0, 9)
 	XMin, XMax := store.GetMinMaxDomain(X)
-	Y := core.CreateIntVarIvFromTo("Y", store, 0, 9)
+	Y := core.CreateIntVarFromTo("Y", store, 0, 9)
 	YMin, YMax := store.GetMinMaxDomain(X)
 	C := 12
-	CX := core.CreateIntVarIvFromTo("CX", store, XMin, XMax*1)
-	CY := core.CreateIntVarIvFromTo("CY", store, YMin, YMax*1)
+	CX := core.CreateIntVarFromTo("CX", store, XMin, XMax*1)
+	CY := core.CreateIntVarFromTo("CY", store, YMin, YMax*1)
 	store.AddPropagators(propagator.CreateXmultCeqY(X, 1, CX))  // X*1=CX
 	store.AddPropagators(propagator.CreateXmultCeqY(Y, 1, CY))  // Y*1=CY
 	store.AddPropagators(propagator.CreateXplusYeqC(CX, CY, C)) // CX+CY=12

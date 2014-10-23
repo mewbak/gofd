@@ -42,7 +42,7 @@ func testTravellingSalesmanWithoutAmong(t *testing.T, nodes []core.VarId,
 		i := 0
 		for _, value := range domain {
 			for _, node := range set {
-				reifiedVariables[i] = core.CreateAuxIntVarIvFromTo(store, 0, 1)
+				reifiedVariables[i] = core.CreateAuxIntVarFromTo(store, 0, 1)
 				xeqc := indexical.CreateXeqC(node, value)
 				reified := reification.CreateReifiedConstraint(xeqc,
 					reifiedVariables[i])
@@ -53,7 +53,7 @@ func testTravellingSalesmanWithoutAmong(t *testing.T, nodes []core.VarId,
 		// impose that at most setSize-1 variables in the set can take values
 		// from domain
 		store.AddPropagator(interval.CreateSum(store,
-			core.CreateAuxIntVarIvFromTo(store, 0, setSize-1),
+			core.CreateAuxIntVarFromTo(store, 0, setSize-1),
 			reifiedVariables))
 	}
 
@@ -83,7 +83,7 @@ func generateTSPWithSizeWithoutAmong(numberOfNodes int) []core.VarId {
 				domain = append(domain, j+1)
 			}
 		}
-		nodes[i] = core.CreateAuxIntVarIvValues(store, domain)
+		nodes[i] = core.CreateAuxIntVarValues(store, domain)
 	}
 	return nodes
 }
@@ -98,7 +98,7 @@ func generateTSPFromSliceWithoutAmong(nodes [][]int) []core.VarId {
 	log(fmt.Sprintf("TSP with %d cities, from slice", len(nodes)))
 	variables := make([]core.VarId, len(nodes))
 	for i := 0; i < len(nodes); i++ {
-		variables[i] = core.CreateAuxIntVarIvValues(store, nodes[i])
+		variables[i] = core.CreateAuxIntVarValues(store, nodes[i])
 	}
 	return variables
 }

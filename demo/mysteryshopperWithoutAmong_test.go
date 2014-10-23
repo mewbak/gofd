@@ -32,7 +32,7 @@ func testMysteryShopperWithoutAmong(t *testing.T,
 	// create IDs for all salesladies
 	salesladyID := make([]core.VarId, numberOfSalesladies)
 	for i := 0; i < numberOfSalesladies; i++ {
-		salesladyID[i] = core.CreateAuxIntVarIvFromTo(store, i+1, i+1)
+		salesladyID[i] = core.CreateAuxIntVarFromTo(store, i+1, i+1)
 	}
 	// define visits from shoppers at salesladies
 	allVisitsFromAllShoppers := make([][]core.VarId, numberOfShoppers)
@@ -41,7 +41,7 @@ func testMysteryShopperWithoutAmong(t *testing.T,
 		shopperIvisitVSalesladies := make([]core.VarId, numberOfVisits)
 		for i := 0; i < numberOfVisits; i++ {
 			s := fmt.Sprintf("Shopper%vVisit%v", j+1, i+1)
-			ivvar := core.CreateIntVarIvFromTo(s, store, 1, numberOfSalesladies)
+			ivvar := core.CreateIntVarFromTo(s, store, 1, numberOfSalesladies)
 			shopperIvisitVSalesladies[i] = ivvar
 			allVisits = append(allVisits, shopperIvisitVSalesladies[i])
 		}
@@ -72,7 +72,7 @@ func testMysteryShopperWithoutAmong(t *testing.T,
 			for j := 0; j < numberOfSalesladies; j++ {
 				// create variable to store the results of the reified
 				// constraint per saleslady
-				auxvar := core.CreateAuxIntVarIvFromTo(store, 0, 1)
+				auxvar := core.CreateAuxIntVarFromTo(store, 0, 1)
 				ShopperXVisitISalesladyJ := auxvar
 				ShopperXVisitISalesladies[j] = ShopperXVisitISalesladyJ
 				// only one visit per location
@@ -84,7 +84,7 @@ func testMysteryShopperWithoutAmong(t *testing.T,
 			}
 			// during visit I shopper X can only visit one of all the
 			// locations
-			auxvar := core.CreateAuxIntVarIvFromTo(store, 1, numberOfLocations)
+			auxvar := core.CreateAuxIntVarFromTo(store, 1, numberOfLocations)
 			ShopperXVisitILocationY[i] = auxvar
 			store.AddPropagator(interval.CreateWeightedSum(store,
 				ShopperXVisitILocationY[i], weightedLocations,
@@ -110,7 +110,7 @@ func testMysteryShopperWithoutAmong(t *testing.T,
 				shopperIvisitVSalesladies := allVisitsFromAllShoppers[x]
 				for i := 0; i < numberOfVisits; i++ {
 					// visits the saleslady at most one time
-					SJGMSXVI := core.CreateAuxIntVarIvFromTo(store, 0, 1)
+					SJGMSXVI := core.CreateAuxIntVarFromTo(store, 0, 1)
 					xeqc := indexical.CreateXeqC(shopperIvisitVSalesladies[i],
 						j+1)
 					reif := reification.CreateReifiedConstraint(xeqc, SJGMSXVI)
@@ -122,7 +122,7 @@ func testMysteryShopperWithoutAmong(t *testing.T,
 					break
 				}
 			}
-			V1G2 := core.CreateAuxIntVarIvFromTo(store,
+			V1G2 := core.CreateAuxIntVarFromTo(store,
 				1, groupsWithShoppers[y])
 			store.AddPropagator(interval.CreateSum(store,
 				V1G2, SalesladyIGroupXShopperYVisitJ))

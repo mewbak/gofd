@@ -72,23 +72,23 @@ func ConstrainKnapsack(store *core.Store,
 	propsValues := make([]core.Constraint, lenValues)
 	for i := 0; i < lenValues; i++ {
 		stri := fmt.Sprintf("T%d", i)
-		take[i] = core.CreateIntVarIvFromTo(stri, store, 0, 1)
-		sumWeights[i] = core.CreateIntVarIvValues("sumweights_"+stri,
+		take[i] = core.CreateIntVarFromTo(stri, store, 0, 1)
+		sumWeights[i] = core.CreateIntVarValues("sumweights_"+stri,
 			store, []int{0, weights[i]})
 		propsWeights[i] = interval.CreateXmultCeqY(take[i],
 			weights[i], sumWeights[i])
-		sumValues[i] = core.CreateIntVarIvValues("sumvalues_"+stri,
+		sumValues[i] = core.CreateIntVarValues("sumvalues_"+stri,
 			store, []int{0, values[i]})
 		propsValues[i] = interval.CreateXmultCeqY(take[i],
 			values[i], sumValues[i])
 	}
 	store.AddPropagators(propsWeights...)
 	store.AddPropagators(propsValues...)
-	value := core.CreateIntVarIvFromTo("sumValues",
+	value := core.CreateIntVarFromTo("sumValues",
 		store, 0, maxSumValues)
 	sumprop := interval.CreateSumBounds(store, value, sumValues)
 	store.AddPropagators(sumprop)
-	sumWeight := core.CreateIntVarIvFromTo("sumWeights", store, 0,
+	sumWeight := core.CreateIntVarFromTo("sumWeights", store, 0,
 		maxSumWeights)
 	sumprop = interval.CreateSumBounds(store, sumWeight, sumWeights)
 	store.AddPropagators(sumprop)
