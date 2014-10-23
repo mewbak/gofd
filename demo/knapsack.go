@@ -8,11 +8,11 @@ import (
 
 // KnapsackProblem represents a knapsack problem
 type KnapsackProblem struct {
-	name     string
-	weights  []int
-	values   []int
-	capacity int
-	maxValue int
+	Name     string
+	Weights  []int
+	Values   []int
+	Capacity int
+	MaxValue int
 }
 
 var KnapsackProblems []KnapsackProblem = []KnapsackProblem{
@@ -44,7 +44,7 @@ var KnapsackProblems []KnapsackProblem = []KnapsackProblem{
 // the one matching the name exactly
 func Knapsack(name string) *KnapsackProblem {
 	for _, ks := range KnapsackProblems {
-		if ks.name == name {
+		if ks.Name == name {
 			return &ks
 		}
 	}

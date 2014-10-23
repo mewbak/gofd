@@ -13,8 +13,8 @@ func testDefinedKnapsack(t *testing.T, name string) {
 	if ks == nil {
 		panic(fmt.Sprintf("Problem %s not found", name))
 	}
-	testKnapsack(t, "knapsack"+ks.name,
-		ks.weights, ks.values, ks.capacity, ks.maxValue)
+	testKnapsack(t, fmt.Sprintf("knapsack%s", ks.Name),
+		ks.Weights, ks.Values, ks.Capacity, ks.MaxValue)
 }
 
 func Test_knapsack0a(t *testing.T) {
@@ -74,7 +74,7 @@ func Test_knapsack2b(t *testing.T) {
 func Test_knapsack2c(t *testing.T) {
 	setup()
 	defer teardown()
-	testDefinedKnapsack(t, "2b")
+	testDefinedKnapsack(t, "2c")
 }
 
 /* helper */
@@ -94,7 +94,8 @@ func showProblem(name string, weights, values []int, capacity int) {
 	log(fmt.Sprintf("values    : %s", strings.Join(svalues, ", ")))
 }
 
-func showSolution(solution map[core.VarId]int, vars []core.VarId, weights []int, maxValue int,
+func showSolution(solution map[core.VarId]int, vars []core.VarId,
+	weights []int, maxValue int,
 	statStore *core.StoreStatistics,
 	statSearch *labeling.SearchStatistics) {
 	s := make([]string, 0)
@@ -113,7 +114,8 @@ func testKnapsack(t *testing.T, testname string,
 	weights, values []int, capacity, sol int) {
 	showProblem(testname, weights, values, capacity)
 	vars, objectiveVar := ConstrainKnapsack(store, weights, values, capacity)
-	maxVal, solution, searchStat, storeStat := labeling.MaximizeStats(store, objectiveVar)
+	maxVal, solution, searchStat, storeStat :=
+		labeling.MaximizeStats(store, objectiveVar)
 	equalsInt_test(t, "Test_"+testname, maxVal, sol)
 	showSolution(solution, vars, weights, maxVal, storeStat, searchStat)
 }
