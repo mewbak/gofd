@@ -6,8 +6,6 @@ gofd is a concurrent finite domain solver for [golang](http://golang.org/).
 
     go get bitbucket.org/gofd/gofd
 
-
-
 # Tutorial #
 * [Getting Started](/gofd/gofd/wiki/GettingStarted) - Model and solve your first constraint satisfaction problem 
 * [Labeling](/gofd/gofd/wiki/Labeling) - Model and solve a more complex constraint satisfaction problem with labeling

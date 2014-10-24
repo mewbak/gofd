@@ -53,7 +53,7 @@ func eightQueens() {
 	queens := make([]core.VarId, n)
 	for i := 0; i < n; i++ {
 		varname := fmt.Sprintf("Q%d", i)
-		queens[i] = core.CreateIntVarIvFromTo(varname, store, 0, n-1)
+		queens[i] = core.CreateIntVarFromTo(varname, store, 0, n-1)
 	}
 	prop := propagator.CreateAlldifferent(queens...)
 	store.AddPropagators(prop)
