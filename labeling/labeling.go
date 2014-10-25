@@ -72,8 +72,9 @@ func fix(store *core.Store, resultQuery ResultQuery,
 		}
 		if hasNext {
 			variable, _ := store.GetIntVar(varId)
-			// println("\r\nSetze \r\n", variable.ID)
+			// println(fmt.Sprintf("Fix: %v", variable))
 			for value := range strategy(variable.Domain) {
+				// println(fmt.Sprintf("  Fix to %v", value))
 				if loggerDoInfo {
 					logger.If("LABELING_FixVariable: %v value: %v", varId,
 						value)

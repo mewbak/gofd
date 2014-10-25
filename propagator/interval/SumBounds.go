@@ -27,15 +27,13 @@ type SumBounds struct {
 
 func (this *SumBounds) Start() {
 	core.LogInitConsistency(this)
-
 	// initial check
 	evt := core.CreateChangeEvent()
 	this.ivSumBoundsInitialCheck(evt)
 	core.SendChangesToStore(evt, this)
-
+	// process all changes
 	for changeEntry := range this.inCh {
 		core.LogIncomingChange(this, this.store, changeEntry)
-
 		evt = core.CreateChangeEvent()
 		varidChanged := changeEntry.GetID()
 		changedDom := this.varidToDomainMap[varidChanged]
