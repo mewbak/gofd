@@ -15,9 +15,9 @@ func fmtIntSlice(is []int) string {
 	return "[" + strings.Join(core.IntSliceToStringSlice(is), ",") + "]"
 }
 
-func Alldifferent_Offset_test(t *testing.T, inits [][]int, names []string,
+func AlldifferentOffset_test(t *testing.T, inits [][]int, names []string,
 	offsets []int, exps [][]int, expready bool) {
-	msg := "Alldifferent_Offset_test %s"
+	msg := "AlldifferentOffset_test %s"
 
 	s := make([]string, len(inits)+1)
 	i := 0
@@ -33,73 +33,73 @@ func Alldifferent_Offset_test(t *testing.T, inits [][]int, names []string,
 
 	vars := createTestVars(inits, names)
 
-	Alldifferent_Offset := CreateAlldifferent_Offset(
+	AlldifferentOffset := CreateAlldifferentOffset(
 		vars, offsets)
-	store.AddPropagators(Alldifferent_Offset)
+	store.AddPropagators(AlldifferentOffset)
 	ready := store.IsConsistent()
-	ready_test(t, "Alldifferent_Offset", ready, expready)
+	ready_test(t, "AlldifferentOffset", ready, expready)
 	if expready {
 		for i, exp := range exps {
-			domainEquals_test(t, "Alldifferent_Offset", vars[i], exp)
+			domainEquals_test(t, "AlldifferentOffset", vars[i], exp)
 		}
 	}
 }
 
-func Test_Alldifferent_Offseta(t *testing.T) {
+func Test_AlldifferentOffseta(t *testing.T) {
 	setup()
 	defer teardown()
 	offsets := []int{0, -1, -2, -3}
-	Alldifferent_Offset_test(t,
+	AlldifferentOffset_test(t,
 		[][]int{[]int{0}, []int{0, 1}, []int{1, 2}, []int{2, 3}},
 		[]string{"X", "Y", "Z", "Q"},
 		offsets,
 		[][]int{[]int{}, []int{}, []int{}, []int{}}, false)
 }
 
-func Test_Alldifferent_Offsetb(t *testing.T) {
+func Test_AlldifferentOffsetb(t *testing.T) {
 	setup()
 	defer teardown()
 	offsets := []int{0, -1, -2, -3}
-	Alldifferent_Offset_test(t,
+	AlldifferentOffset_test(t,
 		[][]int{[]int{0}, []int{0, 1}, []int{1, 2}, []int{1, 2, 3}},
 		[]string{"X", "Y", "Z", "Q"},
 		offsets,
 		[][]int{[]int{}, []int{}, []int{}, []int{}}, false)
 }
 
-func Test_Alldifferent_Offsetc(t *testing.T) {
+func Test_AlldifferentOffsetc(t *testing.T) {
 	setup()
 	defer teardown()
 	offsets := []int{0, -1, -2, -3}
-	Alldifferent_Offset_test(t,
+	AlldifferentOffset_test(t,
 		[][]int{[]int{0}, []int{0, 1}, []int{0, 1, 2}, []int{0, 1, 2, 3}},
 		[]string{"X", "Y", "Z", "Q"},
 		offsets,
 		[][]int{[]int{0}, []int{0}, []int{0}, []int{0}}, true)
 }
 
-func Test_Alldifferent_Offsetd(t *testing.T) {
+func Test_AlldifferentOffsetd(t *testing.T) {
 	setup()
 	defer teardown()
 	offsets := []int{0, -1, -2, -3}
-	Alldifferent_Offset_test(t,
+	AlldifferentOffset_test(t,
 		[][]int{[]int{0, 1}, []int{1}, []int{1, 3}, []int{5}},
 		[]string{"X", "Y", "Z", "Q"},
 		offsets,
 		[][]int{[]int{1}, []int{1}, []int{1}, []int{5}}, true)
 }
 
-func Test_Alldifferent_Offset_clone(t *testing.T) {
+func Test_AlldifferentOffset_clone(t *testing.T) {
 	setup()
 	defer teardown()
-	log("Alldifferent_Offset_clone")
+	log("AlldifferentOffset_clone")
 
 	inits := [][]int{[]int{0, 1}, []int{1}, []int{1, 3}, []int{5}}
 	offsets := []int{0, -1, -2, -3}
 	names := []string{"X", "Y", "Z", "Q"}
 
 	vars := createTestVars(inits, names)
-	c := CreateAlldifferent_Offset(vars, offsets)
+	c := CreateAlldifferentOffset(vars, offsets)
 
 	clone_test(t, store, c)
 }
