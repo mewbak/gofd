@@ -12,11 +12,11 @@ const ReadChannelBuffer int = 17 // some buffering on store input
 
 // Store represents a constraint store
 type Store struct {
-	iDToIntVar       map[VarId]*IntVar
-	propCounter      PropId
-	iDCounter        VarId
-	registryStore    *RegistryStore
-	
+	iDToIntVar    map[VarId]*IntVar
+	propCounter   PropId
+	iDCounter     VarId
+	registryStore *RegistryStore
+
 	readChannel    chan *ChangeEvent // incoming domain reductions
 	controlChannel chan ControlEvent // for commands such as register
 	// eventCounter increment per outgoing even, expect one incoming
@@ -88,31 +88,6 @@ func (this *Store) close() {
 
 	this.registryStore.Close()
 
-	/*for propId, varIds := range this.propVarIds {
-		
-		for i,varId := range varIds {
-			// propagator no longer listens to variable
-			delete(this.propVarIds[propId], varId)
-			
-			// this was the last variable the propagator listend to
-			// thus, the last accessible channel reference
-			if len(this.propVarIds[propId]) == 0 {
-				println("HELLOU")
-				// no longer send to that propagator, propagator closes down
-				close(this.iDToWriteChannel[varId][propId])
-				
-				if len(this.iDToWriteChannel[varId])==0 {
-					delete(this.iDToWriteChannel, varId)
-				}
-				// remove any dangling reference to propagator,
-				// ready to be garbage collected
-				delete(this.propagators, propId)
-			}
-			println("HELLOU2")
-			// removes channel reference from multiplexer for this variable
-			delete(this.iDToWriteChannel[varId], propId)
-		}
-	}*/
 	// ToDo: still fails, why?
 	// by preventing pending change events to have effect there is no
 	// longer a nil or deadlock, but for e.g. nqueens I get more solutions...
@@ -181,12 +156,14 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	// writeChannel, for the store to write and the propagator to read
 	writeChannel := make(chan *ChangeEntry, channelSize)
 	this.stat.sizeChannels += channelSize
-		
-	constraintData := CreateConstraintData(propId, this.registryStore.constraints[propId], writeChannel)	
-	
+
+	constraintData := CreateConstraintData(propId,
+		this.registryStore.constraints[propId], writeChannel)
+
 	//connect varids and constraint
-	this.registryStore.AddVaridsConntectedToConstraint(varIds,constraintData)
-	this.registryStore.AddConstraintInterestedInVarids(constraintData, interestedInVarIds)
+	this.registryStore.AddVaridsConntectedToConstraint(varIds, constraintData)
+	this.registryStore.AddConstraintInterestedInVarids(constraintData,
+		interestedInVarIds)
 
 	if loggerDebug {
 		logger.Df("STORE_registerPropagator writeChannel: %v", writeChannel)
@@ -333,36 +310,10 @@ func (this *Store) processChanges(changes []*ChangeEntry, loggerDebug bool) {
 				logger.Df("STORE_fixed domain, var: %s",
 					this.registryStore.GetVarName(varId))
 			}
-			
+
 			removedConstraints := this.registryStore.RemoveFixedRelations(varId)
 			this.stat.propagators -= removedConstraints
-			
-			/*
-			for propId := range this.iDToWriteChannel[varId] {
-				// propagator no longer listens to fixed variable
-				//delete(this.propVarIds[propId], varId)
-				i:=0
-				
-				for j,vId := range this.propVarIds[propId] {
-					if vId==varId{
-						i=j
-						break
-					}
-				}
-				copy(this.propVarIds[propId][i:], this.propVarIds[propId][i+1:])
-				this.propVarIds[propId][len(this.propVarIds[propId])-1] = 0
-				this.propVarIds[propId] = this.propVarIds[propId][:len(this.propVarIds[propId])-1]
-				// if it was the last variable the propagator listend to
-				if len(this.propVarIds[propId]) == 0 {
-					// no longer send to that propagator, close it down
-					close(this.iDToWriteChannel[varId][propId])
-					this.stat.propagators -= 1
-					// remove dangling reference to propagator, allow gc
-					delete(this.propagators, propId)
-				}
-				// remove channel (only) from that multiplexer
-				delete(this.iDToWriteChannel[varId], propId)
-			}*/
+
 		}
 	}
 }
@@ -390,7 +341,7 @@ func (this *Store) isInconsistent() bool {
 // registered propagators containing copies of those domains
 func (this *Store) multiplex(changeEntry *ChangeEntry) {
 	connectedConstraints := this.registryStore.ConnectedConstraints(changeEntry.varId)
-	
+
 	if logger.DoDebug() {
 		logger.Df("STORE_multiplex change on %s, value %s to %v channels",
 			this.registryStore.GetVarName(changeEntry.varId), changeEntry,
@@ -450,12 +401,12 @@ func (this *Store) getVariableIDs() []VarId {
 // GetName returns the name of the IntVar with the given id
 func (this *Store) GetName(id VarId) string {
 	// It is safe to do directly as names never change
-	return this.registryStore.GetVarName(id)
+	//return this.registryStore.GetVarName(id)
 	// ToDo: really no race condition during construction?
 	// Alternative:
-	// evt := createGetNameEvent(id)
-	// this.controlChannel <- evt
-	// return <-evt.channel
+	evt := createGetNameEvent(id)
+	this.controlChannel <- evt
+	return <-evt.channel
 }
 
 // GetIntVar returns a pointer to an IntVar represented by given varId
@@ -523,8 +474,9 @@ func (this *Store) String() string {
 	msg += "constraint count: %v\n"
 	msg += "id to write-channel count: %v\n"
 	msg += "%s"
-	return fmt.Sprintf(msg, this.closed, this.communicating, 
-		len(this.registryStore.constraints), len(this.registryStore.varidsConnectedToConstraints), s)
+	return fmt.Sprintf(msg, this.closed, this.communicating,
+		len(this.registryStore.constraints),
+		len(this.registryStore.varidsConnectedToConstraints), s)
 }
 
 // StringWithSpecVarIds returns the current state of the store as a string.
@@ -544,6 +496,7 @@ func (this *Store) StringWithSpecVarIds(varids []VarId) string {
 	msg += "constraint count: %v\n"
 	msg += "id to write-channel count: %v\n"
 	msg += "%s"
-	return fmt.Sprintf(msg, this.closed, this.communicating, 
-		len(this.registryStore.constraints), len(this.registryStore.varidsConnectedToConstraints), s)
+	return fmt.Sprintf(msg, this.closed, this.communicating,
+		len(this.registryStore.constraints),
+		len(this.registryStore.varidsConnectedToConstraints), s)
 }

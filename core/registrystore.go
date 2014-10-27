@@ -118,16 +118,11 @@ func (this *RegistryStore) Close(){
 	for _,constraintData := range constraintDatas {
 		this.constraintsInterestedInVarids[constraintData] = nil
 		close(constraintData.channel)
-		//deprecated
-		/*constraintData.channel = nil
-		constraintData.constraint = nil
-		constraintData.propId = 0*/
 	}
 	
 	this.constraintsInterestedInVarids = nil
 	this.varidsConnectedToConstraints = nil
 	this.constraints = nil
-//	println("JOU", len(this.constraints))
 }
 
 func (this *RegistryStore) AddVaridsConntectedToConstraint(varIds []VarId, constraintData *ConstraintData) {
@@ -167,10 +162,8 @@ func (this *RegistryStore) RemoveFixedRelations(varid VarId) int {
 		this.constraintsInterestedInVarids[constraintD] = append(this.constraintsInterestedInVarids[constraintD][:indexToRemove], this.constraintsInterestedInVarids[constraintD][indexToRemove+1:]...)	
 		if len(this.constraintsInterestedInVarids[constraintD]) == 0 {
 			close(constraintD.channel)
-/*			constraintD.channel = nil
-			constraintD.constraint = nil
-			constraintD.propId = 0*/
-			// remove dangling reference to propagator, allow gc
+
+			// remove dangling reference to constraints, allow gc
 			delete(this.constraints, constraintD.propId)
 			delete(this.constraintsInterestedInVarids, constraintD)
 			removedConstraints+=1
