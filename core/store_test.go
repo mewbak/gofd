@@ -100,23 +100,23 @@ func Test_StoreAddPropagator(t *testing.T) {
 	left, right := createVarPropagatorDummy(t)
 	store.AddPropagator(left)
 	time.Sleep(500) // adding propagator is async; ToDo: sleep?
-	if len(store.propagators) != 1 {
-		t.Errorf("Store.AddPropagator: len(store.propagators)=%v, want %v",
-			len(store.propagators), 1)
+	if len(store.registryStore.constraints) != 1 {
+		t.Errorf("Store.AddPropagator: len(store.registryStore.constraints)=%v, want %v",
+			len(store.registryStore.constraints), 1)
 	}
-	if store.propagators[store.propCounter-1] != left {
+	if store.registryStore.constraints[store.propCounter-1] != left {
 		t.Errorf("Store.AddPropagator: last added = %v, want %v",
-			store.propagators[store.propCounter-1], left)
+			store.registryStore.constraints[store.propCounter-1], left)
 	}
 	store.AddPropagator(right)
 	time.Sleep(500) // adding propagator is async; ToDo: sleep?
-	if len(store.propagators) != 2 {
-		t.Errorf("Store.AddPropagator: len(store.propagators)=%v, want %v",
-			len(store.propagators), 2)
+	if len(store.registryStore.constraints) != 2 {
+		t.Errorf("Store.AddPropagator: len(store.registryStore.constraints)=%v, want %v",
+			len(store.registryStore.constraints), 2)
 	}
-	if store.propagators[store.propCounter-1] != right {
+	if store.registryStore.constraints[store.propCounter-1] != right {
 		t.Errorf("Store.AddPropagator: last added = %v, want %v",
-			store.propagators[store.propCounter-1], right)
+			store.registryStore.constraints[store.propCounter-1], right)
 	}
 }
 
@@ -127,15 +127,15 @@ func Test_StoreAddPropagators(t *testing.T) {
 
 	store.AddPropagators(createVarPropagatorDummy(t))
 	time.Sleep(500) //adding propagator is async
-	if len(store.propagators) != 2 {
-		t.Errorf("Store.AddPropagator: len(store.propagators)=%v, want %v",
-			len(store.propagators), 2)
+	if len(store.registryStore.constraints) != 2 {
+		t.Errorf("Store.AddPropagator: len(store.registryStore.constraints)=%v, want %v",
+			len(store.registryStore.constraints), 2)
 	}
 	store.AddPropagators(createVarPropagatorDummy(t))
 	time.Sleep(500) //adding propagator is async
-	if len(store.propagators) != 4 {
-		t.Errorf("Store.AddPropagator: len(store.propagators)=%v, want %v",
-			len(store.propagators), 4)
+	if len(store.registryStore.constraints) != 4 {
+		t.Errorf("Store.AddPropagator: len(store.registryStore.constraints)=%v, want %v",
+			len(store.registryStore.constraints), 4)
 	}
 }
 
