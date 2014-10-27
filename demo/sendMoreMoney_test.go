@@ -10,6 +10,7 @@ func Test_sendMoreMoneyPlain(t *testing.T) {
 	setup()
 	defer teardown()
 	log("sendMoreMoneyPlain      : E,N,D,O,R,Y: 0..9; S,M: 1..9")
+//	logger.SetLoggingLevel(core.LOG_DEBUG)
 	doSMM(t, false)
 }
 
