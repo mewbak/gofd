@@ -7,9 +7,6 @@ import (
 // VarId is a type for unique identifier for IntVars
 type VarId int
 
-// VarIdSet is a type for a set of VarIds
-type VarIdSet map[VarId]bool
-
 // IntVar is an Integer Variable with a Domain
 type IntVar struct {
 	ID     VarId

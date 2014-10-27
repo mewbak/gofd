@@ -117,7 +117,7 @@ func registerOnePropagator(store *Store, prop Constraint) PropId {
 	}
 	propId := store.propCounter
 	store.propCounter += 1
-	store.propagators[propId] = prop
+	store.registryStore.constraints[propId] = prop
 	prop.SetID(propId)
 	prop.Register(store)    // weave into internal data structure
 	store.eventCounter += 1 // expect event from initial check

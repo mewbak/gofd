@@ -230,7 +230,7 @@ func createGetNumPropagatorsEvent() *GetNumPropagatorsEvent {
 }
 
 func (this *GetNumPropagatorsEvent) run(store *Store) {
-	this.channel <- len(store.propagators)
+	this.channel <- len(store.registryStore.constraints)
 }
 
 func (this *GetNumPropagatorsEvent) String() string {
@@ -326,29 +326,18 @@ func (this *CloneEvent) run(store *Store) {
 			newStoreStat.changeEntries += 1
 		}
 	}
-	newStore.propVarIds = make(map[PropId]VarIdSet, len(store.propVarIds))
-	newStore.iDToWriteChannel =
-		make(map[VarId]IntChannelSet, len(store.iDToWriteChannel))
-	newStore.propagators =
-		make(map[PropId]Constraint, len(store.propagators))
+	var clonedConstraints []Constraint
+	
 	// use old variable IDs and name mapping
-	newStore.registryStore = this.store.registryStore.Copy()
+	newStore.registryStore, clonedConstraints = this.store.registryStore.Clone()
 	newStore.iDCounter = this.store.iDCounter
 	newStore.loggingStats = this.store.GetLoggingStat()
 	// use new propIds
 	newStore.propCounter = this.store.propCounter
 	newStore.readyChannel = make(chan bool)
-	clonedProps := make([]Constraint, len(this.store.propagators))
-	i := 0
-	for _, prop := range this.store.propagators {
-		clonedProp := prop.Clone()
-		clonedProp.SetID(0) // temporary value. Will be overridden
-		// for each propagator in function "AddPropagators"
-		clonedProps[i] = clonedProp
-		i++
-	}
+	
 	go newStore.propagate()
-	newStore.AddPropagators(clonedProps...)
+	newStore.AddPropagators(clonedConstraints...)
 	// println(len(cloned_props), newStore.stat.propagators) // why diff?
 	this.channel <- newStore
 }
