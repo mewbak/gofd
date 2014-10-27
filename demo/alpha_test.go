@@ -33,7 +33,7 @@ func runAlpha(t *testing.T, genAlpha func() (map[string]int, map[string]int)) {
 func Test_alpha1(t *testing.T) {
 	setup()
 	defer teardown()
-	msg := "skip, there must be a bug in SumBounds or somewhere else"
+	msg := "SKIP: There must be a bug in SumWeightedBounds? we do not find a solution"
 	log(msg)
 	// runAlpha(t, GenerateAlpha1)
 }

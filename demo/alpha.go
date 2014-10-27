@@ -25,16 +25,35 @@ func ConstrainAlpha(store *core.Store,
 	alldiff := propagator.CreateAlldifferent(avars...)
 	store.AddPropagator(alldiff)
 	for word, value := range words {
-		wordvars := make([]core.VarId, len(word))
-		for idx, rune := range word {
+		wordvarsmap := make(map[core.VarId]int)
+		for _, rune := range word {
 			letter := fmt.Sprintf("%c", rune)
 			if _, ok := vars[letter]; !ok {
 				panic(fmt.Sprintf("letter %v not found", letter))
 			}
-			wordvars[idx] = vars[letter]
+			varid := vars[letter]
+			if _, ok := wordvarsmap[varid]; !ok {
+				wordvarsmap[varid] = 0
+			}
+			// collect the number of occurences
+			wordvarsmap[varid] = wordvarsmap[varid] + 1
+			// ToDo: Sum propagator should find equal variables on its own
+		}
+		wordvars := make([]core.VarId, len(wordvarsmap))
+		wordoccs := make([]int, len(wordvarsmap))
+		i := 0
+		for varid, noocc := range wordvarsmap {
+			wordvars[i] = varid
+			wordoccs[i] = noocc
+			i++
 		}
 		zvar := core.CreateIntVarFromTo(word, store, 0, value)
-		sumprop := propagator.CreateSumBounds(store, zvar, wordvars)
+		sumprop := propagator.CreateWeightedSumBounds(store,
+			zvar, wordoccs, wordvars...)
+		//for idx, varid := range wordvars {
+		//	fmt.Printf("%d*%s ", wordoccs[idx], store.GetName(varid))
+		//}
+		//fmt.Printf("\n")
 		store.AddPropagator(sumprop)
 		store.AddPropagator(propagator.CreateXeqC(zvar, value)) // fix late
 	}
