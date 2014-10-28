@@ -16,7 +16,6 @@ type Store struct {
 	propCounter   PropId
 	iDCounter     VarId
 	registryStore *RegistryStore
-
 	readChannel    chan *ChangeEvent // incoming domain reductions
 	controlChannel chan ControlEvent // for commands such as register
 	// eventCounter increment per outgoing even, expect one incoming
@@ -51,7 +50,7 @@ func CreateStoreWithoutLogging() *Store {
 	store.communicating = false
 	store.closed = false
 	store.stat = CreateStoreStatistics()
-	store.registryStore = CreateRegistryStore()
+	store.registryStore = createRegistryStore()
 	go store.propagate() // always start the store main loop
 	return store
 }
@@ -73,7 +72,7 @@ func CreateStore() *Store {
 	store.communicating = false
 	store.closed = false
 	store.stat = CreateStoreStatistics()
-	store.registryStore = CreateRegistryStore()
+	store.registryStore = createRegistryStore()
 	go store.propagate() // always start the store main loop
 	return store
 }
@@ -161,8 +160,8 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 		this.registryStore.constraints[propId], writeChannel)
 
 	//connect varids and constraint
-	this.registryStore.AddVaridsConntectedToConstraint(varIds, constraintData)
-	this.registryStore.AddConstraintInterestedInVarids(constraintData,
+	this.registryStore.AddVarIdsToConstraint(varIds, constraintData)
+	this.registryStore.AddConstraintToVarIds(constraintData,
 		interestedInVarIds)
 
 	if loggerDebug {
@@ -340,15 +339,15 @@ func (this *Store) isInconsistent() bool {
 // multiplex multiplexes and dispatches copied value removal messages to all
 // registered propagators containing copies of those domains
 func (this *Store) multiplex(changeEntry *ChangeEntry) {
-	connectedConstraints := this.registryStore.ConnectedConstraints(changeEntry.varId)
-
+	rs := this.registryStore
+	constraints := rs.Constraints(changeEntry.varId)
 	if logger.DoDebug() {
 		logger.Df("STORE_multiplex change on %s, value %s to %v channels",
-			this.registryStore.GetVarName(changeEntry.varId), changeEntry,
-			len(connectedConstraints))
+			rs.GetVarName(changeEntry.varId), changeEntry,
+			len(constraints))
 	}
-	this.eventCounter += len(connectedConstraints)
-	for _, constraintData := range connectedConstraints {
+	this.eventCounter += len(constraints)
+	for _, constraintData := range constraints {
 		constraintData.channel <- changeEntry
 	}
 }
@@ -360,7 +359,7 @@ func (this *Store) propagatorExistsAlready(prop Constraint) bool {
 	return exists
 }
 
-// Clone creates a running copy of this store and returns pointer to this copy
+// Clone creates a running copy of this store, returns pointer to this copy
 func (this *Store) Clone(chEvt *ChangeEvent) *Store {
 	evt := createCloneEvent(this, chEvt)
 	this.controlChannel <- evt
@@ -465,7 +464,7 @@ func (this *Store) GetStat() *StoreStatistics {
 // String returns the current state of the store as a string
 func (this *Store) String() string {
 	s := ""
-	for id, name := range this.registryStore.GetVarIdToNameMap() {
+	for id, name := range this.registryStore.getVarIdToNameMap() {
 		s += fmt.Sprintf("%s   %s\n", name, this.iDToIntVar[id].Domain)
 	}
 	msg := "---Store-Status---\n"
@@ -475,8 +474,8 @@ func (this *Store) String() string {
 	msg += "id to write-channel count: %v\n"
 	msg += "%s"
 	return fmt.Sprintf(msg, this.closed, this.communicating,
-		len(this.registryStore.constraints),
-		len(this.registryStore.varidsConnectedToConstraints), s)
+		this.registryStore.numberOfConstraints(),
+		this.registryStore.numberOfActiveVarIds(), s)
 }
 
 // StringWithSpecVarIds returns the current state of the store as a string.
@@ -497,6 +496,6 @@ func (this *Store) StringWithSpecVarIds(varids []VarId) string {
 	msg += "id to write-channel count: %v\n"
 	msg += "%s"
 	return fmt.Sprintf(msg, this.closed, this.communicating,
-		len(this.registryStore.constraints),
-		len(this.registryStore.varidsConnectedToConstraints), s)
+		this.registryStore.numberOfConstraints(),
+		this.registryStore.numberOfActiveVarIds(), s)
 }

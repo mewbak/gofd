@@ -249,7 +249,7 @@ func createGetStatEvent() *GetStatEvent {
 }
 
 func (this *GetStatEvent) run(store *Store) {
-	this.channel <- store.stat.Clone(store) // a fresh copy, current values
+	this.channel <- store.stat.Clone(store) // fresh copy, current values
 }
 
 func (this *GetStatEvent) String() string {
@@ -327,15 +327,14 @@ func (this *CloneEvent) run(store *Store) {
 		}
 	}
 	var clonedConstraints []Constraint
-	
 	// use old variable IDs and name mapping
-	newStore.registryStore, clonedConstraints = this.store.registryStore.Clone()
+	newStore.registryStore, clonedConstraints =
+		this.store.registryStore.Clone()
 	newStore.iDCounter = this.store.iDCounter
 	newStore.loggingStats = this.store.GetLoggingStat()
 	// use new propIds
 	newStore.propCounter = this.store.propCounter
 	newStore.readyChannel = make(chan bool)
-	
 	go newStore.propagate()
 	newStore.AddPropagators(clonedConstraints...)
 	// println(len(cloned_props), newStore.stat.propagators) // why diff?

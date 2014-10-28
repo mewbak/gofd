@@ -1,56 +1,60 @@
 package core
 
+// RegistryStore represents a central part of the data
+// in a store connecting varIds to names and propagators
 type RegistryStore struct {
 	idToName map[VarId]string // variable names back
 	nameToId map[string]VarId // variable names
-	// constraintsInterestedInVarids, varids of unfixed variables per propagator
-	constraintsInterestedInVarids map[*ConstraintData][]VarId
-	varidsConnectedToConstraints map[VarId][]*ConstraintData
+	// varids of unfixed variables per propagator
+	constraintsToVarIds map[*ConstraintData][]VarId
+	// pointer to connected constraints per varid
+	varIdsToConstraints map[VarId][]*ConstraintData
+	// collection of all constraints/propagators
 	constraints map[PropId]Constraint
 }
 
-// ---------- general functions ---------- 
+// ---------- general functions ----------
 
-func CreateRegistryStore() *RegistryStore {
+func createRegistryStore() *RegistryStore {
 	return &RegistryStore{
-		idToName: make(map[VarId]string),
-		nameToId: make(map[string]VarId),
-		constraintsInterestedInVarids: make(map[*ConstraintData][]VarId),
-		varidsConnectedToConstraints: make(map[VarId][]*ConstraintData),
-		constraints: make(map[PropId]Constraint)}
+		idToName:            make(map[VarId]string),
+		nameToId:            make(map[string]VarId),
+		constraintsToVarIds: make(map[*ConstraintData][]VarId),
+		varIdsToConstraints: make(map[VarId][]*ConstraintData),
+		constraints:         make(map[PropId]Constraint)}
 }
 
-// Copy copies the registry store
+// Clone clones the registry store
 func (this *RegistryStore) Clone() (*RegistryStore, []Constraint) {
 	rs := new(RegistryStore)
 	rs.idToName = this.idToName
 	rs.nameToId = this.nameToId
-	rs.constraintsInterestedInVarids = make(map[*ConstraintData][]VarId, len(this.constraintsInterestedInVarids))
-	rs.varidsConnectedToConstraints = make(map[VarId][]*ConstraintData, len(this.varidsConnectedToConstraints))
+	rs.constraintsToVarIds = make(map[*ConstraintData][]VarId,
+		len(this.constraintsToVarIds))
+	rs.varIdsToConstraints = make(map[VarId][]*ConstraintData,
+		len(this.varIdsToConstraints))
 	rs.constraints = make(map[PropId]Constraint, len(this.constraints))
-
-	clonedConstraints := make([]Constraint,len(this.constraints))
-
-	i:=0
+	clonedConstraints := make([]Constraint, len(this.constraints))
+	i := 0
 	for _, prop := range this.constraints {
 		clonedConstraints[i] = prop.Clone()
-		clonedConstraints[i].SetID(0) // temporary value. Will be overridden
-		// for each propagator in function "Addconstraints"
-		i+=1
+		// Set temporary id. Will be overridden for
+		// each propagator in Addconstraints
+		clonedConstraints[i].SetID(0)
+		i += 1
 	}
-
 	return rs, clonedConstraints
 }
 
 //---------- varid to name and vice versa ----------
 
-// GetVarIdToNameMap returns the whole idToName-map
-func (this *RegistryStore) GetVarIdToNameMap() map[VarId]string {
+// getVarIdToNameMap returns the whole idToName-map
+func (this *RegistryStore) getVarIdToNameMap() map[VarId]string {
 	return this.idToName
 }
 
-// GetNameToVarIdMap returns the whole nameToID-map
-func (this *RegistryStore) GetNameToVarIdMap() map[string]VarId {
+// getNameToVarIdMap returns the whole nameToID-map
+func (this *RegistryStore) getNameToVarIdMap() map[string]VarId {
 	return this.nameToId
 }
 
@@ -82,16 +86,25 @@ func (this *RegistryStore) GetVarId(varName string) VarId {
 	return this.nameToId[varName]
 }
 
-//---------- propagator <-> varid mappings ----------
-
-type ConstraintData struct {
-	propId PropId
-	constraint Constraint
-	channel chan *ChangeEntry	
+func (this *RegistryStore) numberOfConstraints() int {
+	return len(this.constraints)
 }
 
-func CreateConstraintData(propId PropId, 
-		constraint Constraint, channel chan *ChangeEntry) *ConstraintData{
+func (this *RegistryStore) numberOfActiveVarIds() int {
+	return len(this.varIdsToConstraints)
+}
+
+//---------- propagator <-> varid mappings ----------
+
+// ConstraintData represents all information about a propagator
+type ConstraintData struct {
+	propId     PropId
+	constraint Constraint
+	channel    chan *ChangeEntry
+}
+
+func CreateConstraintData(propId PropId, constraint Constraint,
+	channel chan *ChangeEntry) *ConstraintData {
 	cd := new(ConstraintData)
 	cd.propId = propId
 	cd.constraint = constraint
@@ -99,82 +112,78 @@ func CreateConstraintData(propId PropId,
 	return cd
 }
 
-func (this *RegistryStore) Close(){
-	
-	varids:=make([]VarId,len(this.varidsConnectedToConstraints))
-	constraintDatas := make([]*ConstraintData,len(this.constraintsInterestedInVarids))
-	i:=0
-	for varid,_ := range this.varidsConnectedToConstraints {
+func (this *RegistryStore) Close() {
+	varids := make([]VarId, len(this.varIdsToConstraints))
+	constraintDatas := make([]*ConstraintData,
+		len(this.constraintsToVarIds))
+	i := 0
+	for varid, _ := range this.varIdsToConstraints {
 		varids[i] = varid
-		i+=1
+		i += 1
 	}
-	
-	i=0
-	for constraintData,_ := range this.constraintsInterestedInVarids {
-		constraintDatas[i]=constraintData
-		i+=1
+	i = 0
+	for constraintData, _ := range this.constraintsToVarIds {
+		constraintDatas[i] = constraintData
+		i += 1
 	}
-	
-	for _,constraintData := range constraintDatas {
-		this.constraintsInterestedInVarids[constraintData] = nil
+	for _, constraintData := range constraintDatas {
+		this.constraintsToVarIds[constraintData] = nil
 		close(constraintData.channel)
 	}
-	
-	this.constraintsInterestedInVarids = nil
-	this.varidsConnectedToConstraints = nil
+	this.constraintsToVarIds = nil
+	this.varIdsToConstraints = nil
 	this.constraints = nil
 }
 
-func (this *RegistryStore) AddVaridsConntectedToConstraint(varIds []VarId, constraintData *ConstraintData) {
+func (this *RegistryStore) AddVarIdsToConstraint(varIds []VarId,
+	cD *ConstraintData) {
 	for _, varId := range varIds {
-		if _, exists := this.varidsConnectedToConstraints[varId]; !exists {
-			this.varidsConnectedToConstraints[varId] = make([]*ConstraintData,0) 
+		if _, exists := this.varIdsToConstraints[varId]; !exists {
+			this.varIdsToConstraints[varId] = make([]*ConstraintData, 0)
 		}
-		this.varidsConnectedToConstraints[varId] = append(this.varidsConnectedToConstraints[varId],constraintData)
+		this.varIdsToConstraints[varId] =
+			append(this.varIdsToConstraints[varId], cD)
 	}
 }
 
-func (this *RegistryStore) AddConstraintInterestedInVarids(constraintData *ConstraintData, varids []VarId) {
-	if _, exists := this.constraintsInterestedInVarids[constraintData]; !exists {
-		this.constraintsInterestedInVarids[constraintData] = make([]VarId,0) 
+func (this *RegistryStore) AddConstraintToVarIds(cD *ConstraintData,
+	varids []VarId) {
+	if _, exists := this.constraintsToVarIds[cD]; !exists {
+		this.constraintsToVarIds[cD] = make([]VarId, 0)
 	}
-	
-	this.constraintsInterestedInVarids[constraintData] = varids
+	// TODO: that does not make sense, it overrides?
+	this.constraintsToVarIds[cD] = varids
 }
 
-// RemoveFixedRelations removes relations between varid and propId, if 
+// RemoveFixedRelations removes relations between varid and propId, if
 // domain of varid is ground
 func (this *RegistryStore) RemoveFixedRelations(varid VarId) int {
-	constraintData := this.varidsConnectedToConstraints[varid]
-
-	removedConstraints:=0
-
-	for _,constraintD := range constraintData {
-		//entfernen	
-		indexToRemove:=-1
-		for i,vid := range this.constraintsInterestedInVarids[constraintD] {
-			if vid==varid{
+	constraintData := this.varIdsToConstraints[varid]
+	removedConstraints := 0
+	for _, constraintD := range constraintData {
+		// remove
+		indexToRemove := -1
+		for i, vid := range this.constraintsToVarIds[constraintD] {
+			if vid == varid {
 				indexToRemove = i
 				break
-			}	
+			}
 		}
-	
-		this.constraintsInterestedInVarids[constraintD] = append(this.constraintsInterestedInVarids[constraintD][:indexToRemove], this.constraintsInterestedInVarids[constraintD][indexToRemove+1:]...)	
-		if len(this.constraintsInterestedInVarids[constraintD]) == 0 {
+		this.constraintsToVarIds[constraintD] =
+			append(this.constraintsToVarIds[constraintD][:indexToRemove],
+				this.constraintsToVarIds[constraintD][indexToRemove+1:]...)
+		if len(this.constraintsToVarIds[constraintD]) == 0 {
 			close(constraintD.channel)
-
 			// remove dangling reference to constraints, allow gc
 			delete(this.constraints, constraintD.propId)
-			delete(this.constraintsInterestedInVarids, constraintD)
-			removedConstraints+=1
+			delete(this.constraintsToVarIds, constraintD)
+			removedConstraints += 1
 		}
 	}
-	
-	this.varidsConnectedToConstraints[varid] = nil
-
+	this.varIdsToConstraints[varid] = nil
 	return removedConstraints
 }
 
-func (this *RegistryStore) ConnectedConstraints(varid VarId) []*ConstraintData{
-	return this.varidsConnectedToConstraints[varid]
+func (this *RegistryStore) Constraints(varid VarId) []*ConstraintData {
+	return this.varIdsToConstraints[varid]
 }

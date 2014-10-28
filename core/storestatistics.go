@@ -57,8 +57,9 @@ func (this *StoreStatistics) Clone(store *Store) *StoreStatistics {
 	other := store.stat
 	stat.variables = other.variables
 	stat.propagators = other.propagators
-	stat.actVariables = len(store.iDToIntVar)    // fresh on Clone
-	stat.actPropagators = len(store.registryStore.constraints) // fresh on Clone
+	// fresh count on Clone
+	stat.actVariables = len(store.iDToIntVar)
+	stat.actPropagators = len(store.registryStore.constraints)
 	stat.sizeChannels = other.sizeChannels
 	stat.changeEvents = other.changeEvents
 	stat.emptyChangeEvents = other.emptyChangeEvents
