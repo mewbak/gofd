@@ -105,20 +105,12 @@ func (this *Store) IsConsistent() bool {
 	return <-this.getReadyChannel()
 }
 
-// AddPropagator registers a propagator to the constraint store.
+// AddPropagator registers a propagator to the constraint store
 func (this *Store) AddPropagator(prop Constraint) {
-	if (*this).closed {
-		panic("cannot add propagator to closed store")
-	}
-	evt := createRegisterPropagatorEvent(prop)
-	this.controlChannel <- evt
-	propId := <-evt.channel
-	if logger.DoDebug() {
-		logger.Df("propagator registered with id %d", propId)
-	}
+	this.AddPropagators(prop)
 }
 
-// AddPropagators registers Propagators to the constraint store.
+// AddPropagators registers propagators to the constraint store
 func (this *Store) AddPropagators(props ...Constraint) {
 	evt := createRegisterPropagatorsEvent(props)
 	this.controlChannel <- evt
