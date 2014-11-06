@@ -15,7 +15,7 @@ type RegistryStore struct {
 
 // ---------- general functions ----------
 
-func createRegistryStore() *RegistryStore {
+func CreateRegistryStore() *RegistryStore {
 	return &RegistryStore{
 		idToName:            make(map[VarId]string),
 		nameToId:            make(map[string]VarId),
@@ -48,13 +48,13 @@ func (this *RegistryStore) Clone() (*RegistryStore, []Constraint) {
 
 //---------- varid to name and vice versa ----------
 
-// getVarIdToNameMap returns the whole idToName-map
-func (this *RegistryStore) getVarIdToNameMap() map[VarId]string {
+// GetVarIdToNameMap returns the whole idToName-map
+func (this *RegistryStore) GetVarIdToNameMap() map[VarId]string {
 	return this.idToName
 }
 
-// getNameToVarIdMap returns the whole nameToID-map
-func (this *RegistryStore) getNameToVarIdMap() map[string]VarId {
+// GetNameToVarIdMap returns the whole nameToID-map
+func (this *RegistryStore) GetNameToVarIdMap() map[string]VarId {
 	return this.nameToId
 }
 
@@ -113,29 +113,38 @@ func CreateConstraintData(propId PropId, constraint Constraint,
 }
 
 func (this *RegistryStore) Close() {
-	varids := make([]VarId, len(this.varIdsToConstraints))
-	constraintDatas := make([]*ConstraintData,
-		len(this.constraintsToVarIds))
-	i := 0
-	for varid, _ := range this.varIdsToConstraints {
-		varids[i] = varid
-		i += 1
-	}
-	i = 0
+	//close all channels
 	for constraintData, _ := range this.constraintsToVarIds {
-		constraintDatas[i] = constraintData
-		i += 1
-	}
-	for _, constraintData := range constraintDatas {
-		this.constraintsToVarIds[constraintData] = nil
 		close(constraintData.channel)
 	}
+	//set memory free for garbage collection
 	this.constraintsToVarIds = nil
 	this.varIdsToConstraints = nil
 	this.constraints = nil
 }
 
-func (this *RegistryStore) AddVarIdsToConstraint(varIds []VarId,
+// ConnectVarIdWithConstraint connect Constraint with related varids
+// - a constraint is interested in varids v1, v2, ..., vx (list can be 
+//   reduced while propagation/labeling)
+//   (see AddConstraintToVarIds)
+// - changes for the domain of a varid can be "observed" by several constraints
+//   (see AddVarIdsToConstraint)
+func (this *RegistryStore) RegisterVarIdWithConstraint(propId PropId, 
+	writeChannel chan *ChangeEntry, varIds []VarId, 
+	interestedInVarIds []VarId) {
+	constraintData := CreateConstraintData(propId,
+		this.constraints[propId], writeChannel)
+	
+	this.addVarIdsToConstraint(varIds, constraintData)
+	this.addConstraintToVarIds(constraintData, interestedInVarIds)
+}
+
+// addVarIdsToConstraint stores the relation between several varids and the
+// specific constraint, e.g. constraint C1: X+Y=Z with id c1 and 
+// writechannel w1 is given. C1, c1 and w1 are store in a ConstraintData 
+// instance cd1. Then for each variable X,Y and Z cd1 is stored. So, when 
+// a change for X is incoming, then all cdx will be informed.
+func (this *RegistryStore) addVarIdsToConstraint(varIds []VarId,
 	cD *ConstraintData) {
 	for _, varId := range varIds {
 		if _, exists := this.varIdsToConstraints[varId]; !exists {
@@ -146,12 +155,13 @@ func (this *RegistryStore) AddVarIdsToConstraint(varIds []VarId,
 	}
 }
 
-func (this *RegistryStore) AddConstraintToVarIds(cD *ConstraintData,
+// addConstraintToVarIds stores the relation between a specific constraint
+// and several varids, e.g. constraint C1: X+Y=Z with id c1 and 
+// writechannel w1 is given. C1, c1 and w1 are store in a ConstraintData 
+// instance cd1. Then cd1 is stored with the slice of variables (X,Y and Z),
+// for which he wants to get change information.
+func (this *RegistryStore) addConstraintToVarIds(cD *ConstraintData,
 	varids []VarId) {
-	if _, exists := this.constraintsToVarIds[cD]; !exists {
-		this.constraintsToVarIds[cD] = make([]VarId, 0)
-	}
-	// TODO: that does not make sense, it overrides?
 	this.constraintsToVarIds[cD] = varids
 }
 

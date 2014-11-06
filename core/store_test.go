@@ -9,20 +9,20 @@ import (
 
 // PropDummy propagator dummy for testing
 type PropDummy struct {
-	x       VarId
+	vars    []VarId
 	id      PropId
-	xDomain Domain
+	domains []Domain
 	t       *testing.T
 	in      <-chan *ChangeEntry
 	out     chan<- *ChangeEvent
 }
 
 func (this *PropDummy) GetVarIds() []VarId {
-	return []VarId{this.x}
+	return this.vars
 }
 
 func (this *PropDummy) GetDomains() []Domain {
-	return []Domain{this.xDomain}
+	return this.domains
 }
 
 func (this *PropDummy) GetInCh() <-chan *ChangeEntry {
@@ -52,10 +52,10 @@ func (this *PropDummy) Start() {
 func (this *PropDummy) Register(store *Store) {
 	var domains []Domain
 	this.in, domains, this.out =
-		store.RegisterPropagator([]VarId{this.x}, this.id)
-	this.xDomain = domains[0]
-	this.xDomain.Remove(1)
-	if this.xDomain.Equals(store.iDToIntVar[this.x].Domain) {
+		store.RegisterPropagator(this.vars, this.id)
+	this.domains = domains
+	this.domains[0].Remove(1)
+	if this.domains[0].Equals(store.iDToIntVar[this.vars[0]].Domain) {
 		msg := "Store.PropDummyRegister: "
 		msg += "local domain IS NOT a copy of store domain"
 		this.t.Errorf(msg)
@@ -64,23 +64,23 @@ func (this *PropDummy) Register(store *Store) {
 }
 
 func (this *PropDummy) Clone() Constraint {
-	return &PropDummy{id: this.id}
+	return &PropDummy{id: this.id, vars: this.vars}
 }
 
 func (this *PropDummy) String() string {
-	return fmt.Sprintf("PropDummy, Dom: %v", this.xDomain)
+	return fmt.Sprintf("PropDummy, Dom: %v", this.domains)
 }
 
-func createPropagatorDummy(x VarId, t *testing.T) (Constraint, Constraint) {
+func createPropagatorDummy(vars []VarId, t *testing.T) (Constraint, Constraint) {
 	prop1, prop2 := new(PropDummy), new(PropDummy)
-	prop1.x, prop2.x = x, x
+	prop1.vars, prop2.vars = vars, vars
 	prop1.t, prop2.t = t, t
 	return prop1, prop2
 }
 
 func createVarPropagatorDummy(t *testing.T) (Constraint, Constraint) {
 	x := CreateAuxIntVarValues(store, []int{0, 1, 2, 3, 4})
-	return createPropagatorDummy(x, t)
+	return createPropagatorDummy([]VarId{x}, t)
 }
 
 func Test_RegisterPropagator(t *testing.T) {

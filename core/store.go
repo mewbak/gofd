@@ -50,7 +50,7 @@ func CreateStoreWithoutLogging() *Store {
 	store.communicating = false
 	store.closed = false
 	store.stat = CreateStoreStatistics()
-	store.registryStore = createRegistryStore()
+	store.registryStore = CreateRegistryStore()
 	go store.propagate() // always start the store main loop
 	return store
 }
@@ -72,7 +72,7 @@ func CreateStore() *Store {
 	store.communicating = false
 	store.closed = false
 	store.stat = CreateStoreStatistics()
-	store.registryStore = createRegistryStore()
+	store.registryStore = CreateRegistryStore()
 	go store.propagate() // always start the store main loop
 	return store
 }
@@ -132,6 +132,8 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	this.stat.propagators++
 	lenvarIds := len(varIds)
 	domains := make([]Domain, lenvarIds)
+	//Must be copy of varIds, because count of interestedInVarIds can be 
+	//reduced while propagation/labeling 
 	interestedInVarIds := make([]VarId, lenvarIds)
 	channelSize := 0
 	loggerDebug := logger.DoDebug()
@@ -148,13 +150,8 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	writeChannel := make(chan *ChangeEntry, channelSize)
 	this.stat.sizeChannels += channelSize
 
-	constraintData := CreateConstraintData(propId,
-		this.registryStore.constraints[propId], writeChannel)
-
-	//connect varids and constraint
-	this.registryStore.AddVarIdsToConstraint(varIds, constraintData)
-	this.registryStore.AddConstraintToVarIds(constraintData,
-		interestedInVarIds)
+	this.registryStore.RegisterVarIdWithConstraint(propId, 
+		writeChannel, varIds, interestedInVarIds)
 
 	if loggerDebug {
 		logger.Df("STORE_registerPropagator writeChannel: %v", writeChannel)
@@ -456,7 +453,7 @@ func (this *Store) GetStat() *StoreStatistics {
 // String returns the current state of the store as a string
 func (this *Store) String() string {
 	s := ""
-	for id, name := range this.registryStore.getVarIdToNameMap() {
+	for id, name := range this.registryStore.GetVarIdToNameMap() {
 		s += fmt.Sprintf("%s   %s\n", name, this.iDToIntVar[id].Domain)
 	}
 	msg := "---Store-Status---\n"
