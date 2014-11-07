@@ -124,25 +124,25 @@ func (this *RegistryStore) Close() {
 }
 
 // ConnectVarIdWithConstraint connect Constraint with related varids
-// - a constraint is interested in varids v1, v2, ..., vx (list can be 
+// - a constraint is interested in varids v1, v2, ..., vx (list can be
 //   reduced while propagation/labeling)
 //   (see AddConstraintToVarIds)
 // - changes for the domain of a varid can be "observed" by several constraints
 //   (see AddVarIdsToConstraint)
-func (this *RegistryStore) RegisterVarIdWithConstraint(propId PropId, 
-	writeChannel chan *ChangeEntry, varIds []VarId, 
+func (this *RegistryStore) RegisterVarIdWithConstraint(propId PropId,
+	writeChannel chan *ChangeEntry, varIds []VarId,
 	interestedInVarIds []VarId) {
 	constraintData := CreateConstraintData(propId,
 		this.constraints[propId], writeChannel)
-	
+
 	this.addVarIdsToConstraint(varIds, constraintData)
 	this.addConstraintToVarIds(constraintData, interestedInVarIds)
 }
 
 // addVarIdsToConstraint stores the relation between several varids and the
-// specific constraint, e.g. constraint C1: X+Y=Z with id c1 and 
-// writechannel w1 is given. C1, c1 and w1 are store in a ConstraintData 
-// instance cd1. Then for each variable X,Y and Z cd1 is stored. So, when 
+// specific constraint, e.g. constraint C1: X+Y=Z with id c1 and
+// writechannel w1 is given. C1, c1 and w1 are store in a ConstraintData
+// instance cd1. Then for each variable X,Y and Z cd1 is stored. So, when
 // a change for X is incoming, then all cdx will be informed.
 func (this *RegistryStore) addVarIdsToConstraint(varIds []VarId,
 	cD *ConstraintData) {
@@ -156,8 +156,8 @@ func (this *RegistryStore) addVarIdsToConstraint(varIds []VarId,
 }
 
 // addConstraintToVarIds stores the relation between a specific constraint
-// and several varids, e.g. constraint C1: X+Y=Z with id c1 and 
-// writechannel w1 is given. C1, c1 and w1 are store in a ConstraintData 
+// and several varids, e.g. constraint C1: X+Y=Z with id c1 and
+// writechannel w1 is given. C1, c1 and w1 are store in a ConstraintData
 // instance cd1. Then cd1 is stored with the slice of variables (X,Y and Z),
 // for which he wants to get change information.
 func (this *RegistryStore) addConstraintToVarIds(cD *ConstraintData,

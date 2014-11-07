@@ -12,10 +12,10 @@ const ReadChannelBuffer int = 17 // some buffering on store input
 
 // Store represents a constraint store
 type Store struct {
-	iDToIntVar    map[VarId]*IntVar
-	propCounter   PropId
-	iDCounter     VarId
-	registryStore *RegistryStore
+	iDToIntVar     map[VarId]*IntVar
+	propCounter    PropId
+	iDCounter      VarId
+	registryStore  *RegistryStore
 	readChannel    chan *ChangeEvent // incoming domain reductions
 	controlChannel chan ControlEvent // for commands such as register
 	// eventCounter increment per outgoing even, expect one incoming
@@ -132,8 +132,8 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	this.stat.propagators++
 	lenvarIds := len(varIds)
 	domains := make([]Domain, lenvarIds)
-	//Must be copy of varIds, because count of interestedInVarIds can be 
-	//reduced while propagation/labeling 
+	//Must be copy of varIds, because count of interestedInVarIds can be
+	//reduced while propagation/labeling
 	interestedInVarIds := make([]VarId, lenvarIds)
 	channelSize := 0
 	loggerDebug := logger.DoDebug()
@@ -150,7 +150,7 @@ func (this *Store) RegisterPropagator(varIds []VarId,
 	writeChannel := make(chan *ChangeEntry, channelSize)
 	this.stat.sizeChannels += channelSize
 
-	this.registryStore.RegisterVarIdWithConstraint(propId, 
+	this.registryStore.RegisterVarIdWithConstraint(propId,
 		writeChannel, varIds, interestedInVarIds)
 
 	if loggerDebug {

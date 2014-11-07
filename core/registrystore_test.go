@@ -54,66 +54,66 @@ func Test_RemoveFixedRelations0(t *testing.T) {
 	setup()
 	defer teardown()
 	log("RegistryStoreRemoveFixedRelations")
-	
+
 	rs := CreateRegistryStore()
 	// setup... X=0,Y=1,Z=2 and constraint X+Y=Z
-	varids:= []VarId{0,1,2}
-	c1,_ := createPropagatorDummy(varids,t)	
+	varids := []VarId{0, 1, 2}
+	c1, _ := createPropagatorDummy(varids, t)
 	rs.constraints[c1.GetID()] = c1
-	interestedVarids := make([]VarId,len(varids))
+	interestedVarids := make([]VarId, len(varids))
 	copy(interestedVarids, varids)
 	writeChannel := make(chan *ChangeEntry, 10)
-	
-	rs.RegisterVarIdWithConstraint(c1.GetID(),writeChannel,
-		varids,interestedVarids)
-	
+
+	rs.RegisterVarIdWithConstraint(c1.GetID(), writeChannel,
+		varids, interestedVarids)
+
 	constraintData := rs.varIdsToConstraints[0][0]
-	
+
 	// now, X will be fixed (then, no constraint should listen on X and
 	// c1 should only listen to Y, Z)
 	rs.RemoveFixedRelations(0)
 	m := make(map[*ConstraintData]int)
 	m[constraintData] = 2
 	testRegistrations(t, rs, 1, m, 0)
-	
+
 	rs.RemoveFixedRelations(2)
 	m = make(map[*ConstraintData]int)
 	m[constraintData] = 1
 	testRegistrations(t, rs, 1, m, 2)
-	
+
 	rs.RemoveFixedRelations(1)
 	m = make(map[*ConstraintData]int)
 	m[constraintData] = 0
 	testRegistrations(t, rs, 0, m, 1)
 }
 
-func testRegistrations(t *testing.T, rs *RegistryStore, 
-	expNumberConstraints int, expNumberVaridsPerPropId map[*ConstraintData]int, 
-	removedVarId VarId){
-	if len(rs.constraintsToVarIds)!=expNumberConstraints {
-		t.Errorf("RegistryStore.constraintsToVarIds has wrong number "+ 
-				"constraints")
+func testRegistrations(t *testing.T, rs *RegistryStore,
+	expNumberConstraints int, expNumberVaridsPerPropId map[*ConstraintData]int,
+	removedVarId VarId) {
+	if len(rs.constraintsToVarIds) != expNumberConstraints {
+		t.Errorf("RegistryStore.constraintsToVarIds has wrong number " +
+			"constraints")
 	}
 	for cd, numberVarids := range expNumberVaridsPerPropId {
-		if len(rs.constraintsToVarIds[cd])!=numberVarids {
-			t.Errorf("RegistryStore.constraintsToVarIds[cd] has wrong number "+
+		if len(rs.constraintsToVarIds[cd]) != numberVarids {
+			t.Errorf("RegistryStore.constraintsToVarIds[cd] has wrong number " +
 				"of varids")
 		}
-		if numberVarids==0 {
-			// expected result: closed writeChannel, constraintsToVarIds 
+		if numberVarids == 0 {
+			// expected result: closed writeChannel, constraintsToVarIds
 			// reduced (0) and constraints reduced (0)
-			if _,k := rs.constraintsToVarIds[cd]; k {
-				t.Errorf("RegistryStore.constraintsToVarIds: contains wrong "+
+			if _, k := rs.constraintsToVarIds[cd]; k {
+				t.Errorf("RegistryStore.constraintsToVarIds: contains wrong " +
 					"number of elements")
-			} 
-			if _,k := rs.constraints[cd.constraint.GetID()]; k{
-				t.Errorf("RegistryStore.constraints: contains wrong number "+
+			}
+			if _, k := rs.constraints[cd.constraint.GetID()]; k {
+				t.Errorf("RegistryStore.constraints: contains wrong number " +
 					"of elements")
 			}
-		}		
+		}
 	}
-	
-	if rs.varIdsToConstraints[removedVarId] !=nil{
+
+	if rs.varIdsToConstraints[removedVarId] != nil {
 		t.Errorf("RegistryStore.constraints: varid still contained")
 	}
 }
