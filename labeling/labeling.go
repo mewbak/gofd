@@ -13,11 +13,8 @@ import (
 // strategy, where the last configuration counts.
 func Labeling(store *core.Store, resultQuery ResultQuery,
 	configurations ...interface{}) bool {
-	// ToDo: what happens, if store is closed?
-	// see also: event.go, function "run"
-
-	store.IsConsistent() // finalize propagation
-	newStore := store.Clone(nil)
+	store.IsConsistent()             // finalize propagation
+	newStore := store.Clone(nil)     // local copy
 	strategy := InDomainRange        // default strategy
 	varSelect := SmallestDomainFirst // default variable selection
 	for _, configuration := range configurations {
@@ -47,7 +44,7 @@ func Labeling(store *core.Store, resultQuery ResultQuery,
 	if logger.DoDebug() {
 		logger.Dln("LABELING_Finished")
 	}
-	newStore.Close()
+	newStore.Close() // cleanup local copy of the store
 	return resultQuery.getResultStatus()
 }
 
@@ -58,7 +55,6 @@ func fix(store *core.Store, resultQuery ResultQuery,
 	varSelect func(store *core.Store) (core.VarId, bool)) bool {
 	stat := resultQuery.GetSearchStatistics()
 	consistent := store.IsConsistent() // finalize propagation
-
 	if store.GetLoggingStat() {
 		stat.UpdateStoreStatistics(store) // update our cumulative statistics
 	}
