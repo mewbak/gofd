@@ -17,7 +17,7 @@ PRECSECS=10000
 # cycling every PRECSECS seconds
 function msecs {
 stamp=$(($(date +%s)%$PRECSECS))$((date +%N) | cut -c 1-3)
-echo $stamp
+echo $stamp | sed 's/^0*//'
 }
 
 # compute a time difference between now and an older time stamp
