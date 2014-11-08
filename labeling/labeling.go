@@ -48,7 +48,6 @@ func Labeling(store *core.Store, resultQuery ResultQuery,
 		logger.Dln("LABELING_Finished")
 	}
 	newStore.Close()
-	store.Close()
 	return resultQuery.getResultStatus()
 }
 
