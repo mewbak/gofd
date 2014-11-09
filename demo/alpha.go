@@ -22,8 +22,6 @@ func ConstrainAlpha(store *core.Store,
 		vars[varname] = varid
 		avars[i] = varid
 	}
-	alldiff := propagator.CreateAlldifferent(avars...)
-	store.AddPropagator(alldiff)
 	for word, value := range words {
 		wordvarsmap := make(map[core.VarId]int)
 		for _, rune := range word {
