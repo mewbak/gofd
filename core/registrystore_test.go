@@ -161,7 +161,7 @@ func testRegistrations(t *testing.T, rs *RegistryStore,
 		}
 		if numberVarids == 0 {
 			// expected result: closed writeChannel, constraintsToVarIds
-			// reduced (cd not contained anymore) and constraints reduced 
+			// reduced (cd not contained anymore) and constraints reduced
 			// (propId not contained anymore)
 			if _, k := rs.constraintsToVarIds[cd]; k {
 				t.Errorf("RegistryStore.constraintsToVarIds: contains wrong " +
